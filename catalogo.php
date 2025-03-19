@@ -15,7 +15,7 @@
         
         .product-image {
             position: relative;
-            padding-top: 75%; /* Relación de aspecto 4:3 */
+            padding-top: 75%;
             overflow: hidden;
         }
         
@@ -43,6 +43,25 @@
         .product-actions {
             margin-top: auto;
         }
+        .button.is-primary {
+            background-color: #444f5a;
+            border-color: transparent;
+            color: #fff;
+        }
+        .button.is-primary:hover{
+            background-color: #5a6877;
+            border-color: #444f5a;
+            color: #fff;
+        }
+        .button.is-link.is-outlined {
+            background-color: #e6e6e6;
+            border-color: #444f5a;
+            color: #444f5a;
+        }
+        .button.is-link.is-outlined:hover{
+            background-color: #718293;
+        }
+
     </style>
 </head>
 <body>
@@ -63,7 +82,7 @@
 
 
     <!-- Contenido principal -->
-    <section class="section">
+    <article class="section">
         <div class="container">
             <!-- Filtros y búsqueda (opcional) -->
             <div class="columns mb-5">
@@ -72,6 +91,7 @@
                         <label class="label">Categoría</label>
                         <div class="control">
                             <div class="select is-fullwidth">
+
                                 <select>
                                     <option>Todas as categorías</option>
                                     <option>Informática</option>
@@ -110,14 +130,14 @@
                     'nombre' => 'PHP Coding',
                     'descripcion' => 'Vem connosco aprender sobre o mundo da informática!',
                     'precio' => 99.99,
-                    'imagen' => 'https://images.pexels.com/photos/31177212/pexels-photo-31177212.jpeg?auto=compress&cs=tinysrgb&w=600',
+                    'imagen' => 'img1.webp',
                     'categoria' => 'Informática'
                 ];
                 ?>
             
                 <!-- Inicio del bloque de cursso que se repetirá -->
-                <div class="column is-3-desktop is-4-tablet is-6-mobile">
-                    <div class="card product-card">
+                <article class="column is-3-desktop is-4-tablet is-6-mobile">
+                    <div class="card product-card" ><a href="detalhes_curso.php?id=<?echo $produto['id'];?>">
                         <div class="card-image">
                             <div class="product-image">
                                 <img src="<?php echo $producto['imagen']; ?>" alt="<?php echo $producto['nombre']; ?>">
@@ -127,16 +147,16 @@
                             <p class="subtitle is-6"><?php echo $producto['categoria']; ?></p>
                             <p class="title is-5"><?php echo $producto['nombre']; ?></p>
                             <p class="content"><?php echo $producto['descripcion']; ?></p>
-                            <p class="product-price">$<?php echo number_format($producto['precio'], 2); ?></p>
+                            <p class="product-price">€<?php echo number_format($producto['precio'], 2); ?></p>
                             <div class="product-actions">
                                 <div class="buttons">
                                     <a href="detalles.php?id=<?php echo $producto['id']; ?>" class="button is-link is-outlined is-fullwidth">Ver detalhes</a>
-                                    <button class="button is-primary is-fullwidth">Comprar curso???</button>
+                                    <button class="button is-primary is-fullwidth">Inscrever</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </article>
                 <!-- Fin del bloque de curso -->
             
                 
@@ -163,6 +183,6 @@
                 </ul>
             </div>-->
         </div>
-    </section>
+            </article>
 </body>
 </html>
