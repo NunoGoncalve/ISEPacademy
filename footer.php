@@ -12,11 +12,14 @@
                         ISEP Academy
                 </h4> 
                 <p class="bd-footer-link has-text-left">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti facere necessitatibus neque repudiandae similique commodi facilis assumenda veritatis, ut animi placeat voluptatem omnis qui quod alias quaerat porro culpa error!
+                    © 2025 ISEP Academy - Todos os direitos reservados.  
+                    <br>
+                    Aprenda com os melhores! Oferecemos cursos online de alta qualidade para impulsionar sua carreira. Entre em contato! | Siga-nos nas redes sociais. 🚀
                 </p>
             </div>
             <div class="column">
-                <figure class="image" style="max-width: 35%; margin: auto;">
+                <br>
+                <figure class="image" style="max-width: 50%; margin: auto;">
                     <img src="img/01ISEPacademylogo.png" alt="logo ISEP Academy">
                 </figure>
             </div>
