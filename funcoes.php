@@ -8,7 +8,7 @@
         }
     }
 
-    Switch ($_POST["func"]){
+    Switch ($_POST["Func"]){
         case "login":
             $email = $_POST["email"];
             $pass = $_POST["pass"];
@@ -43,7 +43,13 @@
            
             break;
         case "favourite":
-                $Query = "Update Interaction SET Favourite=true where UserID=".$_POST["UserID"]." AND CourseID=".$_POST["UserID"];
+                $Query = "Update Interaction SET Favourite=".$_POST["Fav"]." where UserID=".$_POST["UserID"]." AND CourseID=".$_POST["UserID"];
+                $info = exeDB($Query);
+                echo "ok";
+        break;
+
+        case "subscribe":
+            $Query = "Update Interaction SET Status=1 where UserID=".$_POST["UserID"]." AND CourseID=".$_POST["UserID"];
                 $info = exeDB($Query);
                 echo "ok";
         break;
