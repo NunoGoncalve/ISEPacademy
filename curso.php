@@ -3,12 +3,18 @@
 	include 'funcoes.php';
 	
 	$CourseID=$_GET["ID"];
+    $Flag=0;
 
-    $Query = "Select Name, CardDesc, PagDesc, Price, Category from Course where ID=".$CourseID;
+    $Query = "Select Name, CardDesc, PagDesc, Price, Category, StartDate from Course where ID=".$CourseID;
     $CourseInfo = exeDB($Query);
 
 	$Query = "Select Favourite, Status from Interaction where CourseID=".$CourseID." AND UserID=1";
     $Info = exeDB($Query);
+	if(empty($Info)){
+		$Info["Favourite"]=0;
+		$Info["Status"]=0;
+		$Flag=1;
+	}
 ?>
 <!DOCTYPE html>
 <html lang="pt">
@@ -26,7 +32,8 @@
             $.post("funcoes.php",{
                 Func:"subscribe",
                 UserID:<?php echo "1, 
-                CourseID:".$CourseID?>
+                CourseID:".$CourseID.",
+				Flag:".$Flag?>
             
             },function(data, status){
 				if(data=="ok") { 
@@ -45,7 +52,8 @@
                 Func:"favourite",
 				Fav:fav.value,
                 UserID:<?php echo "1, 
-                CourseID:".$CourseID?>
+                CourseID:".$CourseID.",
+				Flag:".$Flag?>
             
             },function(data, status){
 				if(data=="ok" && fav.value==1){
@@ -149,6 +157,12 @@
                 <div class="pagamento column box is-3">
                     <div class="title is-3">
                         <?php echo number_format($CourseInfo['Price'], 2);?>€
+                    </div>
+                    <div class="title is-6">
+                        Categoria: <?php echo $CourseInfo['Category'];?>
+                    </div>
+					<div class="title is-6">
+                        Data de inicio: <?php echo $CourseInfo['StartDate'];?>
                     </div>
                     <button class="button is-success has-text-primary-100" id="sub" onclick="subscribe()" style="width: 100%">Inscreve-te!</button>
                     <button class="button is-link is-outlined" id="fav" onclick="favourite()" style="width: 100%; margin-top: 2%"> </button>
