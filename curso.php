@@ -1,5 +1,5 @@
 <?php 
-    include 'conexao.php';
+    session_start();
 	include 'funcoes.php';
 	
 	$CourseID=$_GET["ID"];
@@ -17,13 +17,13 @@
 	}
 ?>
 <!DOCTYPE html>
-<html lang="pt">
+<html data-theme="light" lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página Curso Teste</title>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
@@ -112,6 +112,7 @@
 </style>
 
 <body onload="onload()">
+    <?php include 'navbar.php';?>
     <section class="hero is-medium">
         <div class="hero-body">
         </div>

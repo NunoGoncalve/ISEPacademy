@@ -1,34 +1,47 @@
 <?php 
-if(isset($POST_["email"])){
-    include 'conexao.php';
-    $email = $_POST["email"];
-	$pass = $_POST["pass"];
-	
-    $Sel="Select ID, Email, Password, Role from User where Email like '$email'";
-	$exe = mysqli_query($conexao, $Sel);
-    $row = mysqli_fetch_assoc($exe);
-    if($row["Password"]==$_POST["pass"]){
-        $_SESSION["UserID"]=$row["ID"];
-        $_SESSION["Role"]=$row["Role"];
-
-    }
-    else{
-        echo "Erro";
-    }
-}
+session_start();
 ?>
 <!DOCTYPE html>
-<html data-theme="light" lang="en">
+<html data-theme="light" lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script>
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+    
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+        function login() {
+            $.post("funcoes.php",{
+                Func:"login",
+                Email:document.getElementById("email").value,
+                Pass:document.getElementById("password").value
+            },function(data, status){
+				if(data=="ok") { 
+                    document.location="userpage.php";
+                }
+				else{
 
+                }
+			},"text");	
+        }
+    </script>
 </head>
 
 <body>
@@ -40,7 +53,7 @@ if(isset($POST_["email"])){
     
     <section class="section is-fullheight is-flex is-justify-content-center is-align-items-center">
 
-        <form class="box custom-card-width" action="">
+        <form class="box custom-card-width" action="javascript:login()">
             
             <div class="field">
                 <label class="label" for="">Email</label>    
@@ -48,7 +61,7 @@ if(isset($POST_["email"])){
                 <div class="control has-icons-left">
 
 
-                    <input required class="input" type="email" placeholder="example@example.com">
+                    <input required class="input" id="email" type="email" placeholder="example@example.com">
                     <span class="icon is-small is-left">
                         <i class="fas fa-envelope"></i>
                     </span>
@@ -74,35 +87,12 @@ if(isset($POST_["email"])){
             
 
 
-            <button class="button is-success is-fullwidth">Login</button>
+            <button class="button is-success is-fullwidth" id="GreyBtn"type="submit">Login</button>
 
             <p>Não tens conta? <a href="register.php">Criar conta!</a> </p>
 
         </form>
     </section>
-
-    <script>
-        function togglePassword(inputId, iconId) {
-            const input = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
-    
-            if (input.type === "password") {
-                input.type = "text";
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
-            } else {
-                input.type = "password";
-                icon.classList.remove("fa-eye-slash");
-                icon.classList.add("fa-eye");
-            }
-
-
-            function validatePassword() {~
-                document.getElementbyId
-            }
-        }
-    </script>
-
-
+    <?php include 'footer.php';?>
 </body>
 </html>
