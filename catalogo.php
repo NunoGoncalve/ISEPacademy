@@ -61,7 +61,7 @@
             ?>
             <!-- Inicio del bloque de cursso que se repetirá -->
             <article class="column is-3-desktop is-4-tablet is-6-mobile">
-                <div class="card product-card"><a href="curso.php?ID=<? echo $row['ID']; ?>">
+                <div class="card product-card"><a href="curso.php?ID=<?php echo $row['ID']; ?>">
                         <div class="card-image">
                             <div class="product-image">
                                 <img src="<?php echo "img/layout/img".$row['ID'].".jpg"; ?>" alt="<?php echo $row['Name']; ?>">
