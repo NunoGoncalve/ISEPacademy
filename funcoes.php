@@ -51,9 +51,9 @@
 
             case "favourite":
                     if($_POST["Flag"]){
-                        $Query = "Insert into Interaction (Favourite, UserID, CourseID) VALUES (".$_POST["Fav"].",".$_POST["UserID"].",".$_POST["CourseID"].")";
+                        $Query = "Insert into Interaction (Favourite, UserID, CourseID) VALUES (".$_POST["Fav"].",".$_SESSION["UserID"].",".$_POST["CourseID"].")";
                     }else{
-                        $Query = "Update Interaction SET Favourite=".$_POST["Fav"]." where UserID=".$_POST["UserID"]." AND CourseID=".$_POST["CourseID"];
+                        $Query = "Update Interaction SET Favourite=".$_POST["Fav"]." where UserID=".$_SESSION["UserID"]." AND CourseID=".$_POST["CourseID"];
                     }
                     
                     $info = exeDB($Query);
@@ -62,9 +62,9 @@
     
             case "subscribe":
                 if($_POST["Flag"]){
-                    $Query = "Insert into Interaction (Status, UserID, CourseID) VALUES (1,".$_POST["UserID"].",".$_POST["CourseID"].")";
+                    $Query = "Insert into Interaction (Status, UserID, CourseID) VALUES (1,".$_SESSION["UserID"].",".$_POST["CourseID"].")";
                 }else{
-                    $Query = "Update Interaction SET Status=1 where UserID=".$_POST["UserID"]." AND CourseID=".$_POST["UserID"];
+                    $Query = "Update Interaction SET Status=1 where UserID=".$_SESSION["UserID"]." AND CourseID=".$_POST["CourseID"];
                 }
                 $info = exeDB($Query);
                 echo "ok";

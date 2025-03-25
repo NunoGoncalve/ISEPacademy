@@ -8,7 +8,7 @@
     $Query = "Select Name, CardDesc, PagDesc, Price, Category, StartDate from Course where ID=".$CourseID;
     $CourseInfo = exeDB($Query);
 
-	$Query = "Select Favourite, Status from Interaction where CourseID=".$CourseID." AND UserID=1";
+	$Query = "Select Favourite, Status from Interaction where CourseID=".$CourseID." AND UserID=".$_SESSION["UserID"];
     $Info = exeDB($Query);
 	if(empty($Info)){
 		$Info["Favourite"]=0;
@@ -31,8 +31,7 @@
         function subscribe(){
             $.post("funcoes.php",{
                 Func:"subscribe",
-                UserID:<?php echo "1, 
-                CourseID:".$CourseID.",
+                <?php echo "CourseID:".$CourseID.",
 				Flag:".$Flag?>
             
             },function(data, status){
@@ -51,8 +50,7 @@
             $.post("funcoes.php",{
                 Func:"favourite",
 				Fav:fav.value,
-                UserID:<?php echo "1, 
-                CourseID:".$CourseID.",
+                <?php echo "CourseID:".$CourseID.",
 				Flag:".$Flag?>
             
             },function(data, status){
