@@ -5,7 +5,7 @@
         </a>
 
         <a class="navbar-burger is-active" role="button" aria-label="menu" aria-expanded="false">
-            <span aria-hidden="true">sadsa</span>
+            <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>

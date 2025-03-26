@@ -1,5 +1,8 @@
 <?php 
 session_start();
+if(isset($_SESSION["UserID"])){
+    echo '<script type="text/javascript">document.location.href="userpage.php"</script>'; 
+}
 ?>
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
@@ -36,8 +39,13 @@ session_start();
 				if(data=="ok") { 
                     document.location="userpage.php";
                 }
-				else{
-
+				else if(data=="ErroPass"){
+                    document.getElementById("erro").innerHTML="Password errada";
+                    document.getElementById("password").style="border-color: red";
+                }
+                else{
+                    document.getElementById("erro").innerHTML="Email não registado!";
+                    document.getElementById("email").style="border-color: red";
                 }
 			},"text");	
         }
@@ -82,11 +90,9 @@ session_start();
                         <i class="fas fa-lock"></i>
                     </span>
                 </div>
-
             </div>
+            <p class="erro" id="erro"></p>
             
-
-
             <button class="button is-success is-fullwidth" id="GreyBtn"type="submit">Login</button>
 
             <p>Não tens conta? <a href="register.php">Criar conta!</a> </p>

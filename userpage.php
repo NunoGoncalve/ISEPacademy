@@ -23,17 +23,21 @@
 </head>
 
 <body>
-    <?php $UserInfo=getUserInfo(); 
-    include 'navbar.php';
-    ?>
+    <?php $UserInfo=getUserInfo(); include 'navbar.php'; ?>
 
     <div class="columns is-centered">
         <!-- Coluna lateral com informações do usuário -->
         <div class="column is-3">
             <div class="card">
                 <div class="card-image">
-                    <figure class="image is-24x24px">
-                        <img src="<?php echo "img/users/".$_SESSION['UserID'].".png"; ?>" alt="Foto de perfil">
+                    <figure class="ProfileImg" >
+                        <img src="<?php
+                            if(file_exists("img/users/".$_SESSION['UserID'].".png")){
+                                echo "img/users/".$_SESSION['UserID'].".png";
+                            } else{
+                                echo "img/users/default.png";
+                            } 
+                        ?>" alt="Foto de perfil" style="max-height:256px;max-width:256px">
                     </figure>
                 </div>
                 <div class="card-content">

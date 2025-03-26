@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
+    <title>Registo</title>
 
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
@@ -12,17 +12,28 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
         function register(){
-            $.post("funcoes.php",{
-                Func:"register",
-                Name:document.getElementById("name").value,
-                Email:document.getElementById("email").value,
-                Pass:document.getElementById("password").value
-
-            },function(data, status){
-                if(data=="ok") { 
-                    document.location="userpage.php";
-                }
-            },"text");	
+            
+            var fileInput = document.getElementById("FileInput"); // Input file
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                var imageBase64 = event.target.result;
+                $.post("funcoes.php",{
+                    Func:"register",
+                    Name:document.getElementById("name").value,
+                    Email:document.getElementById("email").value,
+                    Pass:document.getElementById("password").value,
+                    Img:imageBase64
+                    
+                },function(data, status){
+                    if(data=="ok") { 
+                        document.location="userpage.php";
+                    }else if(data=="ErroMail"){
+                        document.getElementById("erroMail").innerHTML="Email já registado";
+                        document.getElementById("email").style="border-color:red";
+                    }
+                },"text");	
+            }
+            reader.readAsDataURL(fileInput.files[0]);
         }
 
         function togglePassword(inputId, iconId) {
@@ -46,20 +57,39 @@
             let confirm = document.getElementById("c-password");
 
             if (password.value.length >= 8) {
-
+                document.getElementById("erro").innerHTML="";
                 if(password.value != confirm.value && confirm.value!="") {
-                    alert("passwords dont match");
+                    document.getElementById("c-erro").innerHTML="Passwords não correspondem";
+                    document.getElementById("c-password").style="border-color:red";
+                }else{
+                    document.getElementById("c-erro").innerHTML="";
+                    document.getElementById("c-password").style="";
+                    document.getElementById("password").style="";
                 }
             }
             else {
-                alert("password must be 8 characters");
+                document.getElementById("erro").innerHTML="Password necessita de 8 caracteres!";
+                document.getElementById("password").style="border-color:red";
             }
 
         }
 
-        function showErrorMessage() {
+        
+   
+    function file(){
+        var fileInput = document.getElementById("FileInput");
 
+        if (fileInput.files.length > 0) {
+            var fileType = fileInput.files[0].type; // Obtém o tipo MIME
+
+            if (fileType !== "image/png") {
+                document.getElementById("FileError").innerHTML="Apenas .png são aceites";
+            }else{
+                document.getElementById("FileName").textContent = document.getElementById("FileInput").files[0].name;
+            }
         }
+    }
+    
     </script>
 </head>
 
@@ -68,7 +98,7 @@
     <section class="section is-fullheight is-flex is-justify-content-center is-align-items-center ">
         <form id="register" class="box custom-card-width" action="javascript:register()">
             <div class="field">
-                <label class="label" for="">Username</label>
+                <label class="label" for="name">Username</label>
                 <div class="control has-icons-left">
                     <input required class="input" id="name" type="text" placeholder="username">
                     <span class="icon is-small is-left">
@@ -77,8 +107,9 @@
                 </div>
             </div>
 
+            <!-- Inserir Email -->
             <div class="field">
-                <label class="label" for="">Email</label>    
+                <label class="label" for="email">Email</label>    
                 <div class="control has-icons-left">
                     <input required class="input" id="email" type="email" placeholder="example@example.com">
                     <span class="icon is-small is-left">
@@ -86,9 +117,11 @@
                     </span>
                 </div>
             </div>
+            <p class="erro" id="erroMail"></p>
 
+            <!-- Inserir Password -->
             <div class="field">
-                <label class="label" for="">Password</label>
+                <label class="label" for="password">Password</label>
                 <div class="control has-icons-left has-icons-right">
                     <input id="password" required class="input" onchange="validatePassword()"type="password" >
 
@@ -101,9 +134,11 @@
                     </span>
                 </div>
             </div>
+            <p class="erro" id="erro"></p>
 
+            <!-- Comfirmar Password -->
             <div class="field">
-                <label class="label" for="">Confirm Password</label>
+                <label class="label" for="c-password">Confirmar Password</label>
                 <div class="control has-icons-left has-icons-right">
                     <input id="c-password" required class="input" onchange="validatePassword()" type="password">
                     <span class="icon is-small is-right is-clickable" onclick="togglePassword('c-password', 'c-toggleIcon')">
@@ -114,8 +149,26 @@
                     </span>
                 </div>
             </div>
-            <button class="button is-success is-fullwidth" id="GreyBtn">Register</button>
+            <p class="erro" id="c-erro"></p>
+
+            <!-- Inserir Imagem -->
+            <label class="label"> Imagem de perfil</label>
+            <div id="file-js-example" class="file has-name">
+                <label class="file-label">
+                    <input class="file-input" id="FileInput" accept="image/png" onchange="file()" type="file" name="resume" />
+                    <span class="file-cta">
+                    <span class="file-icon">
+                        <i class="fas fa-upload"></i>
+                    </span>
+                    <span class="file-label"> Escolha um ficheiro </span>
+                    </span>
+                    <span class="file-name" id="FileName"> Vazio </span>
+                </label>
+            </div>
+            <p class="erro" id="FileError"></p>
+            <button class="button is-success is-fullwidth" id="GreyBtn">Registar</button>
             <p>Já tens conta? <a href="login.php">Fazer login!</a> </p>
+        
         </form>
     </section>
    

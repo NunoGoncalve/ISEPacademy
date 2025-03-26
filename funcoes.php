@@ -12,21 +12,24 @@
                 $Query="Select ID, Email, Password, Role from User where Email like '$Email'";
                 $info = exeDB($Query);
 
-                if($info["Password"]==$Pass){
+                if(empty($info)){
+                    echo "ErroEmail";
+                }else if($info["Password"]!=$Pass){
+                    echo "ErroPass";
+                }
+                else{
                     $_SESSION["UserID"]=$info["ID"];
                     $_SESSION["Role"]=$info["Role"];
                     echo "ok";
-                }
-                else{
-                    echo "Erro";
                 }
             break;
             case "register":
                 $Name = $_POST["Name"]; 
                 $Email = $_POST["Email"];
                 $Pass = $_POST["Pass"];
-                //$role = $_POST["role"];
-                
+                $imgData = $_POST['Img'];
+
+
                 $Query="Select Count(Email) as ContMail from User where Email like '$Email'";
                 $info = exeDB($Query);
                 if($info["ContMail"]==0){
@@ -36,12 +39,19 @@
                     $info=exeDB($Query);
                     $_SESSION["UserID"]=$info["ID"];
                     $_SESSION["Role"]=$info["Role"];
+
+                    
+                    list($type, $data) = explode(';', $imgData);
+                    list(, $data) = explode(',', $data);
+                    $decodedImage = base64_decode($data);
+                    file_put_contents("img/users/".$info["ID"].".png", $decodedImage); 
+
                     echo "ok";
                 }
                 else{
-                    echo "Erro2";
+                    echo "ErroMail";
                 }
-               
+                
             break;
 
             case "logout":

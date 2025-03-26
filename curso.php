@@ -8,13 +8,20 @@
     $Query = "Select Name, CardDesc, PagDesc, Price, Category, StartDate from Course where ID=".$CourseID;
     $CourseInfo = exeDB($Query);
 
-	$Query = "Select Favourite, Status from Interaction where CourseID=".$CourseID." AND UserID=".$_SESSION["UserID"];
-    $Info = exeDB($Query);
-	if(empty($Info)){
-		$Info["Favourite"]=0;
-		$Info["Status"]=0;
-		$Flag=1;
-	}
+    if(isset($_SESSION["UserID"])){
+        $Query = "Select Favourite, Status from Interaction where CourseID=".$CourseID." AND UserID=".$_SESSION["UserID"];
+        $Info = exeDB($Query);
+        if(empty($Info)){
+            $Info["Favourite"]=0;
+            $Info["Status"]=0;
+            $Flag=1;
+        }
+    }else{
+        $Info["Favourite"]=0;
+        $Info["Status"]=0;
+        $Flag=2;
+    }
+	
 ?>
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
@@ -29,44 +36,52 @@
     <script>
 
         function subscribe(){
-            $.post("funcoes.php",{
+            if(<?php echo $Flag ?>==2){
+                alert("Necessita de efetuar o login primeiro!");
+            }else{
+                $.post("funcoes.php",{
                 Func:"subscribe",
                 <?php echo "CourseID:".$CourseID.",
 				Flag:".$Flag?>
-            
-            },function(data, status){
-				if(data=="ok") { 
-                    document.getElementById("sub").innerHTML='Inscrito!';
-                    document.getElementById("sub").onclick='';
-                    alert("Inscrito com sucesso");
-                    document.location="curso.php?ID=<?php echo $CourseID?>";
-                }
-				else{}
-			},"text");	
+                },function(data, status){
+                    if(data=="ok") { 
+                        document.getElementById("sub").innerHTML='Inscrito!';
+                        document.getElementById("sub").onclick='';
+                        alert("Inscrito com sucesso");
+                        document.location="curso.php?ID=<?php echo $CourseID?>";
+                    }
+                    else{}
+                },"text");	
+            }
+           
         }
 
         function favourite(){
-			fav = document.getElementById("fav");
-            $.post("funcoes.php",{
-                Func:"favourite",
-				Fav:fav.value,
-                <?php echo "CourseID:".$CourseID.",
-				Flag:".$Flag?>
-            
-            },function(data, status){
-				if(data=="ok" && fav.value==1){
-					fav.innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-solid fa-heart" id="heart"></i></span>Adicionado!';
-					fav.value=0;
-                    alert("Curso adicionado aos favoritos!");                
+            if(<?php echo $Flag ?>==2){
+                alert("Necessita de efetuar o login primeiro!");
+            }else{
+                fav = document.getElementById("fav");
+                $.post("funcoes.php",{
+                    Func:"favourite",
+                    Fav:fav.value,
+                    <?php echo "CourseID:".$CourseID.",
+                    Flag:".$Flag?>
+                
+                },function(data, status){
+                    if(data=="ok" && fav.value==1){
+                        fav.innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-solid fa-heart" id="heart"></i></span>Adicionado!';
+                        fav.value=0;
+                        alert("Curso adicionado aos favoritos!");                
 
-                }
-				else if(data=="ok"){
-					fav.innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
-					fav.value=1;
-					alert("Curso removido dos favoritos");
-                    
-				}
-			},"text");	
+                    }
+                    else if(data=="ok"){
+                        fav.innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
+                        fav.value=1;
+                        alert("Curso removido dos favoritos");
+                        
+                    }
+                },"text");	
+            }
         }
 
 		function onload(){		

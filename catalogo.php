@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php session_start(); include 'funcoes.php';?>
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
 
@@ -54,27 +54,26 @@
         <!-- Catálogo de cursos -->
         <div class="columns is-multiline">
             <?php
-                include 'conexao.php';
-                $Sel = "Select * from Course";
-                $exe = mysqli_query($conexao, $Sel);
-                while($row = mysqli_fetch_assoc($exe)){ 
+                $Query = "Select * from Course";
+                $exe = exeDBList($Query);
+                while($CourseInfo = mysqli_fetch_assoc($exe)){ 
             ?>
             <!-- Inicio del bloque de cursso que se repetirá -->
             <article class="column is-3-desktop is-4-tablet is-6-mobile">
-                <div class="card product-card"><a href="curso.php?ID=<?php echo $row['ID']; ?>">
+                <div class="card product-card"><a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>">
                         <div class="card-image">
                             <div class="product-image">
-                                <img src="<?php echo "img/layout/img".$row['ID'].".jpg"; ?>" alt="<?php echo $row['Name']; ?>">
+                                <img src="<?php echo "img/layout/img".$CourseInfo['ID'].".jpg"; ?>" alt="<?php echo $CourseInfo['Name']; ?>">
                             </div>
                         </div>
                         <div class="card-content product-content">
-                            <p class="subtitle is-6"><?php echo $row['Category']; ?></p>
-                            <p class="title is-5"><?php echo $row['Name']; ?></p>
-                            <p class="content" id="cardText"><?php echo $row['CardDesc']; ?></p>
-                            <p class="product-price">€<?php echo number_format($row['Price'], 2); ?></p>
+                            <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
+                            <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
+                            <p class="content" id="cardText"><?php echo $CourseInfo['CardDesc']; ?></p>
+                            <p class="product-price">€<?php echo number_format($CourseInfo['Price'], 2); ?></p>
                             <div class="product-actions">
                                 <div class="buttons">
-                                    <a href="curso.php?ID=<?php echo $row['ID']; ?>"
+                                    <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>"
                                         class="button is-info is-outlined is-fullwidth">Ver detalhes</a>
                                     <button class="button is-primary is-fullwidth">Inscrever</button>
                                 </div>
