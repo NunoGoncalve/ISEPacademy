@@ -81,6 +81,7 @@
                         </div>
                 </div>
             </article>
+            
             <?php } ?>
             <!-- Fin del bloque de curso -->
 

@@ -1,4 +1,4 @@
-<footer class="footer" style="margin-top:5%">
+<footer class="footer" style="margin-top:8%;padding-bottom: 70px;padding-top: 25px;">
     <div class="columns">
         <div class="column">
             <h4 class="bd-footer-title has-text-weight-medium has-text-left"> 

@@ -27,7 +27,7 @@
                 $Name = $_POST["Name"]; 
                 $Email = $_POST["Email"];
                 $Pass = $_POST["Pass"];
-                $imgData = $_POST['Img'];
+                
 
 
                 $Query="Select Count(Email) as ContMail from User where Email like '$Email'";
@@ -40,11 +40,14 @@
                     $_SESSION["UserID"]=$info["ID"];
                     $_SESSION["Role"]=$info["Role"];
 
-                    
-                    list($type, $data) = explode(';', $imgData);
-                    list(, $data) = explode(',', $data);
-                    $decodedImage = base64_decode($data);
-                    file_put_contents("img/users/".$info["ID"].".png", $decodedImage); 
+                    if(isset($_POST["Img"])){
+                        $imgData = $_POST['Img'];
+                        list($type, $data) = explode(';', $imgData);
+                        list(, $data) = explode(',', $data);
+                        $decodedImage = base64_decode($data);
+                        file_put_contents("img/users/".$info["ID"].".png", $decodedImage);
+                    }
+                     
 
                     echo "ok";
                 }

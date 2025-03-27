@@ -105,14 +105,30 @@
                 </div>
 
                 <div class="field">
-                    <label class="label">Username: <?php echo $UserInfo['Name'];?></label>
+                    <label class="label">Cursos marcados como favoritos:<br>
+                    <ul><?php 
+                        $cursos=getUserFavs();
+                        while($curso = mysqli_fetch_assoc($cursos)){
+                            echo '<li style="list-style: inside">'.$curso["Name"].'</li>';
+                        }  
+                    ?></ul>
+                    </label>
+                </div>
+                <br>
+                <div class="field">
+                    <button class="button GreyBtn">Change Email</button>
+                   <!-- <p class="help is-danger">Este email é inválido</p>-->
+                </div>
+                <div class="field">
+                    <button class="button GreyBtn">Change Password</button>
+                    <!--<p class="help is-success">Este username está disponível</p>-->
+                </div>
+                <div class="field">
+                    <button class="button GreyBtn">Change Username</button>
                     <!--<p class="help is-success">Este username está disponível</p>-->
                 </div>
 
-                <div class="field">
-                    <label class="label">Email: <?php echo $UserInfo['Email'];?></label>
-                   <!-- <p class="help is-danger">Este email é inválido</p>-->
-                </div>
+                
 
                 <!--<div class="field">
                     <label class="label">Assunto</label>
@@ -143,16 +159,7 @@
                         <button class="button is-link is-light">Cancelar</button>
                     </div>
                 </div>-->
-                <div class="field">
-                    <label class="label">Cursos marcados como favoritos:<br>
-                    <ul><?php 
-                        $cursos=getUserFavs();
-                        while($curso = mysqli_fetch_assoc($cursos)){
-                            echo '<li style="list-style: inside">'.$curso["Name"].'</li>';
-                        }  
-                    ?></ul>
-                    </label>
-                </div>
+                
 
             </div>
         </div>

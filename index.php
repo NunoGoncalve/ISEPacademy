@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php session_start(); include 'funcoes.php';?>
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
 <head>
@@ -23,7 +23,7 @@
                     <div class="column is-6">
                         <h2 class="title is-1 mb-6">Sobre o ISEP Academy</h2>
                         <p class="subtitle is-4 has-text-grey mb-5" style="max-width:75%; text-align: justify;">
-                           AVISO: As informações contidas são apenas para efeitos académicos!<br><br>O ISEP Academy conta com diversos cursos disponiveis desde cursos básicos a cursos avançados.<br> Este website foi desenvolvido com o objetivo de ajudar jovens estudantes que queiram aprender mais sobre a sua área ou pessoas que queiram aprender novas skills
+                        AVISO: As informações contidas são apenas para efeitos académicos!<br><br>O ISEP Academy conta com diversos cursos disponiveis desde cursos básicos a cursos avançados.<br> Este website foi desenvolvido com o objetivo de ajudar jovens estudantes que queiram aprender mais sobre a sua área ou pessoas que queiram aprender novas skills
                         </p>
                     </div>
                     <div class="column is-6">
@@ -114,38 +114,39 @@
         <div class="container">
             <h2 class="title is-2 has-text-centered mb-6">Cursos Mais Populares</h2>
             
-                <?php 
-                    $producto = [
-                        'id' => 1,
-                        'nombre' => 'PHP Coding',
-                        'descripcion' => 'Vem connosco aprender sobre o mundo da informática!',
-                        'precio' => 99.99,
-                        'imagen' => 'img/cursos/img1.jpg',
-                        'categoria' => 'Informática'
-                    ];
-                ?>
-            
-                <article class="column is-3-desktop is-4-tablet is-6-mobile">
-                    <div class="card product-card" ><a href="detalhes_curso.php?id=<?echo $produto['id'];?>">
+            <div class="columns is-multiline">
+            <?php
+                $Query = "SELECT Course.*, Count(CourseID) As Nsubs from Course inner join Interaction on Course.ID=Interaction.CourseID group by Course.ID Order by (Nsubs) desc";
+                $exe = exeDBList($Query);
+                while($CourseInfo = mysqli_fetch_assoc($exe)){ 
+            ?>
+            <!-- Inicio del bloque de cursso que se repetirá -->
+            <article class="column is-3-desktop is-4-tablet is-6-mobile is-one-third">
+                <div class="card product-card"><a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>">
                         <div class="card-image">
                             <div class="product-image">
-                                <img src="<?php echo $producto['imagen']; ?>" alt="<?php echo $producto['nombre']; ?>">
+                                <img src="<?php echo "img/layout/img".$CourseInfo['ID'].".jpg"; ?>" alt="<?php echo $CourseInfo['Name']; ?>">
                             </div>
                         </div>
                         <div class="card-content product-content">
-                            <p class="subtitle is-6"><?php echo $producto['categoria']; ?></p>
-                            <p class="title is-5"><?php echo $producto['nombre']; ?></p>
-                            <p class="content"><?php echo $producto['descripcion']; ?></p>
-                            <p class="product-price">€<?php echo number_format($producto['precio'], 2); ?></p>
+                            <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
+                            <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
+                            <p class="content" id="cardText"><?php echo $CourseInfo['CardDesc']; ?></p>
+                            <p class="product-price">€<?php echo number_format($CourseInfo['Price'], 2); ?></p>
                             <div class="product-actions">
                                 <div class="buttons">
-                                    <a href="detalles.php?id=<?php echo $producto['id']; ?>" class="button is-link is-outlined is-fullwidth">Ver detalhes</a>
+                                    <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>"
+                                        class="button is-info is-outlined is-fullwidth">Ver detalhes</a>
                                     <button class="button is-primary is-fullwidth">Inscrever</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </article>
+                </div>
+            </article>
+            <?php } ?>
+            <!-- Fin del bloque de curso -->
+
+            </div>
                 
         </div>
     </section>

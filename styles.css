@@ -15,7 +15,7 @@ input[type="password"] {
     min-width: 35%;
 }
 
-#GreyBtn {
+.button.GreyBtn {
     background-color: #444f5a;
     color: white;
 
@@ -23,7 +23,7 @@ input[type="password"] {
         background-color: orange;
     }
 }
-#GreyBtn:hover {
+.button.GreyBtn:hover {
     background-color: #646b72;
 }
 
@@ -95,6 +95,7 @@ input[type="password"] {
     color: #fff;
 }
 
+/*--------------------------*/
 #cardText{
     color: #2e353d;
 }
@@ -107,6 +108,10 @@ input[type="password"] {
 .ProfileImg{
     display: flex;
     justify-content: center;
+}
+
+.breadcrumb span{
+    color:#363636;
 }
 
 /* ----------------------- */

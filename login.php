@@ -93,9 +93,9 @@ if(isset($_SESSION["UserID"])){
             </div>
             <p class="erro" id="erro"></p>
             
-            <button class="button is-success is-fullwidth" id="GreyBtn"type="submit">Login</button>
+            <button class="button is-success is-fullwidth GreyBtn" type="submit">Login</button>
 
-            <p>Não tens conta? <a href="register.php">Criar conta!</a> </p>
+            <p>Não tens conta? <a href="register.php">Cria aqui!</a> </p>
 
         </form>
     </section>

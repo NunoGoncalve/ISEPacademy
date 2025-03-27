@@ -1,26 +1,29 @@
 <?php 
     session_start();
-	include 'funcoes.php';
-	
-	$CourseID=$_GET["ID"];
-    $Flag=0;
+    if(!isset($_GET["ID"])){
+        echo '<script type="text/javascript">document.location.href="catalogo.php"</script>';
+    }else{
+        include 'funcoes.php';
+        
+        $CourseID=$_GET["ID"];
+        $Flag=0;
 
-    $Query = "Select Name, CardDesc, PagDesc, Price, Category, StartDate from Course where ID=".$CourseID;
-    $CourseInfo = exeDB($Query);
+        $Query = "Select Name, CardDesc, PagDesc, Price, Category, StartDate from Course where ID=".$CourseID;
+        $CourseInfo = exeDB($Query);
 
-    if(isset($_SESSION["UserID"])){
-        $Query = "Select Favourite, Status from Interaction where CourseID=".$CourseID." AND UserID=".$_SESSION["UserID"];
-        $Info = exeDB($Query);
-        if(empty($Info)){
+        if(isset($_SESSION["UserID"])){
+            $Query = "Select Favourite, Status from Interaction where CourseID=".$CourseID." AND UserID=".$_SESSION["UserID"];
+            $Info = exeDB($Query);
+            if(empty($Info)){
+                $Info["Favourite"]=0;
+                $Info["Status"]=0;
+                $Flag=1;
+            }
+        }else{
             $Info["Favourite"]=0;
             $Info["Status"]=0;
-            $Flag=1;
+            $Flag=2;
         }
-    }else{
-        $Info["Favourite"]=0;
-        $Info["Status"]=0;
-        $Flag=2;
-    }
 	
 ?>
 <!DOCTYPE html>
@@ -164,6 +167,7 @@
                     <div class="title is-5">
                         Descrição
                     </div>
+                    
                     <div class="subtitle is-6">
                         <?php echo $CourseInfo["PagDesc"]?>
                     </div>
@@ -176,7 +180,7 @@
                         Categoria: <?php echo $CourseInfo['Category'];?>
                     </div>
 					<div class="title is-6">
-                        Data de inicio: <?php echo $CourseInfo['StartDate'];?>
+                        Data de inicio: <?php echo date("d-m-Y", strtotime($CourseInfo['StartDate']));;?>
                     </div>
                     <button class="button is-success has-text-primary-100" id="sub" onclick="subscribe()" style="width: 100%">Inscreve-te!</button>
                     <button class="button is-link is-outlined" id="fav" onclick="favourite()" style="width: 100%; margin-top: 2%"> </button>
@@ -198,6 +202,6 @@
                 <?php } ?>
         </div>
     </section>
-    <?php include 'footer.php';?>
+    <?php include 'footer.php';}?>
 </body>
 </html>

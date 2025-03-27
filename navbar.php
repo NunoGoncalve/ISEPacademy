@@ -20,9 +20,9 @@
             <div class="navbar-item">
                 <?php 
                 if(isset($_SESSION["UserID"])){
-                    echo '<a class="button" id="GreyBtn" href="userpage.php">Conta</a>';
+                    echo '<a class="button GreyBtn" href="userpage.php">Conta</a>';
                 }else{
-                    echo '<a class="button" id="GreyBtn" href="login.php">Log in</a>';
+                    echo '<a class="button GreyBtn" href="login.php">Log in</a>';
                 }
                     
                     ?>

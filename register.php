@@ -15,7 +15,8 @@
             
             var fileInput = document.getElementById("FileInput"); // Input file
             var reader = new FileReader();
-            reader.onload = function(event) {
+            if (fileInput.files.length > 0) {
+                reader.onload = function(event) {
                 var imageBase64 = event.target.result;
                 $.post("funcoes.php",{
                     Func:"register",
@@ -31,9 +32,27 @@
                         document.getElementById("erroMail").innerHTML="Email já registado";
                         document.getElementById("email").style="border-color:red";
                     }
-                },"text");	
+                    },"text");	
+                }
+                reader.readAsDataURL(fileInput.files[0]); // Converte a imagem antes do envio
+            }else{
+                $.post("funcoes.php",{
+                    Func:"register",
+                    Name:document.getElementById("name").value,
+                    Email:document.getElementById("email").value,
+                    Pass:document.getElementById("password").value,
+                    
+                },function(data, status){
+                    if(data=="ok") { 
+                        document.location="userpage.php";
+                    }else if(data=="ErroMail"){
+                        document.getElementById("erroMail").innerHTML="Email já registado";
+                        document.getElementById("email").style="border-color:red";
+                    }
+                    },"text");	
             }
-            reader.readAsDataURL(fileInput.files[0]);
+            
+            
         }
 
         function togglePassword(inputId, iconId) {
@@ -84,7 +103,9 @@
 
             if (fileType !== "image/png") {
                 document.getElementById("FileError").innerHTML="Apenas .png são aceites";
+                fileInput.value="";
             }else{
+                document.getElementById("FileError").innerHTML="";
                 document.getElementById("FileName").textContent = document.getElementById("FileInput").files[0].name;
             }
         }
@@ -166,7 +187,7 @@
                 </label>
             </div>
             <p class="erro" id="FileError"></p>
-            <button class="button is-success is-fullwidth" id="GreyBtn">Registar</button>
+            <button class="button is-success is-fullwidth GreyBtn">Registar</button>
             <p>Já tens conta? <a href="login.php">Fazer login!</a> </p>
         
         </form>
