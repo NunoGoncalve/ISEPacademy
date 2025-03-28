@@ -40,7 +40,8 @@ if(isset($_SESSION["UserID"])){
                     document.location="userpage.php";
                 }
 				else if(data=="ErroPass"){
-                    document.getElementById("erro").innerHTML="Password errada";
+                    document.getElementById("erro").innerHTML='<a style="color:black; text-decoration:underline" href="recpass.php">Recuperar password</a>';
+                    document.getElementById("erro").style="padding:3px";
                     document.getElementById("password").style="border-color: red";
                 }
                 else{

@@ -1,6 +1,10 @@
 <?php 
     session_start();
 
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
+    
+
     if(isset($_POST["Func"])){
         
         Switch ($_POST["Func"]){
@@ -82,8 +86,52 @@
                 $info = exeDB($Query);
                 echo "ok";
             break;
-        }
+            case "Recpass":
+                
+                $Query="Select Count(Email) as ContMail from User where Email like '".$_POST["Email"]."'";
+                $info = exeDB($Query);
+                if($info["ContMail"]==0){
+                    echo "ErroMail";
+                }else{
+                    require 'vendor/phpmailer/src/Exception.php';
+                    require 'vendor/phpmailer/src/PHPMailer.php';
+                    require 'vendor/phpmailer/src/SMTP.php';
+
+                    //Configuração
+                    $cod=rand(1,999999);
+                    $mail = new PHPMailer();
+                    $mail->isSMTP();
+                    $mail->CharSet = "UTF-8";
+                    //$mail->SMTPDebug = 4;
+                    $mail->Host = 'vmcus31960.claranet.pt';
+                    $mail->SMTPAuth = true;
+                    $mail->SMTPSecure = 'ssl';
+                    $mail->Username = 'no_reply@IsepAcademy.fixstuff.net';
+                    $mail->Password = '54%27qLvj';
+                    $mail->Port = '465';
+                    
+                    //Composição do email
+                    $mail->setFrom('no_reply@IsepAcademy.fixstuff.net');
+                    $mail->addAddress($_POST["Email"]);
+                                
+                    $mail->isHTML(true);
+                    $mail->Subject = "Código de verificação";
+                    $mail->Body  = "Insira o seguinte código de verificação <h1>".$cod."</h1>"; 
+                    $mail->send();
+                    echo $cod;  
+                }
+
+            break;
+            case "Chpass":
+                $Query="Select ID from User where Email like '".$_POST["Email"]."'";
+                $info = exeDB($Query);
+                $Query = "Update User SET Password=".$_POST["Pass"]." where ID=".$info["ID"];
+                exeDB($Query);
+                echo "ok";
+            break;
+        }  
     }
+
     function exeDB($Query)  {
         include 'conexao.php';
         $exe = mysqli_query($conexao, $Query);
