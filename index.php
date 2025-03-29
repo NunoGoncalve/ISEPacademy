@@ -121,7 +121,7 @@
                 while($CourseInfo = mysqli_fetch_assoc($exe)){ 
             ?>
             <!-- Inicio del bloque de cursso que se repetirá -->
-            <article class="column is-3-desktop is-4-tablet is-6-mobile is-one-third">
+            <article class="column is-3-desktop is-4-tablet is-20-mobile">
                 <div class="card product-card"><a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>">
                         <div class="card-image">
                             <div class="product-image">

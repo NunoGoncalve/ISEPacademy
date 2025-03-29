@@ -1,6 +1,5 @@
-<?php session_start(); include 'funcoes.php';
-	
-?>
+<?php session_start(); include 'funcoes.php';?>
+
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
 
@@ -68,10 +67,10 @@
             ?>
             <!-- Inicio del bloque de cursso que se repetirá -->
             <article class="column is-3-desktop is-4-tablet is-6-mobile">
-                <div class="card product-card"><a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>">
+                <div class="card product-card"><a href="curso.php?ID=<? echo $row['ID']; ?>">
                         <div class="card-image">
                             <div class="product-image">
-                                <img src="<?php echo "img/layout/img".$CourseInfo['ID'].".jpg"; ?>" alt="<?php echo $CourseInfo['Name']; ?>">
+                                <img src="<?php echo "img/layout/img".$row['ID'].".jpg"; ?>" alt="<?php echo $row['Name']; ?>">
                             </div>
                         </div>
                         <div class="card-content product-content">
@@ -80,7 +79,7 @@
                             <p class="content" id="cardText"><?php echo $CourseInfo['CardDesc']; ?></p>
                             <div class="product-actions">
                                 <div class="buttons">
-                                    <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>"
+                                    <a href="curso.php?ID=<?php echo $row['ID']; ?>"
                                         class="button is-info is-outlined is-fullwidth">Ver detalhes</a>
                                     <?php if($_SESSION["Role"]==2){
                                             echo '<button class="button is-red is-fullwidth">Remover</button>';
@@ -93,7 +92,6 @@
                         </div>
                 </div>
             </article>
-            
             <?php } ?>
             <!-- Fin del bloque de curso -->
 

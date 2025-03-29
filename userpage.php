@@ -69,7 +69,8 @@ error_reporting(E_ALL); ?>
                         <button class="button is-danger" onclick="logout()">Logout</button>
                     </div>
                 </div>
-            </div>
+            </div><a href="editar_curso.php?id=2" class="btn btn-primary">Editar Curso</a>
+
             <aside class="menu mt-4">
                 <p class="menu-label">General</p>
                 <ul class="menu-list">
