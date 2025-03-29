@@ -1,4 +1,8 @@
-<?php session_start(); include 'funcoes.php';?>
+<?php session_start();
+include 'funcoes.php';
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL); ?>
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
 
@@ -12,31 +16,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
-        function logout(){
-            $.post("funcoes.php",{Func:"logout"},function(data, status){
-				if(data=="ok") { 
-                    document.location="login.php";
+        function logout() {
+            $.post("funcoes.php", { Func: "logout" }, function (data, status) {
+                if (data == "ok") {
+                    document.location = "login.php";
                 }
-			},"text");	
+            }, "text");
         }
     </script>
 </head>
 
 <body>
-    <?php $UserInfo=getUserInfo(); include 'navbar.php'; ?>
+    <?php $UserInfo = getUserInfo();
+    include 'navbar.php'; ?>
 
     <div class="columns is-centered">
         <!-- Coluna lateral com informações do usuário -->
         <div class="column is-3">
             <div class="card">
                 <div class="card-image">
-                    <figure class="ProfileImg" >
+                    <figure class="ProfileImg">
                         <img src="<?php
-                            if(file_exists("img/users/".$_SESSION['UserID'].".png")){
-                                echo "img/users/".$_SESSION['UserID'].".png";
-                            } else{
-                                echo "img/users/default.png";
-                            } 
+                        if (file_exists("img/users/" . $_SESSION['UserID'] . ".png")) {
+                            echo "img/users/" . $_SESSION['UserID'] . ".png";
+                        } else {
+                            echo "img/users/default.png";
+                        }
                         ?>" alt="Foto de perfil" style="max-height:256px;max-width:256px">
                     </figure>
                 </div>
@@ -48,12 +53,18 @@
                         </div>
                     </div>
                     <div class="content">
-                        <p><strong>Tipo:</strong> <?php 
-                        Switch($UserInfo['Role']){
-                            case 1: echo "Aluno"; break;                       
-                            case 2: echo "Professor"; break;
-                            case 3: echo "Admin"; break;
-                        }?></p>
+                        <p><strong>Tipo:</strong> <?php
+                        switch ($UserInfo['Role']) {
+                            case 1:
+                                echo "Aluno";
+                                break;
+                            case 2:
+                                echo "Professor";
+                                break;
+                            case 3:
+                                echo "Admin";
+                                break;
+                        } ?></p>
                         <p><strong>Membro desde:</strong> <?php echo $UserInfo['RegisterDate']; ?></p>
                         <button class="button is-danger" onclick="logout()">Logout</button>
                     </div>
@@ -92,78 +103,64 @@
         <!-- Formulário -->
         <div class="column is-6">
             <div class="box">
+			<?php if ($_SESSION['Role'] == 1) { ?>
                 <div class="field">
-                    <label class="label">Cursos aos que está inscrito:<br>
-                    <ul><?php 
-                        $cursos=getUserSubs();
-                        while($curso = mysqli_fetch_assoc($cursos)){
-                            echo '<li style="list-style: inside">'.$curso["Name"].'</li>';
-                        }
-                        
-                    ?></ul>
+                   
+					<label class="label">Cursos aos que está inscrito:<br>
+                        <ul><?php
+                        $cursos = getUserSubs();
+                        while ($curso = mysqli_fetch_assoc($cursos)) {
+                            echo '<li style="list-style: inside">' . $curso["Name"] . '</li>';
+						}
+					?></ul>
                     </label>
                 </div>
 
                 <div class="field">
                     <label class="label">Cursos marcados como favoritos:<br>
-                    <ul><?php 
-                        $cursos=getUserFavs();
-                        while($curso = mysqli_fetch_assoc($cursos)){
-                            echo '<li style="list-style: inside">'.$curso["Name"].'</li>';
-                        }  
-                    ?></ul>
+                        <ul><?php
+                        $cursos = getUserFavs();
+                        while ($curso = mysqli_fetch_assoc($cursos)) {
+                            echo '<li style="list-style: inside">' . $curso["Name"] . '</li>';
+                        }
+                        ?></ul>
                     </label>
                 </div>
-                <br>
-                <div class="field">
-                    <button class="button GreyBtn">Change Email</button>
-                   <!-- <p class="help is-danger">Este email é inválido</p>-->
-                </div>
-                <div class="field">
-                    <button class="button GreyBtn">Change Password</button>
-                    <!--<p class="help is-success">Este username está disponível</p>-->
-                </div>
-                <div class="field">
-                    <button class="button GreyBtn">Change Username</button>
-                    <!--<p class="help is-success">Este username está disponível</p>-->
-                </div>
-
-                
-
-                <!--<div class="field">
-                    <label class="label">Assunto</label>
-                    <div class="control">
-                        <div class="select">
-                            <select>
-                                <option>Selecione</option>
-                                <option>Opção 1</option>
-                                <option>Opção 2</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>>-->
-
-                <!--<div class="field">
-                    <label class="label">Fala comigo!</label>
-                    <div class="control">
-                        <textarea class="textarea" placeholder="Digite sua mensagem"></textarea>
-                    </div>
-                </div>
-
-
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button class="button is-link">Enviar</button>
-                    </div>
-                    <div class="control">
-                        <button class="button is-link is-light">Cancelar</button>
-                    </div>
-                </div>-->
-                
-
-            </div>
+				
+                <?php }else if ($_SESSION['Role'] == 2) { ?>
+                    <div class="field">
+                        <label class="label">Cursos criados: <br>
+                            <ul><?php
+                            $cursos = getUserCreated();
+                            while ($curso = mysqli_fetch_assoc($cursos)) { ?>
+                                    <div class="card product-card small-card" a href="curso.php?ID=<? echo $curso['ID']; ?>">
+                                        <div class="card-image">
+                                            <div class="product-image">
+                                                <img src="<?php echo "img/layout/img" . $curso['ID'] . ".jpg"; ?>"
+                                                    alt="<?php echo $curso['Name']; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="card-content product-content">
+                                            <p class="subtitle is-6"><?php echo $curso['Category']; ?></p>
+                                            <p class="title is-5"><?php echo $curso['Name']; ?></p>
+                                            <p class="content" id="cardText"><?php echo $curso['CardDesc']; ?></p>
+                                            <div class="product-actions">
+                                                <div class="buttons">
+                                                    <a href="editar_curso.php?ID=<?php echo $curso['ID']; ?>"
+                                                        class="button is-info is-outlined is-fullwidth">Editar Curso</a>
+                                                    <button class="button is-primary is-fullwidth">Remover</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+								</div>
+						<?php }} ?>
+			</div>
         </div>
     </div>
-    <?php include 'footer.php';?>
+    </div><?php include 'footer.php'; ?>
+    </div>
+
 </body>
+
 </html>

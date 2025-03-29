@@ -165,15 +165,42 @@
                             
                 $mail->isHTML(true);
                 $mail->Subject = "Pedido de eliminação";
-                $mail->Body  = "<h2> Foi pedida a eliminação do curso <b>ID -> ".$_POST["CourseID"]."</b></h2>"; 
+                $mail->Body  = '<h2> Foi pedida a eliminação do Curso <b>ID -> '.$_POST["CourseID"].'</b><br>
+                <a href="https://isepacademy.fixstuff.net/Nuno/funcoes.php?Func=DelCourse&CourseID='.$_POST["CourseID"].'">Aceitar</a>
+                </h2>'; 
                 $mail->send();
-                $Query="Update Course Set StartDate='0000-00-00', EndDate='0000-00-00' Where ID=".$_POST["CourseID"];
-                $info = exeDB($Query);
                 echo "ok";
         
             break;
 
         }  
+    }else if(isset($_GET["Func"])){     
+        Switch ($_GET["Func"]){ 
+            case "DelCourse":
+                $Query="Update Course Set StartDate='0000-00-00', EndDate='0000-00-00' Where ID=".$_GET["CourseID"];
+                $info = exeDB($Query);
+                ?><!DOCTYPE html>
+                <html data-theme="light" lang="pt">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Document</title>
+                   
+                </head>
+                <body onload="close()">
+                <script>
+                        setTimeout(function() {
+                            
+                            window.open('','_parent',''); 
+                            window.close();
+
+                        }, 5000);
+                    </script>
+                </body>
+                </html><?php
+            break;
+        }
+
     }
     function exeDB($Query)  {
         include 'conexao.php';
@@ -196,6 +223,10 @@
     
     function getUserFavs(){
         $Query = "Select C.Name from Course C inner join Interaction I on C.ID=I.CourseID where UserID=".$_SESSION["UserID"]." and Favourite=1";
+        return exeDBList($Query);
+    }
+    function getUserCreated(){
+        $Query = "Select * from Course where TeacherID=".$_SESSION["UserID"]." AND StartDate<>0000-00-00 OR EndDate<>0000-00-00";
         return exeDBList($Query);
     }
 
