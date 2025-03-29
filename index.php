@@ -133,7 +133,6 @@
                             <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
                             <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
                             <p class="content" id="cardText"><?php echo $CourseInfo['CardDesc']; ?></p>
-                            <p class="product-price">€<?php echo number_format($CourseInfo['Price'], 2); ?></p>
                             <div class="product-actions">
                                 <div class="buttons">
                                     <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>"
