@@ -37,7 +37,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
-
         function subscribe(){
             if(<?php echo $Flag ?>==2){
                 alert("Necessita de efetuar o login primeiro!");
@@ -87,6 +86,19 @@
             }
         }
 
+        function delCourse(){
+            $.post("funcoes.php",{
+            Func:"DelCourse",
+            <?php echo "CourseID:".$CourseID?>
+            },function(data, status){
+                if(data=="ok") {   
+                    alert("Pedido de remoção enviado");
+                    document.location="catalogo.php";
+                }
+                else{}
+            },"text");	
+        }
+
 		function onload(){		
 			if(<?php echo $Info["Favourite"]?>){
 				document.getElementById("fav").value=0;
@@ -96,9 +108,11 @@
 				document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
 			}
 
-            switch (<?php echo $Info["Status"]?>){
+            if(<?php echo $_SESSION["Role"]?>==1){
+                switch (<?php echo $Info["Status"]?>){
                 case 0:
 				    document.getElementById("sub").innerHTML='Inscreve-te!';
+                    document.getElementById("sub").onclick="subscribe()";
                 break;
                 case 1:
 				    document.getElementById("sub").innerHTML='Inscrito!';
@@ -108,7 +122,14 @@
 
 				    document.getElementById("sub").innerHTML='Concluido!';
                 break;
+                }
+                
+            }else{
+                document.getElementById("sub").innerHTML='Apagar';
+                document.getElementById("sub").setAttribute('onclick','delCourse()');
+                document.getElementById("sub").className="button is-red has-text-primary-100";
             }
+            
             
 		}   
     </script>
@@ -117,7 +138,6 @@
 <style>
     .hero-body{
 		background-image: url('img/cursos/img<?php echo $CourseID?>.jpg');
-        /*background-image: url('https://www.site.pt/wp-content/uploads/2022/01/o-que-e-php-845x480.jpg');*/
         background-size: contain;
     }
 
@@ -182,7 +202,7 @@
 					<div class="title is-6">
                         Data de inicio: <?php echo date("d-m-Y", strtotime($CourseInfo['StartDate']));;?>
                     </div>
-                    <button class="button is-success has-text-primary-100" id="sub" onclick="subscribe()" style="width: 100%">Inscreve-te!</button>
+                    <button class="button has-text-primary-100" id="sub" onclick="subscribe()" style="width: 100%"></button>
                     <button class="button is-link is-outlined" id="fav" onclick="favourite()" style="width: 100%; margin-top: 2%"> </button>
                 </div>
             </div>

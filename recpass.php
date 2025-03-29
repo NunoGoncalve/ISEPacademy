@@ -17,7 +17,6 @@
                 Email:document.getElementById("Email").value
             },function(data, status){
 				if(data!="ErroMail") { 
-                    cod = data;
                     document.getElementById("form").action="javascript:verify()";
                     document.getElementById("btn").innerHTML="Verificar";
 
@@ -26,32 +25,35 @@
 
                     document.getElementById("InputCod").hidden="";
 
-                    document.getElementById("erro").innerHTML="";
+                    document.getElementById("Erro").innerHTML="";
                     
                     alert("Foi enviado um código de verificação para o seu email!");
                 }
 				else{
-                    document.getElementById("erro").innerHTML="Email não registado!";
+                    document.getElementById("Erro").innerHTML="Email não registado!";
                     document.getElementById("Email").style="border-color: red";
                 }
 			},"text");	
         }
 
         function verify(){
-            if(document.getElementById("Cod").value==cod){
-                document.getElementById("form").action="javascript:chpass()";
-                document.getElementById("btn").innerHTML="Mudar password";
-                document.getElementById("Cod").disabled="true";
-                document.getElementById("Cod").style="";
-                document.getElementById("InputPass").hidden="";
-                document.getElementById("Password").disabled="";
-                document.getElementById("erro").innerHTML="";
-
-
-            }else{
-                document.getElementById("erro").innerHTML="Código inválido";
+            $.post("funcoes.php",{
+                Func:"Verify",
+                Cod:document.getElementById("Cod").value
+            },function(data, status){
+				if(data=="ok") { 
+                    document.getElementById("form").action="javascript:chpass()";
+                    document.getElementById("btn").innerHTML="Mudar password";
+                    document.getElementById("Cod").disabled="true";
+                    document.getElementById("Cod").style="";
+                    document.getElementById("InputPass").hidden="";
+                    document.getElementById("Password").disabled="";
+                    document.getElementById("Erro").innerHTML="";
+                }else{
+                    document.getElementById("Erro").innerHTML="Código inválido";
                 document.getElementById("Cod").style="border-color:red";
-            }
+                }
+			},"text");	
         }
 
         function chpass(){
@@ -127,7 +129,7 @@
                     </span>
                 </div>
             </div>
-            <p class="erro" id="erro"></p>
+            <p class="erro" id="Erro"></p>
             
             <button class="button is-success is-fullwidth GreyBtn" id="btn" type="submit">Recuperar password</button>            
 

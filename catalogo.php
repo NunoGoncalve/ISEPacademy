@@ -1,4 +1,6 @@
-<?php session_start(); include 'funcoes.php';?>
+<?php session_start(); include 'funcoes.php';
+	
+?>
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
 
@@ -54,9 +56,15 @@
         <!-- Catálogo de cursos -->
         <div class="columns is-multiline">
             <?php
-                $Query = "Select * from Course";
+                if($_SESSION["Role"]==2){
+                    $Query = "Select * from Course where TeacherID=".$_SESSION["UserID"]." AND StartDate<>0000-00-00 OR EndDate<>0000-00-00";
+                }else{
+                    $Query = "Select * from Course where StartDate<>0000-00-00 OR EndDate<>0000-00-00";
+                }
                 $exe = exeDBList($Query);
+				
                 while($CourseInfo = mysqli_fetch_assoc($exe)){ 
+					
             ?>
             <!-- Inicio del bloque de cursso que se repetirá -->
             <article class="column is-3-desktop is-4-tablet is-6-mobile">
@@ -70,12 +78,16 @@
                             <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
                             <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
                             <p class="content" id="cardText"><?php echo $CourseInfo['CardDesc']; ?></p>
-                            <p class="product-price">€<?php echo number_format($CourseInfo['Price'], 2); ?></p>
                             <div class="product-actions">
                                 <div class="buttons">
                                     <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>"
                                         class="button is-info is-outlined is-fullwidth">Ver detalhes</a>
-                                    <button class="button is-primary is-fullwidth">Inscrever</button>
+                                    <?php if($_SESSION["Role"]==2){
+                                            echo '<button class="button is-red is-fullwidth">Remover</button>';
+                                        }else{
+                                            echo '<button class="button is-primary is-fullwidth">Inscrever</button>';
+                                        }
+                                 ?>
                                 </div>
                             </div>
                         </div>

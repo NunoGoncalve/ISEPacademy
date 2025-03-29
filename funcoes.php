@@ -86,6 +86,7 @@
                 $info = exeDB($Query);
                 echo "ok";
             break;
+
             case "Recpass":
                 
                 $Query="Select Count(Email) as ContMail from User where Email like '".$_POST["Email"]."'";
@@ -118,10 +119,12 @@
                     $mail->Subject = "Código de verificação";
                     $mail->Body  = "Insira o seguinte código de verificação <h1>".$cod."</h1>"; 
                     $mail->send();
+                    setcookie("Verfication", $cod, time() + (60 * 30), "/");
                     echo $cod;  
                 }
 
             break;
+
             case "Chpass":
                 $Query="Select ID from User where Email like '".$_POST["Email"]."'";
                 $info = exeDB($Query);
@@ -129,9 +132,49 @@
                 exeDB($Query);
                 echo "ok";
             break;
+
+            case "Verify":
+                if($_POST["Cod"]==$_COOKIE["Verfication"]){
+                    setcookie("Verfication", "", time() - 3600);
+                    echo "ok";
+                }
+                
+            break;
+            
+            case "DelCourse":
+                require 'vendor/phpmailer/src/Exception.php';
+                require 'vendor/phpmailer/src/PHPMailer.php';
+                require 'vendor/phpmailer/src/SMTP.php';
+
+                //Configuração
+                $cod=rand(1,999999);
+                $mail = new PHPMailer();
+                $mail->isSMTP();
+                $mail->CharSet = "UTF-8";
+                //$mail->SMTPDebug = 4;
+                $mail->Host = 'vmcus31960.claranet.pt';
+                $mail->SMTPAuth = true;
+                $mail->SMTPSecure = 'ssl';
+                $mail->Username = 'no_reply@IsepAcademy.fixstuff.net';
+                $mail->Password = '54%27qLvj';
+                $mail->Port = '465';
+                
+                //Composição do email
+                $mail->setFrom('no_reply@IsepAcademy.fixstuff.net');
+                $mail->addAddress('nunotmg@gmail.com');
+                            
+                $mail->isHTML(true);
+                $mail->Subject = "Pedido de eliminação";
+                $mail->Body  = "<h2> Foi pedida a eliminação do curso <b>ID -> ".$_POST["CourseID"]."</b></h2>"; 
+                $mail->send();
+                $Query="Update Course Set StartDate='0000-00-00', EndDate='0000-00-00' Where ID=".$_POST["CourseID"];
+                $info = exeDB($Query);
+                echo "ok";
+        
+            break;
+
         }  
     }
-
     function exeDB($Query)  {
         include 'conexao.php';
         $exe = mysqli_query($conexao, $Query);
