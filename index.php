@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <?php include 'navbar.php'; ?>
 
@@ -23,11 +24,9 @@
             <div class="about-content">
                 <div class="columns is-vcentered">
                     <div class="column is-6">
-                        <h2 class="title is-1 mb-6">Sobre o ISEP Academy</h2>
-                        <p class="subtitle is-4 has-text-grey mb-5" style="max-width:75%; text-align: justify;">
-                        AVISO: As informações contidas são apenas para efeitos académicos!<br><br>
-                        O ISEP Academy conta com diversos cursos disponíveis desde cursos básicos a cursos avançados.<br>
-                        Este website foi desenvolvido com o objetivo de ajudar jovens estudantes que queiram aprender mais sobre a sua área ou pessoas que queiram aprender novas skills.
+                        <h2 class="title is-2 mb-5">Sobre o ISEP Academy</h2>
+                        <p class="subtitle is-5 has-text-grey mb-5">
+                        AVISO: As informações contidas são apenas para efeitos académicos!<br><br>O ISEP Academy conta com diversos cursos disponiveis desde cursos básicos a cursos avançados.<br> Este website foi desenvolvido com o objetivo de ajudar jovens estudantes que queiram aprender mais sobre a sua área ou pessoas que queiram aprender novas skills
                         </p>
                     </div>
                     <div class="column is-6">
@@ -65,7 +64,7 @@
                                         <i class="fas fa-handshake fa-2x"></i>
                                     </span>
                                     <p class="stats-number">000+</p>
-                                    <p class="has-text-grey">Empresas Parceiras</p>
+                                    <p class="has-text-grey">Cursos Completados</p>
                                 </div>
                             </div>
                         </div>
@@ -121,7 +120,7 @@
             
             <div class="columns is-multiline">
             <?php
-                $Query = "SELECT Course.*, Count(CourseID) As Nsubs from Course inner join Interaction on Course.ID=Interaction.CourseID group by Course.ID Order by (Nsubs) desc";
+                $Query = "SELECT Course.*, Count(CourseID) As Nsubs from Course inner join Interaction on Course.ID=Interaction.CourseID group by Course.ID Order by (Nsubs) desc limit 4";
                 $exe = exeDBList($Query);
                 while($CourseInfo = mysqli_fetch_assoc($exe)) { 
             ?>
@@ -137,7 +136,6 @@
                             <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
                             <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
                             <p class="content" id="cardText"><?php echo $CourseInfo['CardDesc']; ?></p>
-                            <p class="product-price">€<?php echo number_format($CourseInfo['Price'], 2); ?></p>
                             <div class="product-actions">
                                 <div class="buttons">
                                     <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>"
