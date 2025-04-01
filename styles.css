@@ -352,3 +352,41 @@ body {
     border-radius: 8px;
     margin-bottom: 10px;
 }
+
+.custom-footer-bulma {
+    background-color: #444f5a !important; /* Cor do footer alterada */
+    padding: 4rem 1.5rem;
+    margin-top: 8%;
+}
+
+/* Boxes escuras com hover */
+.custom-footer-bulma .footer-box {
+    background-color: #2e353d !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.custom-footer-bulma .footer-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Efeito nos botões de redes sociais */
+.custom-footer-bulma .button.is-outlined:hover {
+    background-color: #444f5a !important;
+    color: white !important;
+    border-color: white !important;
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+    .custom-footer-bulma {
+        padding: 2rem 1rem;
+        margin-top: 4rem;
+    }
+    
+    .custom-footer-bulma .column.is-4 {
+        margin-bottom: 1.5rem;
+    }
+}
