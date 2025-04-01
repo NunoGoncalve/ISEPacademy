@@ -1,15 +1,16 @@
-<?php session_start();
-include 'funcoes.php';
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL); ?>
+<?php session_start(); include 'funcoes.php';
+// Verificar se o ID do curso foi fornecido
+if (!isset($_SESSION['UserID'])) {
+    echo '<script type="text/javascript">document.location.href="login.php"</script>'; 
+}
+?>
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Page</title>
+    <title>ISEP Academy - Conta</title>
 
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
@@ -23,16 +24,31 @@ error_reporting(E_ALL); ?>
                 }
             }, "text");
         }
+
+        function DelCourse(CourseID){ 
+            if (confirm("Tem a certeza que deseja remover o curso?")) {
+                $.post("funcoes.php",{
+                Func:"DelCourse",
+                CourseID:CourseID
+                },function(data, status){
+                    if(data=="ok") {   
+                        alert("Pedido de remoção enviado");
+                        document.location.reload();
+                    }
+                    else{}
+                },"text");	
+            }
+        }
     </script>
 </head>
 
 <body>
     <?php $UserInfo = getUserInfo();
-    include 'navbar.php'; ?>
+    include 'navbar.php'; ?><br>
 
-    <div class="columns is-centered">
+    <div class="columns">
         <!-- Coluna lateral com informações do usuário -->
-        <div class="column is-3">
+        <div class="column is-3" style="margin-left: 2%;width: 22%;">
             <div class="card">
                 <div class="card-image">
                     <figure class="ProfileImg">
@@ -66,10 +82,10 @@ error_reporting(E_ALL); ?>
                                 break;
                         } ?></p>
                         <p><strong>Membro desde:</strong> <?php echo $UserInfo['RegisterDate']; ?></p>
-                        <button class="button is-danger" onclick="logout()">Logout</button>
+                        <button class="button is-red" onclick="logout()">Logout</button>
                     </div>
                 </div>
-            </div><a href="editar_curso.php?id=2" class="btn btn-primary">Editar Curso</a>
+            </div>
 
             <aside class="menu mt-4">
                 <p class="menu-label">General</p>
@@ -100,68 +116,77 @@ error_reporting(E_ALL); ?>
                 </ul>
             </aside>
         </div>
-
+        
         <!-- Formulário -->
-        <div class="column is-6">
-            <div class="box">
-			<?php if ($_SESSION['Role'] == 1) { ?>
-                <div class="field">
-                   
-					<label class="label">Cursos aos que está inscrito:<br>
-                        <ul><?php
-                        $cursos = getUserSubs();
-                        while ($curso = mysqli_fetch_assoc($cursos)) {
-                            echo '<li style="list-style: inside">' . $curso["Name"] . '</li>';
-						}
-					?></ul>
-                    </label>
-                </div>
+        <div class="container">
+        
+            <div class="box" style="width: 90%;">           
+                <label class="label">Cursos criados: </label>
+                
+                    <?php if ($_SESSION['Role'] == 1) { ?>
+                        <div class="field">
+                            <label class="label">Cursos aos que está inscrito:<br>
+                                <ul><?php
+                                $cursos = getUserSubs();
+                                while ($curso = mysqli_fetch_assoc($cursos)) {
+                                    echo '<li style="list-style: inside">' . $curso["Name"] . '</li>';
+                                }
+                            ?></ul>
+                            </label>
+                        </div>
 
-                <div class="field">
-                    <label class="label">Cursos marcados como favoritos:<br>
-                        <ul><?php
-                        $cursos = getUserFavs();
-                        while ($curso = mysqli_fetch_assoc($cursos)) {
-                            echo '<li style="list-style: inside">' . $curso["Name"] . '</li>';
-                        }
-                        ?></ul>
-                    </label>
-                </div>
-				
-                <?php }else if ($_SESSION['Role'] == 2) { ?>
-                    <div class="field">
-                        <label class="label">Cursos criados: <br>
-                            <ul><?php
+                        <div class="field">
+                            <label class="label">Cursos marcados como favoritos:<br>
+                                <ul><?php
+                                $cursos = getUserFavs();
+                                while ($curso = mysqli_fetch_assoc($cursos)) {
+                                    echo '<li style="list-style: inside">' . $curso["Name"] . '</li>';
+                                }
+                                ?></ul>
+                            </label>
+                        </div>
+                        
+                        <?php }else if ($_SESSION['Role'] == 2) { ?>
+                            <?php
                             $cursos = getUserCreated();
                             while ($curso = mysqli_fetch_assoc($cursos)) { ?>
-                                    <div class="card product-card small-card" a href="curso.php?ID=<? echo $curso['ID']; ?>">
+                            <div class="columns is-multiline">
+                                <div class="column is-4-desktop is-4-tablet is-6-mobile">
+                                    <?php if($curso["Status"]==2){
+                                        echo '<div class="card product-card small-card unavailable-card" style="max-height: fit-content" href="curso.php?ID='.$curso['ID'].'">';
+                                    }else{
+                                        echo '<div class="card product-card small-card" style="max-height: fit-content" href="curso.php?ID='.$curso['ID'].'">';
+                                    }?>
                                         <div class="card-image">
                                             <div class="product-image">
-                                                <img src="<?php echo "img/layout/img" . $curso['ID'] . ".jpg"; ?>"
+                                                <img src="<?php echo "img/layout/".$curso['ID'].".jpg"; ?>"
                                                     alt="<?php echo $curso['Name']; ?>">
                                             </div>
                                         </div>
-                                        <div class="card-content product-content">
+                                        <div class="card-content product-content" style="height: 60%;">
                                             <p class="subtitle is-6"><?php echo $curso['Category']; ?></p>
                                             <p class="title is-5"><?php echo $curso['Name']; ?></p>
-                                            <p class="content" id="cardText"><?php echo $curso['CardDesc']; ?></p>
+                                            
                                             <div class="product-actions">
                                                 <div class="buttons">
-                                                    <a href="editar_curso.php?ID=<?php echo $curso['ID']; ?>"
-                                                        class="button is-info is-outlined is-fullwidth">Editar Curso</a>
-                                                    <button class="button is-primary is-fullwidth">Remover</button>
+                                                <?php if($curso["Status"]!=2){?> 
+                                                        <a href="editar_curso.php?ID=<?php echo $curso['ID']; ?>" class="button is-info is-outlined is-fullwidth">Editar Curso</a>
+                                                        <button class="button is-primary is-fullwidth is-red" onclick="DelCourse('<?php echo $curso['ID'] ?>')">Remover</button>
+                                                    <?php } else{?>
+                                                        <button class="button is-primary is-fullwidth is-red">Em analise</button>
+                                                    <?php } ?>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-								</div>
-						<?php }} ?>
-			</div>
+                                </div> 
+                            </div>                                              
+                    <?php   }   
+                        } ?>
+                </div>
+            </div> 
         </div>
     </div>
-    </div><?php include 'footer.php'; ?>
-    </div>
-
+    <?php include 'footer.php'; ?>
 </body>
-
 </html>

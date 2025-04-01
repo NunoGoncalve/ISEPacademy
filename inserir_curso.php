@@ -1,119 +1,21 @@
-<?php session_start();
-include 'funcoes.php'; ?>
-<?php include 'navbar.php';
+<?php session_start(); include 'funcoes.php'; ?>
 
-$sql1 = 'SELECT '?>
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISEP Academy - Cadastro de Curso</title>
+    <title>ISEP Academy - Criar Curso</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Adicionando jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #3273dc;
-            --secondary-color: #f14668;
-        }
-
-        body {
-            background-color: #f9f9f9;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 600px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 1rem;
-        }
-
-        .card {
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .card-header-title {
-            color: white !important;
-            font-size: 1.2rem !important;
-        }
-
-        .module-card {
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-            border: 1px solid #e0e0e0;
-        }
-
-        .module-card:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            transform: translateY(-3px);
-        }
-
-        .module-details {
-            background-color: #f9f9f9;
-            padding: 1rem;
-            border-radius: 8px;
-        }
-
-        .input,
-        .select select,
-        .textarea,
-        .file-cta {
-            font-size: 1rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 6px;
-        }
-
-        .label {
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .button {
-            transition: all 0.3s ease;
-            border-radius: 6px;
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .is-invalid {
-            border-color: var(--secondary-color) !important;
-        }
-
-        @media screen and (max-width: 768px) {
-            body {
-                font-size: 14px;
-            }
-
-            .container {
-                padding: 0.5rem;
-            }
-
-            .input,
-            .select select,
-            .textarea,
-            .file-cta {
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+ 
 </head>
 
 <body>
+    <?php include 'navbar.php'; ?>
     <section class="section py-4">
         <div class="container">
             <div class="card">
@@ -179,20 +81,18 @@ $sql1 = 'SELECT '?>
                             <div class="column is-6-desktop is-12-mobile">
                                 <div class="field">
                                     <label class="label">Imagem do Curso</label>
-                                    <div class="file is-primary is-boxed is-fullwidth">
-                                        <label class="file-label">
-                                            <input class="file-input" type="file" id="course-image" name="curso-imagem"
-                                                accept="image/*" required>
-                                            <span class="file-cta">
+                                    <div id="file-js-example" class="file has-name">
+                                            <label class="file-label">
+                                                <input class="file-input" id="course-image" accept="image/jpeg" onchange="file()" type="file" name="curso-imagem" required/>
+                                                <span class="file-cta">
                                                 <span class="file-icon">
                                                     <i class="fas fa-upload"></i>
                                                 </span>
-                                                <span class="file-label">
-                                                    Escolher Imagem
+                                                <span class="file-label"> Escolha um ficheiro </span>
                                                 </span>
-                                            </span>
-                                        </label>
-                                    </div>
+                                                <span class="file-name" id="FileName"> Vazio </span>
+                                            </label>
+                                        </div>
                                     <p class="help is-danger" id="course-image-error"></p>
                                 </div>
                             </div>
@@ -203,7 +103,7 @@ $sql1 = 'SELECT '?>
                                     <div id="modulos-container">
                                         <div class="card module-card" id="modulo-1">
                                             <header class="card-header">
-                                                <p class="card-header-title is-size-7">
+                                                <p class="card-header-title">
                                                     Módulo 1
                                                 </p>
                                                 <button type="button" class="card-header-icon"
@@ -342,6 +242,22 @@ $sql1 = 'SELECT '?>
             }
         }
 
+        function file(){
+            var fileInput = document.getElementById("course-image");
+
+            if (fileInput.files.length > 0) {
+                var fileType = fileInput.files[0].type; // Obtém o tipo MIME
+
+                if (fileType !== "image/jpeg") {
+                    document.getElementById("FileError").innerHTML="Apenas .jpg são aceites";
+                    fileInput.value="";
+                }else{
+                    document.getElementById("course-image-error").innerHTML="";
+                    document.getElementById("FileName").textContent = document.getElementById("course-image").files[0].name;
+                }
+            }
+        }   
+
         function validateForm() {
             let isValid = true;
 
@@ -437,70 +353,70 @@ $sql1 = 'SELECT '?>
         }
 
         function submeter() {
-    // Validar o formulário antes de prosseguir
-    if (!validateForm()) {
-        return false;
-    }
-    
-    var fileInput = document.getElementById("course-image");
-    
-    // Verificar se uma imagem foi selecionada
-    if (fileInput.files.length === 0) {
-        document.getElementById('course-image-error').textContent = 'Selecione uma imagem para o curso';
-        return false;
-    }
-    
-    var reader = new FileReader();
-
-    reader.onload = function (event) {
-        var imageBase64 = event.target.result;
-
-        // Coletar módulos
-        var modules = [];
-        document.querySelectorAll('.module-card').forEach((modulo, index) => {
-            var modName = modulo.querySelector('.module-name').value;
-            var modDesc = modulo.querySelector('.module-description').value;
-
-            modules.push({
-                ModuleName: modName,
-                ModuleDescription: modDesc
-            });
-        });
-
-        // Enviar dados via AJAX com tratamento de erro
-        $.ajax({
-            url: "funcoes.php",
-            type: "POST",
-            data: {
-                Func: "newCourse",
-                Name: document.getElementById("course-title").value,
-                DescriptionCourse: document.getElementById("course-description").value,
-                SecondDescription: document.getElementById("course-card-description").value,
-                CategoryCourse: document.getElementById("course-category").value,
-                StartDate: document.getElementById("start-date").value,
-                EndDate: document.getElementById("end-date").value,
-                Price: document.getElementById("price").value,
-                Img: imageBase64,
-                Modules: JSON.stringify(modules)
-            },
-            dataType: "text",
-            success: function(data) {
-                if (data == "ok") {
-                    document.location = "userpage.php";
-                } else {
-                    alert("Erro ao cadastrar curso: " + data);
-                }
-            },
-            error: function(xhr, status, error) {
-                alert("Erro na requisição AJAX: " + error);
-                console.error(xhr.responseText);
+            // Validar o formulário antes de prosseguir
+            if (!validateForm()) {
+                return false;
             }
-        });
-    };
+            
+            var fileInput = document.getElementById("course-image");
+            
+            // Verificar se uma imagem foi selecionada
+            if (fileInput.files.length === 0) {
+                document.getElementById('course-image-error').textContent = 'Selecione uma imagem para o curso';
+                return false;
+            }
+            
+            var reader = new FileReader();
 
-    reader.readAsDataURL(fileInput.files[0]);
-    return false; // Impedir o envio normal do formulário
-}
+            reader.onload = function (event) {
+                var imageBase64 = event.target.result;
+
+                // Coletar módulos
+                var modules = [];
+                document.querySelectorAll('.module-card').forEach((modulo, index) => {
+                    var modName = modulo.querySelector('.module-name').value;
+                    var modDesc = modulo.querySelector('.module-description').value;
+
+                    modules.push({
+                        ModuleName: modName,
+                        ModuleDescription: modDesc
+                    });
+                });
+
+                // Enviar dados via AJAX com tratamento de erro
+                $.ajax({
+                    url: "funcoes.php",
+                    type: "POST",
+                    data: {
+                        Func: "newCourse",
+                        Name: document.getElementById("course-title").value,
+                        DescriptionCourse: document.getElementById("course-description").value,
+                        SecondDescription: document.getElementById("course-card-description").value,
+                        CategoryCourse: document.getElementById("course-category").value,
+                        StartDate: document.getElementById("start-date").value,
+                        EndDate: document.getElementById("end-date").value,
+                        Price: document.getElementById("price").value,
+                        Img: imageBase64,
+                        Modules: JSON.stringify(modules)
+                    },
+                    dataType: "text",
+                    success: function(data) {
+                        if (data == "ok") {
+                            document.location = "userpage.php";
+                        } else {
+                            alert("Erro ao cadastrar curso: " + data);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Erro na requisição AJAX: " + error);
+                        console.error(xhr.responseText);
+                    }
+                });
+            };
+
+            reader.readAsDataURL(fileInput.files[0]);
+            return false; // Impedir o envio normal do formulário
+        }
     </script>
 </body>
 

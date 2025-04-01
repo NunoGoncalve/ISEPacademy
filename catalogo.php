@@ -50,27 +50,34 @@
                     </div>
                 </div>
             </div>
+        
 
 
-        <!-- Catálogo de cursos -->
-        <div class="columns is-multiline">
-            <?php
-                if($_SESSION["Role"]==2){
-                    $Query = "Select * from Course where TeacherID=".$_SESSION["UserID"]." AND StartDate<>0000-00-00 OR EndDate<>0000-00-00";
-                }else{
-                    $Query = "Select * from Course where StartDate<>0000-00-00 OR EndDate<>0000-00-00";
-                }
-                $exe = exeDBList($Query);
-				
-                while($CourseInfo = mysqli_fetch_assoc($exe)){ 
-					
-            ?>
-            <!-- Inicio del bloque de cursso que se repetirá -->
-            <article class="column is-3-desktop is-4-tablet is-6-mobile">
-                <div class="card product-card"><a href="curso.php?ID=<? echo $row['ID']; ?>">
+            <!-- Catálogo de cursos -->
+            <div class="columns is-multiline">
+                <?php
+                    Switch ($_SESSION["Role"]) {
+                        case 2:
+                            $Query = "Select * from Course where TeacherID=".$_SESSION["UserID"]." AND Status>=1";
+                        break;
+                        case 3:
+                            $Query = "Select * from Course";
+                        break;
+                        default:
+                            $Query = "Select * from Course where Status=1";
+                        break;
+                    }
+                    $exe = exeDBList($Query);
+                    
+                    while($CourseInfo = mysqli_fetch_assoc($exe)){ 
+                        
+                ?>
+                <!-- Inicio do bloco de curso que se repetirá -->
+                <article class="column is-3-desktop is-4-tablet is-6-mobile">
+                    <div class="card product-card"><a href="curso.php?ID=<? echo $CourseInfo['ID']; ?>">
                         <div class="card-image">
                             <div class="product-image">
-                                <img src="<?php echo "img/layout/img".$row['ID'].".jpg"; ?>" alt="<?php echo $row['Name']; ?>">
+                                <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>" alt="<?php echo $CourseInfo['Name']; ?>">
                             </div>
                         </div>
                         <div class="card-content product-content">
@@ -79,33 +86,36 @@
                             <p class="content" id="cardText"><?php echo $CourseInfo['CardDesc']; ?></p>
                             <div class="product-actions">
                                 <div class="buttons">
-                                    <a href="curso.php?ID=<?php echo $row['ID']; ?>"
-                                        class="button is-info is-outlined is-fullwidth">Ver detalhes</a>
-                                    <?php if($_SESSION["Role"]==2){
-                                            echo '<button class="button is-red is-fullwidth">Remover</button>';
+                                    
+                                    <?php if($_SESSION["Role"]>1){
+                                            echo '<a href="editar_curso.php?ID='.$CourseInfo["ID"].'"
+                                                class="button is-info is-outlined is-fullwidth">Editar</a>
+                                                <button class="button is-primary is-fullwidth">Remover</button>';
                                         }else{
-                                            echo '<button class="button is-primary is-fullwidth">Inscrever</button>';
+                                            echo '<a href="curso.php?ID='.$CourseInfo["ID"].'"
+                                                class="button is-info is-outlined is-fullwidth">Ver detalhes</a>
+                                                <button class="button is-primary is-fullwidth">Inscrever</button>';
                                         }
-                                 ?>
+                                    ?>
                                 </div>
                             </div>
                         </div>
-                </div>
-            </article>
-            <?php } ?>
-            <!-- Fin del bloque de curso -->
+                    </div>
+                </article>
+                <?php } ?>
+                <!-- Fim do bloco de curso -->
+            </div>
 
+            <!-- Paginación en caso de necesidad 
+                <div class="pagination is-centered mt-6">
+                    <ul class="pagination-list">
+                        <li><a class="pagination-link is-current" aria-label="Ir a página 1" aria-current="page">1</a></li>
+                        <li><a class="pagination-link" aria-label="Ir a página 2">2</a></li>
+                        <li><a class="pagination-link" aria-label="Página 3">3</a></li>
+                        <li><a class="pagination-link" aria-label="Ir a página 4">4</a></li>
+                    </ul>
+                </div>-->
         </div>
-
-        <!-- Paginación en caso de necesidad 
-            <div class="pagination is-centered mt-6">
-                <ul class="pagination-list">
-                    <li><a class="pagination-link is-current" aria-label="Ir a página 1" aria-current="page">1</a></li>
-                    <li><a class="pagination-link" aria-label="Ir a página 2">2</a></li>
-                    <li><a class="pagination-link" aria-label="Página 3">3</a></li>
-                    <li><a class="pagination-link" aria-label="Ir a página 4">4</a></li>
-                </ul>
-            </div>-->
     </article>
     <?php include 'footer.php';?>
 </body>

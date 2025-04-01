@@ -3,12 +3,12 @@ session_start();
 include 'funcoes.php';
 
 // Verificar se o ID do curso foi fornecido
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+if (!isset($_GET['ID']) || empty($_GET['ID'])) {
     header('Location: catalogo.php');
     exit;
 }
 
-$course_id = $_GET['id'];
+$course_id = $_GET['ID'];
 
 // Obter os dados do curso
 $course = getCourseById($course_id);
@@ -23,11 +23,11 @@ if (!$course) {
 $modules = getModulesByCourseId($course_id);
 
 // Garantir que $modules seja um array
-if (!is_array($modules)) {
+/*if (!is_array($modules)) {
     $modules = [];
-}
+}*/
 
-include 'navbar.php';
+
 ?>
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
@@ -36,69 +36,31 @@ include 'navbar.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ISEP Academy - Editar Curso</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #3273dc;
-            --secondary-color: #f14668;
-        }
+    <script>
+        function file(){
+        var fileInput = document.getElementById("course-image");
 
-        body {
-            background-color: #f9f9f9;
-            font-size: 16px;
-            line-height: 1.6;
-        }
+        if (fileInput.files.length > 0) {
+            var fileType = fileInput.files[0].type; // Obtém o tipo MIME
 
-        .container {
-            max-width: 600px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 1rem;
+            if (fileType !== "image/jpeg") {
+                document.getElementById("FileError").innerHTML="Apenas .jpg são aceites";
+                fileInput.value="";
+            }else{
+                document.getElementById("FileError").innerHTML="";
+                document.getElementById("FileName").textContent = document.getElementById("course-image").files[0].name;
+            }
         }
-
-        .card {
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .card-header-title {
-            color: white !important;
-            font-size: 1.2rem !important;
-        }
-
-        .module-card {
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-            border: 1px solid #e0e0e0;
-        }
-
-        .module-card:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            transform: translateY(-3px);
-        }
-
-        .current-image {
-            max-width: 100%;
-            max-height: 150px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .is-invalid {
-            border-color: var(--secondary-color) !important;
-        }
-    </style>
+    }
+    </script>
 </head>
 
 <body>
+    <?php include 'navbar.php'; ?>
     <section class="section py-4">
         <div class="container">
             <div class="card">
@@ -162,26 +124,26 @@ include 'navbar.php';
                             <div class="column is-6">
                                 <div class="field">
                                     <label class="label">Imagem do Curso</label>
-                                    <?php if (!empty($course['image'])): ?>
+                                     
                                         <div class="mb-2">
                                             <p class="is-size-7 mb-1">Imagem Atual:</p>
-                                            <img src="<?php echo $course['image']; ?>" alt="Imagem do curso"
+                                            <img src="<?php echo "img/layout/".$course['ID'].".jpg"; ?>" alt="Imagem do curso"
                                                 class="current-image">
                                         </div>
-                                    <?php endif; ?>
-                                    <div class="file is-primary is-fullwidth">
-                                        <label class="file-label">
-                                            <input class="file-input" type="file" id="course-image" accept="image/*">
-                                            <span class="file-cta">
+                                   
+                                        <div id="file-js-example" class="file has-name">
+                                            <label class="file-label">
+                                                <input class="file-input" id="course-image" accept="image/jpeg" onchange="file()" type="file" name="resume" />
+                                                <span class="file-cta">
                                                 <span class="file-icon">
                                                     <i class="fas fa-upload"></i>
                                                 </span>
-                                                <span class="file-label">
-                                                    <?php echo !empty($course['image']) ? 'Alterar Imagem' : 'Escolher Imagem'; ?>
+                                                <span class="file-label"> Escolha um ficheiro </span>
                                                 </span>
-                                            </span>
-                                        </label>
-                                    </div>
+                                                <span class="file-name" id="FileName"> Vazio </span>
+                                            </label>
+                                        </div>
+                                        <p class="help is-danger" id="FileError"></p>
                                     <p class="help">Deixe em branco para manter a imagem atual</p>
                                 </div>
                             </div>
@@ -190,46 +152,13 @@ include 'navbar.php';
                         <!-- Módulos do curso -->
                         <div class="field mt-4">
                             <label class="label">Módulos do Curso</label>
-                            <div id="modulos-container">
-                                <?php if (!empty($modules)): ?>
-                                    <?php foreach ($modules as $index => $module): ?>
-                                        <?php if (is_array($module) && isset($module['ID'], $module['Name'], $module['Description'])): ?>
-                                            <div class="card module-card" data-module-id="<?php echo $module['ID']; ?>">
-                                                <header class="card-header">
-                                                    <p class="card-header-title is-size-7">
-                                                        Módulo <?php echo $index + 1; ?>
-                                                    </p>
-                                                    <button type="button" class="card-header-icon" onclick="removerModulo(this)">
-                                                        <span class="icon is-small">
-                                                            <i class="fas fa-trash" aria-hidden="true"></i>
-                                                        </span>
-                                                    </button>
-                                                </header>
-                                                <div class="card-content">
-                                                    <div class="field">
-                                                        <label class="label">Nome do Módulo</label>
-                                                        <div class="control">
-                                                            <input class="input is-primary module-name" type="text"
-                                                                value="<?php echo htmlspecialchars($module['Name']); ?>"
-                                                                required>
-                                                        </div>
-                                                    </div>
-                                                    <div class="field">
-                                                        <label class="label">Descrição do Módulo</label>
-                                                        <div class="control">
-                                                            <textarea class="textarea module-description"
-                                                                required><?php echo htmlspecialchars($module['Description']); ?></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <div class="card module-card">
+                            <div id="modulos-container">                               
+                                <?php while($module = mysqli_fetch_assoc($modules)){?>
+                                    <div class="card module-card" data-module-id="<?php echo $module['ID']; ?>">
                                         <header class="card-header">
                                             <p class="card-header-title is-size-7">
-                                                Módulo 1
+                                                Módulo <?php echo $module['ID']; ?>
+                                                
                                             </p>
                                             <button type="button" class="card-header-icon" onclick="removerModulo(this)">
                                                 <span class="icon is-small">
@@ -241,18 +170,22 @@ include 'navbar.php';
                                             <div class="field">
                                                 <label class="label">Nome do Módulo</label>
                                                 <div class="control">
-                                                    <input class="input is-primary module-name" type="text" required>
+                                                    <input class="input is-primary module-name" type="text"
+                                                        value="<?php echo $module['Name']; ?>"
+                                                        required>      
+                                                    <input class="module-id" type="text" value="<?php echo $module['ID']; ?>" hidden>                                 
                                                 </div>
                                             </div>
                                             <div class="field">
                                                 <label class="label">Descrição do Módulo</label>
                                                 <div class="control">
-                                                    <textarea class="textarea module-description" required></textarea>
+                                                    <textarea class="textarea module-description"
+                                                        required><?php echo $module['Description']; ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                <?php endif; ?>
+                                <?php } ?>
                             </div>
                             <div class="mt-3">
                                 <button type="button" class="button is-primary" onclick="adicionarModulo()">
@@ -316,8 +249,8 @@ include 'navbar.php';
     <?php include 'footer.php'; ?>
     
     <script>
-        let moduloCounter = <?php echo !empty($modules) && is_array(value: $modules) ? ($modules['CID']) : 1; ?>;
-
+        //let moduloCounter = <?php echo !empty($modules) && is_array(value: $modules) ? ($modules['CID']) : 1; ?>;
+        let moduloCounter = document.querySelectorAll('.module-card').length;
         // Adicionar novo módulo
         function adicionarModulo() {
             moduloCounter++;
@@ -341,6 +274,7 @@ include 'navbar.php';
                         <label class="label">Nome do Módulo</label>
                         <div class="control">
                             <input class="input is-primary module-name" type="text" required>
+                            <input class="module-id" type="text" value="${moduloCounter}" hidden>
                         </div>
                     </div>
                     <div class="field">
@@ -470,7 +404,7 @@ include 'navbar.php';
             const modules = [];
             document.querySelectorAll('.module-card').forEach((modulo) => {
                 modules.push({
-                    ModuleId: modulo.dataset.moduleId || null,
+                    ModuleId: modulo.querySelector('.module-id').value,
                     ModuleName: modulo.querySelector('.module-name').value,
                     ModuleDescription: modulo.querySelector('.module-description').value
                 });
@@ -497,7 +431,7 @@ include 'navbar.php';
                     success: function (response) {
                         if (response == "ok") {
                             alert("Curso atualizado com sucesso!");
-                            window.location.href = "catalogo.php";
+                            document.location = "catalogo.php";
                         } else {
                             alert("Erro ao atualizar curso: " + response);
                         }

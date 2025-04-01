@@ -1,10 +1,6 @@
 <?php 
     session_start();
 
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\Exception;
-    
-
     if(isset($_POST["Func"])){
         
         Switch ($_POST["Func"]){
@@ -18,7 +14,7 @@
 
                 if(empty($info)){
                     echo "ErroEmail";
-                }else if($info["Password"]!=$Pass){
+                }else if($Pass!=$info["Password"]){
                     echo "ErroPass";
                 }
                 else{
@@ -30,8 +26,8 @@
             case "register":
                 $Name = $_POST["Name"]; 
                 $Email = $_POST["Email"];
-                $Pass = $_POST["Pass"];
                 
+                $Pass=$_POST["Pass"];
 
 
                 $Query="Select Count(Email) as ContMail from User where Email like '$Email'";
@@ -87,124 +83,136 @@
                 echo "ok";
             break;
 
-            // PARTE 1: ATUALIZAÇÃO DO BACKEND (PHP)
-// Substitua o case "newCourse" pelo seguinte:
+            case "newCourse":
+                $NameCourse = $_POST["Name"]; 
+                $DescriptionCourse = $_POST["DescriptionCourse"];
+                $SecondDescription = $_POST["SecondDescription"];
+                $CategoryCourse = $_POST["CategoryCourse"];
+                $StartDate = $_POST["StartDate"];
+                $EndDate = $_POST["EndDate"];
+                $Price = $_POST["Price"];
 
-case "newCourse":
-    $NameCourse = $_POST["Name"]; 
-    $DescriptionCourse = $_POST["DescriptionCourse"];
-    $SecondDescription = $_POST["SecondDescription"];
-    $CategoryCourse = $_POST["CategoryCourse"];
-    $StartDate = $_POST["StartDate"];
-    $EndDate = $_POST["EndDate"];
-    $Price = $_POST["Price"];
+                // Verifica se já existe um curso com o mesmo nome
+                $Query = "SELECT COUNT(Name) as contCourse FROM Course WHERE Name = '$NameCourse'";
+                $info = exeDB($Query);
 
-    // Verifica se já existe um curso com o mesmo nome
-    $Query = "SELECT COUNT(Name) as contCourse FROM Course WHERE Name = '$NameCourse'";
-    $info = exeDB($Query);
-
-    if ($info["contCourse"] == 0) {
-        // Inserir o curso na base de dados
-        $Query = "INSERT INTO Course (TeacherID, Name, CardDesc, PagDesc, Category, StartDate, EndDate, Price) 
-                  VALUES (9,'$NameCourse', '$DescriptionCourse', '$SecondDescription', '$CategoryCourse', '$StartDate', '$EndDate', '$Price')";
-        exeDB($Query);
-
-        // Obter o ID do curso recém-criado
-        $Query = "SELECT ID FROM Course WHERE Name = '$NameCourse' ORDER BY ID DESC LIMIT 1";
-        $info = exeDB($Query);
-        $CourseID = $info["ID"];
-
-        // Processar módulos a partir do JSON recebido
-        if (isset($_POST["Modules"])) {
-            $modules = json_decode($_POST["Modules"], true);
-            foreach ($modules as $module) {
-                $ModuleName = $module["ModuleName"];
-                $ModuleDescription = $module["ModuleDescription"];
-                
-                // Inserir cada módulo associado ao curso
-                $Query = "INSERT INTO Steps (CourseID, Name, Description) 
-                          VALUES ('$CourseID', '$ModuleName', '$ModuleDescription')";
-                exeDB($Query);
-            }
-        }
-
-        // Verifica se há uma imagem enviada
-        if (isset($_POST["Img"])) {
-            $imgData = $_POST['Img'];
-            list($type, $data) = explode(';', $imgData);
-            list(, $data) = explode(',', $data);
-            $decodedImage = base64_decode($data);
-            file_put_contents("img/layout/img" . $CourseID . ".jpg", $decodedImage);
-        }
-
-        echo "ok";
-    } else {
-        echo "ErroMail";
-    }
-    case "updateCourse":
-        $CourseID = $_POST["CourseID"];
-        $NameCourse = $_POST["Name"]; 
-        $DescriptionCourse = $_POST["DescriptionCourse"];
-        $SecondDescription = $_POST["SecondDescription"];
-        $CategoryCourse = $_POST["CategoryCourse"];
-        $StartDate = $_POST["StartDate"];
-        $EndDate = $_POST["EndDate"];
-        $Price = $_POST["Price"];
-    
-        // Verifica se já existe outro curso com o mesmo nome (exceto o próprio curso sendo atualizado)
-        $Query = "SELECT COUNT(Name) as contCourse FROM Course WHERE Name = '$NameCourse' AND ID != '$CourseID'";
-        $info = exeDB($Query);
-    
-        if ($info["contCourse"] == 0) {
-            // Atualiza os dados do curso na base de dados
-            $Query = "UPDATE Course SET 
-                      Name = '$NameCourse', 
-                      CardDesc = '$DescriptionCourse', 
-                      PagDesc = '$SecondDescription', 
-                      Category = '$CategoryCourse', 
-                      StartDate = '$StartDate', 
-                      EndDate = '$EndDate', 
-                      Price = '$Price'
-                      WHERE ID = '$CourseID'";
-            exeDB($Query);
-    
-            // Processar módulos a partir do JSON recebido
-            if (isset($_POST["Modules"])) {
-                $modules = json_decode($_POST["Modules"], true);
-                foreach ($modules as $module) {
-                    $ModuleName = $module["ModuleName"];
-                    $ModuleDescription = $module["ModuleDescription"];
-                    
-                    // Inserir cada módulo associado ao curso
-                    $Query = "INSERT INTO Steps (CourseID, Name, Description) 
-                              VALUES ('$CourseID', '$ModuleName', '$ModuleDescription')";
+                if ($info["contCourse"] == 0) {
+                    // Inserir o curso na base de dados
+                    $Query = "INSERT INTO Course (TeacherID, Name, CardDesc, PagDesc, Category, StartDate, EndDate, Price) 
+                            VALUES (9,'$NameCourse', '$DescriptionCourse', '$SecondDescription', '$CategoryCourse', '$StartDate', '$EndDate', '$Price')";
                     exeDB($Query);
-                }
-            }
-    
-            // Verifica se há uma imagem enviada
-            if (isset($_POST["Img"]) && !empty($_POST["Img"])) {
-                $imgData = $_POST['Img'];
-                list($type, $data) = explode(';', $imgData);
-                list(, $data) = explode(',', $data);
-                $decodedImage = base64_decode($data);
-                
-                // Remove a imagem antiga se existir
-                if (file_exists("img/layout/img" . $CourseID . ".jpg")) {
-                    unlink("img/layout/img" . $CourseID . ".jpg");
-                }
-                
-                // Salva a nova imagem
-                file_put_contents("img/layout/img" . $CourseID . ".jpg", $decodedImage);
-            }
-    
-            echo "ok";
-        } else {
-            echo "ErroMail";
-        }
-        break;
-    
 
+                    // Obter o ID do curso recém-criado
+                    $Query = "SELECT ID FROM Course WHERE Name = '$NameCourse' ORDER BY ID DESC LIMIT 1";
+                    $info = exeDB($Query);
+                    $CourseID = $info["ID"];
+
+                    // Processar módulos a partir do JSON recebido
+                    if (isset($_POST["Modules"])) {
+                        $modules = json_decode($_POST["Modules"], true);
+                        foreach ($modules as $module) {
+                            $ModuleName = $module["ModuleName"];
+                            $ModuleDescription = $module["ModuleDescription"];
+                            
+                            // Inserir cada módulo associado ao curso
+                            $Query = "INSERT INTO Steps (CourseID, Name, Description) 
+                                    VALUES ('$CourseID', '$ModuleName', '$ModuleDescription')";
+                            exeDB($Query);
+                        }
+                    }
+
+                    // Verifica se há uma imagem enviada
+                    if (isset($_POST["Img"])) {
+                        $imgData = $_POST['Img'];
+                        list($type, $data) = explode(';', $imgData);
+                        list(, $data) = explode(',', $data);
+                        $decodedImage = base64_decode($data);
+                        file_put_contents("img/layout/img" . $CourseID . ".jpg", $decodedImage);
+                    }
+                    echo "ok";
+                } else {
+                    echo "ErroName";
+                }
+            break;
+            case "updateCourse":
+                $CourseID = $_POST["CourseID"];
+                $NameCourse = $_POST["Name"]; 
+                $DescriptionCourse = $_POST["DescriptionCourse"];
+                $SecondDescription = $_POST["SecondDescription"];
+                $CategoryCourse = $_POST["CategoryCourse"];
+                $StartDate = $_POST["StartDate"];
+                $EndDate = $_POST["EndDate"];
+                $Price = $_POST["Price"];
+            
+                // Verifica se já existe outro curso com o mesmo nome (exceto o próprio curso sendo atualizado)
+                $Query = "SELECT COUNT(Name) as contCourse FROM Course WHERE Name like '$NameCourse' AND ID != '$CourseID'";
+                $info = exeDB($Query);
+            
+                if ($info["contCourse"] == 0) {
+                    // Atualiza os dados do curso na base de dados
+                    $Query = "UPDATE Course SET 
+                            Name = '$NameCourse', 
+                            CardDesc = '$SecondDescription', 
+                            PagDesc = '$DescriptionCourse', 
+                            Category = '$CategoryCourse', 
+                            StartDate = '$StartDate', 
+                            EndDate = '$EndDate', 
+                            Price = '$Price'
+                            WHERE ID = '$CourseID'";
+                    exeDB($Query);
+            
+                    // Processar módulos a partir do JSON recebido
+                    if (isset($_POST["Modules"])) {
+                        $modules = json_decode($_POST["Modules"], true);
+
+                        $Query = "SELECT COUNT(ID) as contStep FROM Steps WHERE CourseID = $CourseID";
+                        $info = exeDB($Query);
+                        // Verifica se o número de módulos foi alterado
+                        for($i = 0; $i < sizeof($modules); $i++) {
+                            if($i >= $info["contStep"]){
+                                $Query = "INSERT INTO Steps (ID, CourseID, Name, Description) 
+                                        VALUES (".$modules[$i]["ModuleId"].", $CourseID, '".$modules[$i]["ModuleName"]."', '".$modules[$i]["ModuleDescription"]."')";
+                                exeDB($Query);
+                            }
+                            else{
+                                $Query = "UPDATE Steps SET Name='".$modules[$i]["ModuleName"]."', Description='".$modules[$i]["ModuleDescription"]."' 
+                                        WHERE CourseID=$CourseID AND ID=".$modules[$i]["ModuleId"];
+                                exeDB($Query);
+                            }
+                        }
+                        /*foreach ($modules as $module) {
+                            $ModuleName = $module["ModuleName"];
+                            $ModuleDescription = $module["ModuleDescription"];
+                            
+                            // Inserir cada módulo associado ao curso
+                            $Query = "UPDATE Steps SET Name='$ModuleName', Description='$ModuleDescription' 
+                                    WHERE CourseID=$CourseID AND Name='$ModuleName'";
+                            exeDB($Query);
+                        }*/
+                    }
+            
+                    // Verifica se há uma imagem enviada
+                    if (isset($_POST["Img"]) && !empty($_POST["Img"])) {
+                        $imgData = $_POST['Img'];
+                        list($type, $data) = explode(';', $imgData);
+                        list(, $data) = explode(',', $data);
+                        $decodedImage = base64_decode($data);
+                        
+                        /* Remove a imagem antiga se existir
+                        if (file_exists("img/layout/img" . $CourseID . ".jpg")) {
+                            unlink("img/layout/img" . $CourseID . ".jpg");
+                        }*/
+                        
+                        // Salva a nova imagem
+                        file_put_contents("img/layout/img" . $CourseID . ".jpg", $decodedImage);
+                    }
+                    echo "ok";
+                } else {
+                    echo "ErroMail";
+                }
+                
+            break;
+    
             case "Recpass":
                 
                 $Query="Select Count(Email) as ContMail from User where Email like '".$_POST["Email"]."'";
@@ -212,24 +220,11 @@ case "newCourse":
                 if($info["ContMail"]==0){
                     echo "ErroMail";
                 }else{
-                    require 'vendor/phpmailer/src/Exception.php';
-                    require 'vendor/phpmailer/src/PHPMailer.php';
-                    require 'vendor/phpmailer/src/SMTP.php';
-
                     //Configuração
-                    $cod=rand(1,999999);
-                    $mail = new PHPMailer();
-                    $mail->isSMTP();
-                    $mail->CharSet = "UTF-8";
-                    //$mail->SMTPDebug = 4;
-                    $mail->Host = 'vmcus31960.claranet.pt';
-                    $mail->SMTPAuth = true;
-                    $mail->SMTPSecure = 'ssl';
-                    $mail->Username = 'no_reply@IsepAcademy.fixstuff.net';
-                    $mail->Password = '54%27qLvj';
-                    $mail->Port = '465';
+                    include '../emailconfig.php';
                     
                     //Composição do email
+                    $cod=rand(1,999999);
                     $mail->setFrom('no_reply@IsepAcademy.fixstuff.net');
                     $mail->addAddress($_POST["Email"]);
                                 
@@ -260,22 +255,9 @@ case "newCourse":
             break;
             
             case "DelCourse":
-                require 'vendor/phpmailer/src/Exception.php';
-                require 'vendor/phpmailer/src/PHPMailer.php';
-                require 'vendor/phpmailer/src/SMTP.php';
 
                 //Configuração
-                $cod=rand(1,999999);
-                $mail = new PHPMailer();
-                $mail->isSMTP();
-                $mail->CharSet = "UTF-8";
-                //$mail->SMTPDebug = 4;
-                $mail->Host = 'vmcus31960.claranet.pt';
-                $mail->SMTPAuth = true;
-                $mail->SMTPSecure = 'ssl';
-                $mail->Username = 'no_reply@IsepAcademy.fixstuff.net';
-                $mail->Password = '54%27qLvj';
-                $mail->Port = '465';
+                include '../emailconfig.php';
                 
                 //Composição do email
                 $mail->setFrom('no_reply@IsepAcademy.fixstuff.net');
@@ -284,9 +266,12 @@ case "newCourse":
                 $mail->isHTML(true);
                 $mail->Subject = "Pedido de eliminação";
                 $mail->Body  = '<h2> Foi pedida a eliminação do Curso <b>ID -> '.$_POST["CourseID"].'</b><br>
-                <a href="https://isepacademy.fixstuff.net/Nuno/funcoes.php?Func=DelCourse&CourseID='.$_POST["CourseID"].'">Aceitar</a>
+                <a style="display: inline-block; background-color: #444f5a; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;" 
+                href="https://isepacademy.fixstuff.net/Master/funcoes.php?Func=DelCourse&CourseID='.$_POST["CourseID"].'">Aceitar</a>
                 </h2>'; 
                 $mail->send();
+                $Query="Update Course Set Status=2 Where ID=".$_POST["CourseID"];
+                $info = exeDB($Query);
                 echo "ok";
         
             break;
@@ -295,7 +280,7 @@ case "newCourse":
     }else if(isset($_GET["Func"])){     
         Switch ($_GET["Func"]){ 
             case "DelCourse":
-                $Query="Update Course Set StartDate='0000-00-00', EndDate='0000-00-00' Where ID=".$_GET["CourseID"];
+                $Query="Update Course Set Status=0 Where ID=".$_GET["CourseID"];
                 $info = exeDB($Query);
                 ?><!DOCTYPE html>
                 <html data-theme="light" lang="pt">
@@ -344,7 +329,7 @@ case "newCourse":
         return exeDBList($Query);
     }
     function getUserCreated(){
-        $Query = "Select * from Course where TeacherID=".$_SESSION["UserID"]." AND StartDate<>0000-00-00 OR EndDate<>0000-00-00";
+        $Query = "Select * from Course where TeacherID=".$_SESSION["UserID"]." AND Status>=1";
         return exeDBList($Query);
     }
 
@@ -364,8 +349,9 @@ case "newCourse":
     }
 
     function getModulesByCourseId($id) {
-        $Query = "SELECT *, COUNT(CourseID) AS CID FROM Steps WHERE CourseID = '$id'";
-        $result = exeDBList($Query); // Supondo que exeDBList() retorna um mysqli_result
+        //$Query = "SELECT *, COUNT(CourseID) AS CID FROM Steps WHERE CourseID = $id";
+        $Query = "SELECT * FROM Steps WHERE CourseID = $id";
+        return $result = exeDBList($Query); // Supondo que exeDBList() retorna um mysqli_result
         
         if ($result && mysqli_num_rows($result) > 0) {
             return mysqli_fetch_assoc($result); // Obtém a primeira linha como array associativo

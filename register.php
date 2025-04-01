@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Registo</title>
+    <title>ISEP Academy - Registo</title>
 
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
@@ -75,41 +75,31 @@
             let password = document.getElementById("password");
             let confirm = document.getElementById("c-password");
 
-            if (password.value.length >= 8) {
-                document.getElementById("erro").innerHTML="";
-                if(password.value != confirm.value && confirm.value!="") {
-                    document.getElementById("c-erro").innerHTML="Passwords não correspondem";
-                    document.getElementById("c-password").style="border-color:red";
+            if(password.value != confirm.value && confirm.value!="") {
+                document.getElementById("c-erro").innerHTML="Passwords não correspondem";
+                document.getElementById("c-password").style="border-color:red";
+            }else{
+                document.getElementById("c-erro").innerHTML="";
+                document.getElementById("c-password").style="";
+            }
+
+        }
+   
+        function file(){
+            var fileInput = document.getElementById("FileInput");
+
+            if (fileInput.files.length > 0) {
+                var fileType = fileInput.files[0].type; // Obtém o tipo MIME
+
+                if (fileType !== "image/png") {
+                    document.getElementById("FileError").innerHTML="Apenas .png são aceites";
+                    fileInput.value="";
                 }else{
-                    document.getElementById("c-erro").innerHTML="";
-                    document.getElementById("c-password").style="";
-                    document.getElementById("password").style="";
+                    document.getElementById("FileError").innerHTML="";
+                    document.getElementById("FileName").textContent = document.getElementById("FileInput").files[0].name;
                 }
             }
-            else {
-                document.getElementById("erro").innerHTML="Password necessita de 8 caracteres!";
-                document.getElementById("password").style="border-color:red";
-            }
-
         }
-
-        
-   
-    function file(){
-        var fileInput = document.getElementById("FileInput");
-
-        if (fileInput.files.length > 0) {
-            var fileType = fileInput.files[0].type; // Obtém o tipo MIME
-
-            if (fileType !== "image/png") {
-                document.getElementById("FileError").innerHTML="Apenas .png são aceites";
-                fileInput.value="";
-            }else{
-                document.getElementById("FileError").innerHTML="";
-                document.getElementById("FileName").textContent = document.getElementById("FileInput").files[0].name;
-            }
-        }
-    }
     
     </script>
 </head>
@@ -144,7 +134,7 @@
             <div class="field">
                 <label class="label" for="password">Password</label>
                 <div class="control has-icons-left has-icons-right">
-                    <input id="password" required class="input" onchange="validatePassword()"type="password" >
+                    <input id="password" required class="input"  minlength="10" pattern="^(?=.*[a-zA-Z])(?=.*[\W_]).+$" type="password" placeholder="At least 10 chars, 1 letter & 1 special symbol" >
 
                     <span class="icon is-small is-right is-clickable" onclick="togglePassword('password', 'toggleIcon')">
                         <i id="toggleIcon" class="fas fa-eye"></i>

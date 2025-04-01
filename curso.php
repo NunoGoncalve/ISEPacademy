@@ -11,6 +11,9 @@
         $Query = "Select Name, CardDesc, PagDesc, Price, Category, StartDate from Course where ID=".$CourseID;
         $CourseInfo = exeDB($Query);
 
+        if(empty($CourseInfo)){
+            echo '<script type="text/javascript">document.location.href="catalogo.php"</script>';
+        }
         if(isset($_SESSION["UserID"])){
             $Query = "Select Favourite, Status from Interaction where CourseID=".$CourseID." AND UserID=".$_SESSION["UserID"];
             $Info = exeDB($Query);
@@ -31,7 +34,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página Curso Teste</title>
+    <title>ISEP Academy - <?php echo $CourseInfo["Name"]?></title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
