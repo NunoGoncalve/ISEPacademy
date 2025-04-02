@@ -103,7 +103,10 @@
 				document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
 			}
 
-            if(<?php echo $_SESSION["Role"]?>==1){
+            if(<?php echo $Flag;?>==2){
+                document.getElementById("sub").hidden='true';
+                document.getElementById("fav").hidden=true;
+            }else if(<?php echo $_SESSION["Role"]?>==1){
                 switch (<?php echo $Info["Status"]?>){
                     case 0:
                         document.getElementById("sub").innerHTML='Inscreve-te!';
@@ -119,7 +122,7 @@
                     break;
                 }
                 
-            }else{
+            }else if(<?php echo $_SESSION["Role"]?>>1){
                 document.getElementById("sub").innerHTML='Editar curso';
                 document.getElementById("sub").setAttribute('onclick','document.location="editar_curso.php?ID=<?php echo $CourseID?>"');
                 document.getElementById("sub").className="button is-info is-outlined";
@@ -128,14 +131,13 @@
                 document.getElementById("fav").className="button is-primary";
             }
             
-            
 		}   
     </script>
 </head>
 
 <style>
     .hero-body{
-		background-image: url('img/cursos/img<?php echo $CourseID?>.jpg');
+		background-image: url('img/cursos/<?php echo $CourseID?>.jpg');
         background-size: contain;
     }
 

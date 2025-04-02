@@ -68,7 +68,7 @@ if (!isset($_SESSION['UserID'])) {
                     </div>
                     <div class="content">
                         <p><strong>Tipo:</strong> <?php
-                        switch ($UserInfo['Role']) {
+                        switch ($_SESSION['Role']) {
                             case 1:
                                 echo "Aluno";
                                 break;

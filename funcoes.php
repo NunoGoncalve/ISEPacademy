@@ -26,6 +26,7 @@
             case "register":
                 $Name = $_POST["Name"]; 
                 $Email = $_POST["Email"];
+                
             
                 $options = ['cost' => 12];
                 $Pass = password_hash($_POST["Pass"], PASSWORD_ARGON2ID, $options);
@@ -41,14 +42,24 @@
                     $_SESSION["UserID"]=$info["ID"];
                     $_SESSION["Role"]=$info["Role"];
 
-                    if(isset($_POST["Img"])){
+                    if($_POST["Img"]!=""){
                         $imgData = $_POST['Img'];
                         list($type, $data) = explode(';', $imgData);
                         list(, $data) = explode(',', $data);
                         $decodedImage = base64_decode($data);
                         file_put_contents("img/users/".$info["ID"].".png", $decodedImage);
                     }
-                     
+                    if($_POST["Curriculo"]!=""){
+                        $curriculoData = $_POST['Curriculo'];
+                        $base64Data = explode(',', $curriculoData, 2)[1];
+                        $decodedFile = base64_decode($base64Data);
+                        $filePath = "curriculos/curriculo" . $info["ID"] . ".pdf";
+                        file_put_contents($filePath, $decodedFile);
+                    }
+
+                    if($_POST["Role"]){
+                        RoleRequest($Email, $_SESSION["UserID"]);
+                    }
 
                     echo "ok";
                 }
@@ -286,7 +297,13 @@
             case "DelCourse":
                 $Query="Update Course Set Status=0 Where ID=".$_GET["CourseID"];
                 $info = exeDB($Query);
-                ?><!DOCTYPE html>
+            break;
+            case "Upgrade":
+                $Query = "Update User set Role=2 where ID=".$_GET["ID"];
+                exeDB($Query);
+            break;
+        }
+        ?><!DOCTYPE html>
                 <html data-theme="light" lang="pt">
                 <head>
                     <meta charset="UTF-8">
@@ -305,9 +322,6 @@
                     </script>
                 </body>
                 </html><?php
-            break;
-        }
-
     }
     function exeDB($Query)  {
         include 'conexao.php';
@@ -324,7 +338,7 @@
     }
 
     function getUserInfo(){
-        $Query = "Select Name, Email, Role, RegisterDate from User where ID=".$_SESSION["UserID"];
+        $Query = "Select Name, Email, RegisterDate from User where ID=".$_SESSION["UserID"];
         return exeDB($Query);
     }
     
@@ -366,5 +380,22 @@
             return mysqli_fetch_assoc($result); // Obtém a primeira linha como array associativo
         }
         
+    }
+
+    function RoleRequest($Email, $ID) {
+        //Configuração
+        include '../emailconfig.php';
+                
+        //Composição do email
+        $mail->setFrom('no_reply@IsepAcademy.fixstuff.net');
+        $mail->addAddress('nunotmg@gmail.com');
+                    
+        $mail->isHTML(true);
+        $mail->Subject = "Pedido de eliminação";
+        $mail->Body  = '<h2> Foi pedido o cargo de professor para a conta com o <b>email -> '.$Email.'</b><br>
+        <a style="display: inline-block; background-color: #444f5a; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;" 
+        href="https://isepacademy.fixstuff.net/Master/funcoes.php?Func=Upgrade&ID='.$ID.'">Aceitar</a>  <a style="display: inline-block; background-color: #444f5a; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;" 
+        href="https://isepacademy.fixstuff.net/Master/curriculos/curriculo'.$ID.'.pdf">Abrir curriculo</a></h2>'; 
+        $mail->send();    
     }
 ?>
