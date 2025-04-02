@@ -27,6 +27,8 @@
             $Info["Status"]=0;
             $Flag=2;
         }
+        $Query="Select ID, Name, Description from Steps where CourseID=".$CourseID;
+        $modulos=exeDBList($Query);
 	
 ?>
 <!DOCTYPE html>
@@ -244,6 +246,26 @@
                        
                 </div>
             </div>
+            <div class="boxes columns is-4" style="gap:7rem; margin-top: 2%; padding:2%">
+                 <div class="descricao column box block">
+                     <div class="title is-5">
+                         Módulos/Etapas
+                     </div><br>
+                     <?php while ($modulo = mysqli_fetch_assoc($modulos)) : ?>
+                         <details class="module-details">
+                             <summary>
+                                 <h4 class="title is-5 mb-0">
+                                     Módulo <?php echo htmlspecialchars($modulo['ID']); ?>: 
+                                     <?php echo htmlspecialchars($modulo['Name']); ?>
+                                 </h4>
+                             </summary>
+                             <div class="module-content">
+                                 <p><?php echo $modulo['Description']; ?></p>
+                             </div>
+                         </details>
+                     <?php endwhile; ?>
+                 </div>
+             </div>
             <?php if($Info["Status"]==1){ ?>
                 <div class="boxes columns is-4" style="margin-top: 2%; padding:2%">
                     <div class="descricao column box block">
