@@ -108,7 +108,7 @@ $modules = getModulesByCourseId($course_id);
                                             <select id="course-category" required>
                                                 <option value="">Selecione uma categoria</option>
                                                 <?php
-                                                $categories = ['Tecnologia', 'Negócios', 'Design', 'Marketing', 'Desenvolvimento Pessoal'];
+                                                $categories = ['Tecnologia', 'Marketing', 'Design', 'Ciencias', 'Informatica','Mecanica','Eletricidade','Desporto'];
                                                 foreach ($categories as $category) {
                                                     $selected = ($course['Category'] == $category) ? 'selected' : '';
                                                     echo "<option $selected>$category</option>";
