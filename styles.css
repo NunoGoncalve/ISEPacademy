@@ -166,22 +166,7 @@ body {
     z-index: 2;
 }
 
-.fade-up {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-}
-  
-.fade-up.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.about-animated-content {
-    transition-delay: 0.2s;
-}
-
-.stats-box {  
+.stats-box {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-radius: 12px;
     padding: 2rem;
@@ -445,3 +430,63 @@ body {
 .checkbox input:checked + .checkmark::after {
     display: block;
 }
+
+.media-content.blog{
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.media-content.blog h3, p{
+    color: white;
+    margin-bottom: 10px;
+    margin-top: 10px !important;
+
+}
+
+.container.blog{
+    border: 1px solid #718293;
+    background-color: #718293;
+    border-radius: 5px;
+    padding: 25px;
+}
+
+.scroll{
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+    overflow-y: scroll;
+    height: 750px;
+    padding: 25px;
+    
+}
+
+.modal-card-head{
+    background-color: var(--primary-color) !important;
+    color: white;
+}
+.modal-card-head p{
+    color: white;
+}
+
+
+div::-webkit-scrollbar {
+    width: var(--sb-size);
+  }
+  
+  div::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 3px;
+  }
+  
+  div::-webkit-scrollbar-thumb {
+    background: white;
+    border-radius: 3px;
+  }
+  
+  @supports not selector(::-webkit-scrollbar) {
+    scroll {
+        scrollbar-color: var(--sb-thumb-color)
+                       var(--sb-track-color);
+    }
+  }

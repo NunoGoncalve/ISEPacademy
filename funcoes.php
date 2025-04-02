@@ -97,7 +97,7 @@
 
             case "newCourse":
                 $NameCourse = $_POST["Name"]; 
-                $DescriptionCourse = $_POST["DescriptionCourse"];
+                $DescriptionCourse = nl2br($_POST["DescriptionCourse"]);
                 $SecondDescription = $_POST["SecondDescription"];
                 $CategoryCourse = $_POST["CategoryCourse"];
                 $StartDate = $_POST["StartDate"];
@@ -291,6 +291,12 @@
         
             break;
 
+            case "newPost":
+                $Query="Insert into Blog (UserID, Title, Description) values (".$_SESSION["UserID"].",'".$_POST["title"]."','".$_POST["desc"]."')";
+                $info = exeDB($Query);
+                echo "ok";
+            break;
+
         }  
     }else if(isset($_GET["Func"])){     
         Switch ($_GET["Func"]){ 
@@ -382,6 +388,11 @@
         
     }
 
+    function getBlog() {
+        $Query = "SELECT * FROM Blog";
+        return $result = exeDBList($Query); 
+        
+    }
     function RoleRequest($Email, $ID) {
         //Configuração
         include '../emailconfig.php';

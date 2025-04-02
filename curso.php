@@ -95,18 +95,21 @@
         }
 
 		function onload(){		
-			if(<?php echo $Info["Favourite"]?>){
-				document.getElementById("fav").value=0;
-				document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-solid fa-heart" id="heart"></i></span>Adicionado!';
-			}else{
-				document.getElementById("fav").value=1;
-				document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
-			}
+			
 
             if(<?php echo $Flag;?>==2){
-                document.getElementById("sub").hidden='true';
-                document.getElementById("fav").hidden=true;
-            }else if(<?php echo $_SESSION["Role"]?>==1){
+                document.getElementById("sub").setAttribute("hidden", "hidden");
+                document.getElementById("fav").setAttribute("hidden", "hidden");
+                document.getElementById("sub").className="";
+                document.getElementById("fav").className="";
+            }else if(<?php echo $_SESSION["Role"]+0?>==1){
+                if(<?php echo $Info["Favourite"]?>){
+				    document.getElementById("fav").value=0;
+				    document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-solid fa-heart" id="heart"></i></span>Adicionado!';
+                }else{
+                    document.getElementById("fav").value=1;
+                    document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
+                }
                 switch (<?php echo $Info["Status"]?>){
                     case 0:
                         document.getElementById("sub").innerHTML='Inscreve-te!';
@@ -122,7 +125,7 @@
                     break;
                 }
                 
-            }else if(<?php echo $_SESSION["Role"]?>>1){
+            }else if(<?php echo $_SESSION["Role"]+0?>>1){
                 document.getElementById("sub").innerHTML='Editar curso';
                 document.getElementById("sub").setAttribute('onclick','document.location="editar_curso.php?ID=<?php echo $CourseID?>"');
                 document.getElementById("sub").className="button is-info is-outlined";
@@ -143,37 +146,6 @@
 
     .lista{
         margin: 2% 5%;
-    }
-
-    .rating {
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: flex-end;
-    }
-    
-    .rating input {
-        display: none;
-    }
-    
-    .rating label {
-        cursor: pointer;
-        font-size: 1.5rem;
-        color: #ddd;
-        margin-right: 5px;
-    }
-    
-    .rating label:hover,
-    .rating label:hover ~ label,
-    .rating input:checked ~ label {
-        color: #ffb400;
-    }
-    
-    .stars-display .fa-star {
-        color: #ddd;
-    }
-    
-    .stars-display .has-text-warning {
-        color: #ffb400 !important;
     }
 
 </style>
@@ -257,135 +229,6 @@
                 <?php } ?>
         </div>
     </section>
-    <section class="content">
-        <div class="container">
-            <div class="box" style="margin-top: 2%; padding: 2%">
-                <div class="columns mb-2">
-                    <div class="column is-1">
-                        <figure class="image is-48x48 ml-5">
-                            <img class="is-rounded" src="img/users/default.png" alt="Imagem do utilizador">
-                        </figure>
-                    </div>
-                    <div class="column">
-                        <form id="feedbackForm">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="rating" style="font-size: 1rem;">
-                                        <input type="radio" id="star5" name="rating" value="5" />
-                                        <label for="star5"><i class="fas fa-star"></i></label>
-                                        <input type="radio" id="star4" name="rating" value="4" />
-                                        <label for="star4"><i class="fas fa-star"></i></label>
-                                        <input type="radio" id="star3" name="rating" value="3" />
-                                        <label for="star3"><i class="fas fa-star"></i></label>
-                                        <input type="radio" id="star2" name="rating" value="2" />
-                                        <label for="star2"><i class="fas fa-star"></i></label>
-                                        <input type="radio" id="star1" name="rating" value="1" />
-                                        <label for="star1"><i class="fas fa-star"></i></label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="field">
-                                <div class="control">
-                                    <textarea class="textarea is-small" id="comment" placeholder="Partilha a tua experiência sobre o curso" rows="2" style="min-height: 2.5em;"></textarea>
-                                </div>
-                            </div>
-                            
-                            <div class="field">
-                                <div class="control">
-                                    <button type="button" class="button is-small is-primary">Enviar Feedback</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                
-                <hr>
-                <div class="title is-6">Outros comentários</div>
-                <div class="columns mb-2">
-                    <div class="column is-1">
-                        <figure class="image is-48x48 ml-5">
-                            <img class="is-rounded" src="img/users/default.png" alt="Imagem do utilizador">
-                        </figure>
-                    </div>
-                    <div class="column">
-                        <strong>João Silva</strong>
-                        <div class="stars-display">
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star"></i>
-                            </span>
-                            <span class="is-size-7 has-text-grey ml-2">
-                                02-04-2025
-                            </span>
-                        </div>
-                        <p class="mt-2">Excelente curso! Os conteúdos são muito úteis e bem estruturados. Recomendo para quem quer aprofundar os conhecimentos nesta área. Já estou ansioso para aplicar estas técnicas nos meus projetos profissionais.</p>
-                    </div>
-                </div>
-                <div class="columns mb-2">
-                    <div class="column is-1">
-                        <figure class="image is-48x48 ml-5">
-                            <img class="is-rounded" src="img/users/default.png" alt="Imagem do utilizador">
-                        </figure>
-                    </div>
-                    <div class="column">
-                        <strong>João Silva</strong>
-                        <div class="stars-display">
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star"></i>
-                            </span>
-                            <span class="is-size-7 has-text-grey ml-2">
-                                02-04-2025
-                            </span>
-                        </div>
-                        <p class="mt-2">Excelente curso! Os conteúdos são muito úteis e bem estruturados. Recomendo para quem quer aprofundar os conhecimentos nesta área. Já estou ansioso para aplicar estas técnicas nos meus projetos profissionais.</p>
-                    </div>
-                </div>  
-            </div>
-        </div>
-    </section>
     <?php include 'footer.php';}?>
 </body>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ratingInputs = document.querySelectorAll('.rating input');
-        ratingInputs.forEach((input) => {
-            input.addEventListener('change', function() {
-                const selectedValue = this.value;
-                const stars = document.querySelectorAll('.rating label i');
-                
-                stars.forEach((star, index) => {
-                    if (5 - index <= selectedValue) {
-                        star.style.color = '#ffb400';
-                    } else {
-                        star.style.color = '#ddd';
-                    }
-                });
-            });
-        });
-    });
-</script>
 </html>
