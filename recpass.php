@@ -118,7 +118,7 @@
             <div class="field" hidden="true" id="InputPass">
                 <label class="label" id="labelPass" for="Password">Insira a sua nova password</label>
                 <div class="control has-icons-left has-icons-right">
-                    <input id="Password" required class="input" minlength="8" type="password" disabled="true">
+                    <input id="Password" required class="input" minlength="10" pattern="^(?=.*[a-zA-Z])(?=.*[\W_]).+$" type="password" disabled="true">
 
                     <span class="icon is-small is-right is-clickable" onclick="togglePassword('Password', 'toggleIcon')">
                         <i id="toggleIcon" class="fas fa-eye"></i>

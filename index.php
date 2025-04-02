@@ -120,16 +120,16 @@
             
             <div class="columns is-multiline">
             <?php
-                $Query = "SELECT Course.*, Count(CourseID) As Nsubs from Course inner join Interaction on Course.ID=Interaction.CourseID group by Course.ID Order by (Nsubs) desc limit 4";
+                $Query = "SELECT Course.*, Count(CourseID) As Nsubs from Course inner join Interaction on Course.ID=Interaction.CourseID where Course.Status=1 group by Course.ID Order by (Nsubs) desc Limit 4";
                 $exe = exeDBList($Query);
                 while($CourseInfo = mysqli_fetch_assoc($exe)) { 
             ?>
             <!-- Inicio del bloque de cursso que se repetirá -->
             <article class="column is-3-desktop is-4-tablet is-20-mobile">
-                <div class="card product-card"><a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>">
+                <div class="card product-card" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">
                         <div class="card-image">
                             <div class="product-image">
-                                <img src="<?php echo "img/layout/img".$CourseInfo['ID'].".jpg"; ?>" alt="<?php echo $CourseInfo['Name']; ?>">
+                                <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>" alt="<?php echo $CourseInfo['Name']; ?>">
                             </div>
                         </div>
                         <div class="card-content product-content">
@@ -139,8 +139,7 @@
                             <div class="product-actions">
                                 <div class="buttons">
                                     <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>"
-                                        class="button is-info is-outlined is-fullwidth">Ver detalhes</a>
-                                    <button class="button is-primary is-fullwidth">Inscrever</button>
+                                        class="button is-primary is-fullwidth">Ver detalhes</a>                                   
                                 </div>
                             </div>
                         </div>

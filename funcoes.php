@@ -14,7 +14,7 @@
 
                 if(empty($info)){
                     echo "ErroEmail";
-                }else if($Pass!=$info["Password"]){
+                }else if(!password_verify( $Pass, $info["Password"])){
                     echo "ErroPass";
                 }
                 else{
@@ -26,8 +26,9 @@
             case "register":
                 $Name = $_POST["Name"]; 
                 $Email = $_POST["Email"];
-                
-                $Pass=$_POST["Pass"];
+            
+                $options = ['cost' => 12];
+                $Pass = password_hash($_POST["Pass"], PASSWORD_ARGON2ID, $options);
 
 
                 $Query="Select Count(Email) as ContMail from User where Email like '$Email'";
@@ -137,7 +138,7 @@
             case "updateCourse":
                 $CourseID = $_POST["CourseID"];
                 $NameCourse = $_POST["Name"]; 
-                $DescriptionCourse = $_POST["DescriptionCourse"];
+                $DescriptionCourse = nl2br($_POST["DescriptionCourse"]);
                 $SecondDescription = $_POST["SecondDescription"];
                 $CategoryCourse = $_POST["CategoryCourse"];
                 $StartDate = $_POST["StartDate"];
@@ -241,7 +242,10 @@
             case "Chpass":
                 $Query="Select ID from User where Email like '".$_POST["Email"]."'";
                 $info = exeDB($Query);
-                $Query = "Update User SET Password=".$_POST["Pass"]." where ID=".$info["ID"];
+                $options = ['cost' => 12];
+                $Pass = password_hash($_POST["Pass"], PASSWORD_ARGON2ID, $options);
+
+                $Query = "Update User SET Password='".$Pass."' where ID=".$info["ID"];
                 exeDB($Query);
                 echo "ok";
             break;
@@ -325,17 +329,22 @@
     }
     
     function getUserFavs(){
-        $Query = "Select C.Name from Course C inner join Interaction I on C.ID=I.CourseID where UserID=".$_SESSION["UserID"]." and Favourite=1";
+        $Query = "Select C.* from Course C inner join Interaction I on C.ID=I.CourseID where UserID=".$_SESSION["UserID"]." and Favourite=1 and C.Status=1";
         return exeDBList($Query);
     }
     function getUserCreated(){
-        $Query = "Select * from Course where TeacherID=".$_SESSION["UserID"]." AND Status>=1";
+        $Query = "Select * from Course where TeacherID=".$_SESSION["UserID"]." AND Status<3";
         return exeDBList($Query);
     }
 
     function getUserSubs(){
-        $Query = "Select C.Name from Course C inner join Interaction I on C.ID=I.CourseID where UserID=".$_SESSION["UserID"]." and Status=1";
+        $Query = "Select C.* from Course C inner join Interaction I on C.ID=I.CourseID where UserID=".$_SESSION["UserID"]." and C.Status=1 and I.Status=1";
         return exeDBList($Query);
+    }
+
+    function getAllCourses() {
+        $Query = "SELECT * FROM Course";
+        return $result = exeDBList($Query); 
     }
     function getCourseById($id) {
         $Query = "SELECT * FROM Course WHERE ID = '$id'";

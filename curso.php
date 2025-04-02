@@ -8,7 +8,7 @@
         $CourseID=$_GET["ID"];
         $Flag=0;
 
-        $Query = "Select Name, CardDesc, PagDesc, Price, Category, StartDate from Course where ID=".$CourseID;
+        $Query = "Select Name, CardDesc, PagDesc, Price, Category, StartDate, EndDate from Course where ID=".$CourseID;
         $CourseInfo = exeDB($Query);
 
         if(empty($CourseInfo)){
@@ -40,53 +40,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
-        function subscribe(){
-            if(<?php echo $Flag ?>==2){
-                alert("Necessita de efetuar o login primeiro!");
-            }else{
-                $.post("funcoes.php",{
-                Func:"subscribe",
-                <?php echo "CourseID:".$CourseID.",
-				Flag:".$Flag?>
-                },function(data, status){
-                    if(data=="ok") { 
-                        document.getElementById("sub").innerHTML='Inscrito!';
-                        document.getElementById("sub").onclick='';
-                        alert("Inscrito com sucesso");
-                        document.location="curso.php?ID=<?php echo $CourseID?>";
-                    }
-                    else{}
-                },"text");	
-            }
-           
+        function subscribe(){            
+            $.post("funcoes.php",{
+            Func:"subscribe",
+            <?php echo "CourseID:".$CourseID.",
+            Flag:".$Flag?>
+            },function(data, status){
+                if(data=="ok") { 
+                    document.getElementById("sub").innerHTML='Inscrito!';
+                    document.getElementById("sub").onclick='';
+                    alert("Inscrito com sucesso");
+                    document.location="curso.php?ID=<?php echo $CourseID?>";
+                }
+                else{}
+            },"text");	          
         }
 
         function favourite(){
-            if(<?php echo $Flag ?>==2){
-                alert("Necessita de efetuar o login primeiro!");
-            }else{
-                fav = document.getElementById("fav");
-                $.post("funcoes.php",{
-                    Func:"favourite",
-                    Fav:fav.value,
-                    <?php echo "CourseID:".$CourseID.",
-                    Flag:".$Flag?>
-                
-                },function(data, status){
-                    if(data=="ok" && fav.value==1){
-                        fav.innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-solid fa-heart" id="heart"></i></span>Adicionado!';
-                        fav.value=0;
-                        alert("Curso adicionado aos favoritos!");                
+            fav = document.getElementById("fav");
+            $.post("funcoes.php",{
+                Func:"favourite",
+                Fav:fav.value,
+                <?php echo "CourseID:".$CourseID.",
+                Flag:".$Flag?>
+            
+            },function(data, status){
+                if(data=="ok" && fav.value==1){
+                    fav.innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-solid fa-heart" id="heart"></i></span>Adicionado!';
+                    fav.value=0;
+                    alert("Curso adicionado aos favoritos!");                
 
-                    }
-                    else if(data=="ok"){
-                        fav.innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
-                        fav.value=1;
-                        alert("Curso removido dos favoritos");
-                        
-                    }
-                },"text");	
-            }
+                }
+                else if(data=="ok"){
+                    fav.innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
+                    fav.value=1;
+                    alert("Curso removido dos favoritos");
+                    
+                }
+            },"text");	
+            
         }
 
         function delCourse(){
@@ -113,24 +105,27 @@
 
             if(<?php echo $_SESSION["Role"]?>==1){
                 switch (<?php echo $Info["Status"]?>){
-                case 0:
-				    document.getElementById("sub").innerHTML='Inscreve-te!';
-                    document.getElementById("sub").onclick="subscribe()";
-                break;
-                case 1:
-				    document.getElementById("sub").innerHTML='Inscrito!';
-                    document.getElementById("sub").onclick='';
-                break;
-                case 2: 
+                    case 0:
+                        document.getElementById("sub").innerHTML='Inscreve-te!';
+                        document.getElementById("sub").onclick="subscribe()";
+                    break;
+                    case 1:
+                        document.getElementById("sub").innerHTML='Inscrito!';
+                        document.getElementById("sub").onclick='';
+                    break;
+                    case 2: 
 
-				    document.getElementById("sub").innerHTML='Concluido!';
-                break;
+                        document.getElementById("sub").innerHTML='Concluido!';
+                    break;
                 }
                 
             }else{
-                document.getElementById("sub").innerHTML='Apagar';
-                document.getElementById("sub").setAttribute('onclick','delCourse()');
-                document.getElementById("sub").className="button is-red has-text-primary-100";
+                document.getElementById("sub").innerHTML='Editar curso';
+                document.getElementById("sub").setAttribute('onclick','document.location="editar_curso.php?ID=<?php echo $CourseID?>"');
+                document.getElementById("sub").className="button is-info is-outlined";
+                document.getElementById("fav").innerHTML='Remover curso';
+                document.getElementById("fav").setAttribute('onclick','delCourse()');
+                document.getElementById("fav").className="button is-primary";
             }
             
             
@@ -189,9 +184,9 @@
                 <div class="descricao column box block">
                     <div class="title is-5">
                         Descrição
-                    </div>
+                    </div><br>
                     
-                    <div class="subtitle is-6">
+                    <div class="subtitle is-5">
                         <?php echo $CourseInfo["PagDesc"]?>
                     </div>
                 </div>
@@ -205,8 +200,12 @@
 					<div class="title is-6">
                         Data de inicio: <?php echo date("d-m-Y", strtotime($CourseInfo['StartDate']));;?>
                     </div>
-                    <button class="button has-text-primary-100" id="sub" onclick="subscribe()" style="width: 100%"></button>
+                    <div class="title is-6">
+                        Data de Fim: <?php echo date("d-m-Y", strtotime($CourseInfo['EndDate']));;?>
+                    </div>                                   
+                    <button class="button is-primary" id="sub" onclick="subscribe()" style="width: 100%"> </button>
                     <button class="button is-link is-outlined" id="fav" onclick="favourite()" style="width: 100%; margin-top: 2%"> </button>
+                       
                 </div>
             </div>
             <?php if($Info["Status"]==1){ ?>

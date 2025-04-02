@@ -10,7 +10,7 @@
     <!-- Importar CSS -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -58,7 +58,7 @@
                 <?php
                     Switch ($_SESSION["Role"]) {
                         case 2:
-                            $Query = "Select * from Course where TeacherID=".$_SESSION["UserID"]." AND Status>=1";
+                            $Query = "Select * from Course where TeacherID=".$_SESSION["UserID"]." AND Status<3";
                         break;
                         case 3:
                             $Query = "Select * from Course";
@@ -73,8 +73,8 @@
                         
                 ?>
                 <!-- Inicio do bloco de curso que se repetirá -->
-                <article class="column is-3-desktop is-4-tablet is-6-mobile">
-                    <div class="card product-card"><a href="curso.php?ID=<? echo $CourseInfo['ID']; ?>">
+                <article class="column is-3-desktop is-4-tablet is-6-mobile <?php echo ($CourseInfo["Status"] > 1) ? 'unavailable-card' : '';?> " onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">
+                    <div class="card product-card ">
                         <div class="card-image">
                             <div class="product-image">
                                 <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>" alt="<?php echo $CourseInfo['Name']; ?>">
@@ -85,17 +85,27 @@
                             <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
                             <p class="content" id="cardText"><?php echo $CourseInfo['CardDesc']; ?></p>
                             <div class="product-actions">
-                                <div class="buttons">
-                                    
+                                <div class="buttons">                                  
                                     <?php if($_SESSION["Role"]>1){
-                                            echo '<a href="editar_curso.php?ID='.$CourseInfo["ID"].'"
-                                                class="button is-info is-outlined is-fullwidth">Editar</a>
-                                                <button class="button is-primary is-fullwidth">Remover</button>';
+                                            Switch ($CourseInfo["Status"]){
+                                                case 1: 
+                                                    echo '<a href="editar_curso.php?ID='.$CourseInfo['ID'].'" class="button is-info is-outlined is-fullwidth">Editar Curso</a>
+                                                    <button class="button is-primary is-fullwidth is-red" onclick="DelCourse("'.$CourseInfo['ID'].'")">Remover</button>';
+                                                    break;
+                                                case 2: 
+                                                    echo '<a class=" is-fullwidth"></a>
+                                                    <button class="button is-primary is-fullwidth ">Em analise</button>';
+                                                    break;
+                                                case 3: 
+                                                    echo '<a class=" is-fullwidth"></a>
+                                                    <button class="button is-primary is-fullwidth ">Desativado</button>';
+                                                    break;                                                                                                                                                       
+                                            }   
                                         }else{
                                             echo '<a href="curso.php?ID='.$CourseInfo["ID"].'"
-                                                class="button is-info is-outlined is-fullwidth">Ver detalhes</a>
-                                                <button class="button is-primary is-fullwidth">Inscrever</button>';
+                                                class="button is-primary is-fullwidth">Ver detalhes</a>';
                                         }
+                                        
                                     ?>
                                 </div>
                             </div>

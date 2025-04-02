@@ -1,5 +1,4 @@
 <?php session_start(); include 'funcoes.php';
-// Verificar se o ID do curso foi fornecido
 if (!isset($_SESSION['UserID'])) {
     echo '<script type="text/javascript">document.location.href="login.php"</script>'; 
 }
@@ -43,8 +42,7 @@ if (!isset($_SESSION['UserID'])) {
 </head>
 
 <body>
-    <?php $UserInfo = getUserInfo();
-    include 'navbar.php'; ?><br>
+    <?php $UserInfo = getUserInfo(); include 'navbar.php'; ?><br>
 
     <div class="columns">
         <!-- Coluna lateral com informações do usuário -->
@@ -95,7 +93,7 @@ if (!isset($_SESSION['UserID'])) {
                 </ul>
                 <p class="menu-label">Administracao</p>
                 <ul class="menu-list">
-                    <li><a>Configurações</li>
+                    <li><a>Configurações</a></li>
                     <!--<li>
                         <a class="is-active">Configuracao</a>
                         <ul>
@@ -119,74 +117,137 @@ if (!isset($_SESSION['UserID'])) {
         
         <!-- Formulário -->
         <div class="container">
-        
-            <div class="box" style="width: 90%;">           
-                <label class="label">Cursos criados: </label>
-                
-                    <?php if ($_SESSION['Role'] == 1) { ?>
-                        <div class="field">
-                            <label class="label">Cursos aos que está inscrito:<br>
-                                <ul><?php
-                                $cursos = getUserSubs();
-                                while ($curso = mysqli_fetch_assoc($cursos)) {
-                                    echo '<li style="list-style: inside">' . $curso["Name"] . '</li>';
-                                }
-                            ?></ul>
-                            </label>
-                        </div>
-
-                        <div class="field">
-                            <label class="label">Cursos marcados como favoritos:<br>
-                                <ul><?php
-                                $cursos = getUserFavs();
-                                while ($curso = mysqli_fetch_assoc($cursos)) {
-                                    echo '<li style="list-style: inside">' . $curso["Name"] . '</li>';
-                                }
-                                ?></ul>
-                            </label>
-                        </div>
-                        
-                        <?php }else if ($_SESSION['Role'] == 2) { ?>
-                            <?php
-                            $cursos = getUserCreated();
-                            while ($curso = mysqli_fetch_assoc($cursos)) { ?>
-                            <div class="columns is-multiline">
-                                <div class="column is-4-desktop is-4-tablet is-6-mobile">
-                                    <?php if($curso["Status"]==2){
-                                        echo '<div class="card product-card small-card unavailable-card" style="max-height: fit-content" href="curso.php?ID='.$curso['ID'].'">';
-                                    }else{
-                                        echo '<div class="card product-card small-card" style="max-height: fit-content" href="curso.php?ID='.$curso['ID'].'">';
-                                    }?>
-                                        <div class="card-image">
-                                            <div class="product-image">
-                                                <img src="<?php echo "img/layout/".$curso['ID'].".jpg"; ?>"
-                                                    alt="<?php echo $curso['Name']; ?>">
-                                            </div>
+            <div class="box" style="width: 90%;">    
+<?php           if ($_SESSION['Role'] == 1) { ?>
+                    <label class="label">Cursos Inscritos:</label>
+                    <div class="columns is-multiline">
+<?php                       $courses = getUserSubs();
+                            while ($CourseInfo = mysqli_fetch_assoc($courses)) {?>
+                                <div class="column is-4-desktop is-4-tablet is-6-mobile" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
+                                <div class="card product-card small-card " style="max-height: fit-content">               
+                                    <div class="card-image">
+                                        <div class="product-image">
+                                            <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>"
+                                                alt="<?php echo $CourseInfo['Name']; ?>">
                                         </div>
-                                        <div class="card-content product-content" style="height: 60%;">
-                                            <p class="subtitle is-6"><?php echo $curso['Category']; ?></p>
-                                            <p class="title is-5"><?php echo $curso['Name']; ?></p>
-                                            
-                                            <div class="product-actions">
-                                                <div class="buttons">
-                                                <?php if($curso["Status"]!=2){?> 
-                                                        <a href="editar_curso.php?ID=<?php echo $curso['ID']; ?>" class="button is-info is-outlined is-fullwidth">Editar Curso</a>
-                                                        <button class="button is-primary is-fullwidth is-red" onclick="DelCourse('<?php echo $curso['ID'] ?>')">Remover</button>
-                                                    <?php } else{?>
-                                                        <button class="button is-primary is-fullwidth is-red">Em analise</button>
-                                                    <?php } ?>
-                                                </div>
+                                    </div>
+                                    <div class="card-content product-content" style="height: 60%;">
+                                        <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
+                                        <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
+                                        
+                                        <div class="product-actions">
+                                            <div class="buttons">                   
+                                                <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>" class="button is-primary is-fullwidth">Ver detalhes</a>
                                             </div>
                                         </div>
                                     </div>
-                                </div> 
-                            </div>                                              
-                    <?php   }   
-                        } ?>
-                </div>
-            </div> 
+                                </div>
+                            </div>             
+<?php                       }?>
+
+                    </div>
+                    <label class="label">Cursos marcados como favoritos:</label>
+                    <div class="columns is-multiline">
+                        
+<?php                       $courses = getUserFavs();
+                            while ($CourseInfo = mysqli_fetch_assoc($courses)) {?>
+                                <div class="column is-4-desktop is-4-tablet is-6-mobile <?php echo ($CourseInfo["Status"] == 2) ? 'unavailable-card' : '';?>" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
+                                <div class="card product-card small-card " style="max-height: fit-content">               
+                                    <div class="card-image">
+                                        <div class="product-image">
+                                            <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>"
+                                                alt="<?php echo $CourseInfo['Name']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="card-content product-content" style="height: 60%;">
+                                        <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
+                                        <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
+                                        
+                                        <div class="product-actions">
+                                            <div class="buttons">
+                                                <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>" class="button is-primary is-fullwidth">Ver detalhes</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>             
+<?php                       }?>
+                        
+                    </div>                     
+<?php           }else if ($_SESSION["Role"] == 2) { ?>
+                    <label class="label">Cursos criados: </label>
+                    <div class="columns is-multiline">
+<?php                   $courses = getUserCreated();
+                        while ($CourseInfo = mysqli_fetch_assoc($courses)) { ?>
+                            <div class="column is-4-desktop is-4-tablet is-6-mobile <?php echo ($CourseInfo["Status"] == 2) ? 'unavailable-card' : '';?>" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
+                                <div class="card product-card small-card " style="max-height: fit-content">               
+                                    <div class="card-image">
+                                        <div class="product-image">
+                                            <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>"
+                                                alt="<?php echo $CourseInfo['Name']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="card-content product-content" style="height: 60%;">
+                                        <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
+                                        <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
+                                        
+                                        <div class="product-actions">
+                                            <div class="buttons">
+                                            <?php if($CourseInfo["Status"]!=2){?> 
+                                                    <a href="editar_curso.php?ID=<?php echo $CourseInfo['ID']; ?>" class="button is-info is-outlined is-fullwidth">Editar Curso</a>
+                                                    <button class="button is-primary is-fullwidth" onclick="DelCourse('<?php echo $CourseInfo['ID'] ?>')">Remover</button>
+                                                <?php } else{?>
+                                                    <button class="button is-primary is-fullwidth ">Em analise</button>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                                                                        
+<?php                   }  ?> 
+                    </div>
+<?php               }else{ ?>
+                        <label class="label">Cursos: </label>
+                        <div class="columns is-multiline">
+<?php                   $courses = getAllCourses();
+                        while ($CourseInfo = mysqli_fetch_assoc($courses)) { ?>
+                            <article class="column is-3-desktop is-4-tablet is-6-mobile">                            
+                                <div class="card product-card small-card <?php echo ($CourseInfo["Status"] > 1) ? 'unavailable-card' : '';?>" style="max-height: fit-content" href="curso.php?ID=<?php echo $CourseInfo['ID']?>">               
+                                    <div class="card-image">
+                                        <div class="product-image">
+                                            <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>"
+                                                alt="<?php echo $CourseInfo['Name']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="card-content product-content" style="height: 60%;">
+                                        <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
+                                        <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
+                                        
+                                        <div class="product-actions">
+                                            <div class="buttons">
+<?php                                           Switch ($CourseInfo["Status"]){
+                                                    case 1: ?>
+                                                        <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>" class="button is-info is-outlined is-fullwidth">Editar Curso</a>
+                                                        <button class="button is-primary is-fullwidth is-red" onclick="DelCourse('<?php echo $CourseInfo['ID'] ?>')">Remover</button>
+<?php                                               break;
+                                                    case 2: ?>
+                                                        <button class="button is-primary is-fullwidth ">Em analise</button>
+<?php                                               break;
+                                                    case 3: ?>
+                                                        <button class="button is-primary is-fullwidth ">Desativado</button>
+<?php                                               break;                                                                                                                                                       
+                                                }  ?>                                                   
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+<?php                   }  ?> 
+                        </div>
+<?php               }?>
+            </div>
         </div>
-    </div>
+    </div> 
     <?php include 'footer.php'; ?>
 </body>
 </html>

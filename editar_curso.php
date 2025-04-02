@@ -85,7 +85,7 @@ $modules = getModulesByCourseId($course_id);
                             <label class="label">Descrição do card</label>
                             <div class="control">
                                 <textarea class="textarea is-primary" id="course-card-description" 
-                                    required><?php echo htmlspecialchars($course['CardDesc']); ?></textarea>
+                                    required><?php echo $course['CardDesc']; ?></textarea>
                                 <p class="help is-danger" id="course-card-description-error"></p>
                             </div>
                         </div>
@@ -94,7 +94,7 @@ $modules = getModulesByCourseId($course_id);
                             <label class="label">Descrição Principal</label>
                             <div class="control">
                                 <textarea class="textarea is-primary" id="course-description" 
-                                    required><?php echo htmlspecialchars($course['PagDesc']); ?></textarea>
+                                    required><?php echo  preg_replace('/<br\s\/>/i', "",$course['PagDesc']); ?></textarea>
                                 <p class="help is-danger" id="course-description-error"></p>
                             </div>
                         </div>
