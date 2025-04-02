@@ -38,16 +38,54 @@ if (!isset($_SESSION['UserID'])) {
                 },"text");	
             }
         }
+        
+        function toggleProfileModal() {
+            document.getElementById('profileModal').classList.toggle('is-active');
+        }
     </script>
+    <style>
+        .profile-card {
+            position: relative;
+        }
+        
+        .profile-pen-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .profile-pen-icon:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: rotate(360deg);
+        }
+
+        .menu-list li a {
+            background-color: transparent;
+        }
+
+        .menu-list li a:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+    </style>
 </head>
 
 <body>
     <?php $UserInfo = getUserInfo(); include 'navbar.php'; ?><br>
 
     <div class="columns">
-        <!-- Coluna lateral com informações do usuário -->
         <div class="column is-3" style="margin-left: 2%;width: 22%;">
-            <div class="card">
+            <div class="card profile-card">
+                <div class="profile-pen-icon" onclick="toggleProfileModal()">
+                    <i class="fa-solid fa-pencil"></i>
+                </div>
+                
                 <div class="card-image">
                     <figure class="ProfileImg">
                         <img src="<?php
@@ -83,36 +121,93 @@ if (!isset($_SESSION['UserID'])) {
                         <button class="button is-red" onclick="logout()">Logout</button>
                     </div>
                 </div>
+                <aside class="menu mt-4 ml-3 mb-2">
+                    <p class="menu-label">General</p>
+                    <ul class="menu-list">
+                        <li><a>Dashboard</a></li>
+                        <li><a>Customers</a></li>
+                    </ul>
+                    <p class="menu-label">Administracao</p>
+                    <ul class="menu-list">
+                        <li><a>Configurações</a></li>
+                        <!--<li>
+                            <a class="is-active">Configuracao</a>
+                            <ul>
+                                <li><a>Config</a></li>
+                                <li><a>Config</a></li>
+                                <li><a>Config</a></li>
+                            </ul>
+                        </li>
+                        <li><a>Invitations</a></li>
+                        <li><a>Cloud Storage Environment Settings</a></li>
+                        <li><a>Authentication</a></li>-->
+                    </ul>
+                </aside>
             </div>
-
-            <aside class="menu mt-4">
-                <p class="menu-label">General</p>
-                <ul class="menu-list">
-                    <li><a>Dashboard</a></li>
-                    <li><a>Customers</a></li>
-                </ul>
-                <p class="menu-label">Administracao</p>
-                <ul class="menu-list">
-                    <li><a>Configurações</a></li>
-                    <!--<li>
-                        <a class="is-active">Configuracao</a>
-                        <ul>
-                            <li><a>Config</a></li>
-                            <li><a>Config</a></li>
-                            <li><a>Config</a></li>
-                        </ul>
-                    </li>
-                    <li><a>Invitations</a></li>
-                    <li><a>Cloud Storage Environment Settings</a></li>
-                    <li><a>Authentication</a></li>-->
-                </ul>
-                <p class="menu-label">Transactions</p>
-                <ul class="menu-list">
-                    <li><a>Config</a></li>
-                    <li><a>Config</a></li>
-                    <li><a>Config</a></li>
-                </ul>
-            </aside>
+        </div>
+        
+        <!-- Modal para editar a conta -->
+        <div id="profileModal" class="modal">
+            <div class="modal-background" onclick="toggleProfileModal()"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Editar Conta:</p>
+                    <button class="delete" aria-label="close" onclick="toggleProfileModal()"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="field">
+                        <label class="label">Alterar foto de perfil</label>
+                        <div class="file has-name is-fullwidth">
+                            <label class="file-label">
+                                <input class="file-input" type="file" name="profile_photo" accept="image/*">
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        Escolher arquivo
+                                    </span>
+                                </span>
+                                <span class="file-name">
+                                    Nenhum arquivo selecionado
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="field">
+                        <label class="label">Nome</label>
+                        <div class="control">
+                            <input class="input" type="text" value="<?php echo $UserInfo['Name']; ?>">
+                        </div>
+                    </div>
+                    
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <div class="control">
+                            <input class="input" type="email" value="<?php echo $UserInfo['Email']; ?>">
+                        </div>
+                    </div>
+                    
+                    <div class="field">
+                        <label class="label">Nova Palavra Passe</label>
+                        <div class="control">
+                            <input class="input" type="password" placeholder="Deixe em branco para manter a palavra passe atual">
+                        </div>
+                    </div>
+                    
+                    <div class="field">
+                        <label class="label">Confirmar Nova Palavra Passe</label>
+                        <div class="control">
+                            <input class="input" type="password" placeholder="Confirme a nova palavra passe">
+                        </div>
+                    </div>
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-primary mr-3">Salvar Alterações</button>
+                    <button class="button" onclick="toggleProfileModal()">Cancelar</button>
+                </footer>
+            </div>
         </div>
         
         <!-- Formulário -->
@@ -249,5 +344,21 @@ if (!isset($_SESSION['UserID'])) {
         </div>
     </div> 
     <?php include 'footer.php'; ?>
+    
+    <script>
+        // Script to update file name when file is selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.querySelector('.file-input');
+            const fileName = document.querySelector('.file-name');
+            
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length > 0) {
+                    fileName.textContent = fileInput.files[0].name;
+                } else {
+                    fileName.textContent = 'Nenhum arquivo selecionado';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

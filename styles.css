@@ -166,7 +166,22 @@ body {
     z-index: 2;
 }
 
-.stats-box {
+.fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+  
+.fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.about-animated-content {
+    transition-delay: 0.2s;
+}
+
+.stats-box {  
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-radius: 12px;
     padding: 2rem;

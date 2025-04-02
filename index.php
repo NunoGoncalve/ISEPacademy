@@ -23,7 +23,7 @@
         <div class="container">
             <div class="about-content">
                 <div class="columns is-vcentered">
-                    <div class="column is-6">
+                    <div class="column is-6 fade-up">
                         <h2 class="title is-2 mb-5">Sobre o ISEP Academy</h2>
                         <p class="subtitle is-5 has-text-grey mb-5">
                         AVISO: As informações contidas são apenas para efeitos académicos!<br><br>O ISEP Academy conta com diversos cursos disponiveis desde cursos básicos a cursos avançados.<br> Este website foi desenvolvido com o objetivo de ajudar jovens estudantes que queiram aprender mais sobre a sua área ou pessoas que queiram aprender novas skills
@@ -32,7 +32,7 @@
                     <div class="column is-6">
                         <div class="columns is-multiline">
                             <div class="column is-6">
-                                <div class="stats-box">
+                                <div class="stats-box" style="box-shadow: 0 4px 8px #718293;">
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-user-graduate fa-2x"></i>
                                     </span>
@@ -41,7 +41,7 @@
                                 </div>
                             </div>
                             <div class="column is-6">
-                                <div class="stats-box">
+                                <div class="stats-box" style="box-shadow: 0 4px 8px #718293;">
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-briefcase fa-2x"></i>
                                     </span>
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
                             <div class="column is-6">
-                                <div class="stats-box">
+                                <div class="stats-box" style="box-shadow: 0 4px 8px #718293;">
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-chalkboard-teacher fa-2x"></i>
                                     </span>
@@ -59,7 +59,7 @@
                                 </div>
                             </div>
                             <div class="column is-6">
-                                <div class="stats-box">
+                                <div class="stats-box" style="box-shadow: 0 4px 8px #718293;">
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-handshake fa-2x"></i>
                                     </span>
@@ -152,4 +152,26 @@
 
     <?php include 'footer.php'; ?>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        function checkVisibility() {
+            const elements = document.querySelectorAll('.fade-up');
+            
+            elements.forEach(element => {
+                const rect = element.getBoundingClientRect();
+                const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+                
+                // Se o elemento estiver visível na viewport
+                if (rect.top <= windowHeight * 0.85) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        setTimeout(checkVisibility, 300);
+
+        window.addEventListener('scroll', checkVisibility);
+    });
+</script>
 </html>
