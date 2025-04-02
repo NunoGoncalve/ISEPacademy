@@ -67,10 +67,13 @@
                                             <select id="course-category" required>
                                                 <option value="">Selecione uma categoria</option>
                                                 <option>Tecnologia</option>
-                                                <option>Negócios</option>
-                                                <option>Design</option>
                                                 <option>Marketing</option>
-                                                <option>Desenvolvimento Pessoal</option>
+                                                <option>Design</option>
+                                                <option>Ciencias</option>
+                                                <option>Informatica</option>
+                                                <option>Mecanica</option>
+                                                <option>Eletricidade</option>
+                                                <option>Desporto</option>
                                             </select>
                                         </div>
                                         <p class="help is-danger" id="course-category-error"></p>
