@@ -11,6 +11,12 @@
         $Query = "Select Name, CardDesc, PagDesc, Price, Category, StartDate, EndDate from Course where ID=".$CourseID;
         $CourseInfo = exeDB($Query);
 
+        $Query="Select ID, Name, Description from Steps where CourseID=".$CourseID;
+        $modulos=exeDBList($Query);
+
+        $Query="Select UserID, Name, Rating, Review, ReviewDate from Interaction inner join User on Interaction.UserID=User.ID where CourseID=".$CourseID." and Status=2";
+        $reviews=exeDBList($Query);
+
         if(empty($CourseInfo)){
             echo '<script type="text/javascript">document.location.href="catalogo.php"</script>';
         }
@@ -27,8 +33,7 @@
             $Info["Status"]=0;
             $Flag=2;
         }
-        $Query="Select ID, Name, Description from Steps where CourseID=".$CourseID;
-        $modulos=exeDBList($Query);
+        
 	
 ?>
 <!DOCTYPE html>
@@ -98,90 +103,48 @@
 
 		function onload(){		
 			
+<?php       if(isset($_SESSION["Role"])){?>           
+                if(<?php echo $_SESSION["Role"]?>==1){
+                    if(<?php echo $Info["Favourite"]?>){
+                        document.getElementById("fav").value=0;
+                        document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-solid fa-heart" id="heart"></i></span>Adicionado!';
+                    }else{
+                        document.getElementById("fav").value=1;
+                        document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
+                    }
+                    switch (<?php echo $Info["Status"]?>){
+                        case 0:
+                            document.getElementById("sub").innerHTML='Inscreve-te!';
+                            document.getElementById("sub").onclick="subscribe()";
+                        break;
+                        case 1:
+                            document.getElementById("sub").innerHTML='Inscrito!';
+                            document.getElementById("sub").onclick='';
+                        break;
+                        case 2: 
+    
+                            document.getElementById("sub").innerHTML='Concluido!';
+                        break;
+                    }
+                    
+                }else{
+                    document.getElementById("sub").innerHTML='Editar curso';
+                    document.getElementById("sub").setAttribute('onclick','document.location="editar_curso.php?ID=<?php echo $CourseID?>"');
+                    document.getElementById("sub").className="button is-info is-outlined";
+                    document.getElementById("fav").innerHTML='Remover curso';
+                    document.getElementById("fav").setAttribute('onclick','delCourse()');
+                    document.getElementById("fav").className="button is-primary";
+                }
 
-            if(<?php echo $Flag;?>==2){
+<?php       }else{ ?>
                 document.getElementById("sub").setAttribute("hidden", "hidden");
                 document.getElementById("fav").setAttribute("hidden", "hidden");
                 document.getElementById("sub").className="";
                 document.getElementById("fav").className="";
-            }else if(<?php echo $_SESSION["Role"]+0?>==1){
-                if(<?php echo $Info["Favourite"]?>){
-				    document.getElementById("fav").value=0;
-				    document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-solid fa-heart" id="heart"></i></span>Adicionado!';
-                }else{
-                    document.getElementById("fav").value=1;
-                    document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
-                }
-                switch (<?php echo $Info["Status"]?>){
-                    case 0:
-                        document.getElementById("sub").innerHTML='Inscreve-te!';
-                        document.getElementById("sub").onclick="subscribe()";
-                    break;
-                    case 1:
-                        document.getElementById("sub").innerHTML='Inscrito!';
-                        document.getElementById("sub").onclick='';
-                    break;
-                    case 2: 
-
-                        document.getElementById("sub").innerHTML='Concluido!';
-                    break;
-                }
-                
-            }else if(<?php echo $_SESSION["Role"]+0?>>1){
-                document.getElementById("sub").innerHTML='Editar curso';
-                document.getElementById("sub").setAttribute('onclick','document.location="editar_curso.php?ID=<?php echo $CourseID?>"');
-                document.getElementById("sub").className="button is-info is-outlined";
-                document.getElementById("fav").innerHTML='Remover curso';
-                document.getElementById("fav").setAttribute('onclick','delCourse()');
-                document.getElementById("fav").className="button is-primary";
-            }
-            
+<?php       }?>
 		}   
     </script>
 </head>
-
-<style>
-    .hero-body{
-		background-image: url('img/cursos/<?php echo $CourseID?>.jpg');
-        background-size: contain;
-    }
-
-    .lista{
-        margin: 2% 5%;
-    }
-
-    .rating {
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: flex-end;
-    }
-    
-    .rating input {
-        display: none;
-    }
-    
-    .rating label {
-        cursor: pointer;
-        font-size: 1.5rem;
-        color: #ddd;
-        margin-right: 5px;
-    }
-    
-    .rating label:hover,
-    .rating label:hover ~ label,
-    .rating input:checked ~ label {
-        color: #ffb400;
-    }
-    
-    .stars-display .fa-star {
-        color: #ddd;
-    }
-    
-    .stars-display .has-text-warning {
-        color: #ffb400 !important;
-    }
-
-</style>
 
 <body onload="onload()">
     <?php include 'navbar.php';?>
@@ -327,68 +290,29 @@
                 
                 <hr>
                 <div class="title is-6">Outros comentários</div>
-                <div class="columns mb-2">
-                    <div class="column is-1">
-                        <figure class="image is-48x48 ml-5">
-                            <img class="is-rounded" src="img/users/default.png" alt="Imagem do utilizador">
-                        </figure>
-                    </div>
-                    <div class="column">
-                        <strong>João Silva</strong>
-                        <div class="stars-display">
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star"></i>
-                            </span>
-                            <span class="is-size-7 has-text-grey ml-2">
-                                02-04-2025
-                            </span>
+<?php           while($review = mysqli_fetch_assoc($reviews)){?>
+                    <div class="columns mb-2">
+                        <div class="column is-1">
+                            <figure class="image is-48x48 ml-5">
+                                <img class="is-rounded" src="img/users/default.png" alt="Imagem do utilizador">
+                            </figure>
                         </div>
-                        <p class="mt-2">Excelente curso! Os conteúdos são muito úteis e bem estruturados. Recomendo para quem quer aprofundar os conhecimentos nesta área. Já estou ansioso para aplicar estas técnicas nos meus projetos profissionais.</p>
-                    </div>
-                </div>
-                <div class="columns mb-2">
-                    <div class="column is-1">
-                        <figure class="image is-48x48 ml-5">
-                            <img class="is-rounded" src="img/users/default.png" alt="Imagem do utilizador">
-                        </figure>
-                    </div>
-                    <div class="column">
-                        <strong>João Silva</strong>
-                        <div class="stars-display">
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star has-text-warning"></i>
-                            </span>
-                            <span class="icon is-small">
-                                <i class="fas fa-star"></i>
-                            </span>
-                            <span class="is-size-7 has-text-grey ml-2">
-                                02-04-2025
-                            </span>
+                        <div class="column">
+                            <strong><?php echo $review["Name"]?></strong>
+                            <div class="stars-display">
+<?php                       for ($i = 0; $i < 5; $i++) { ?>
+                                <span class="icon is-small">
+                                    <i class="fas fa-star <?= $i < $review["Rating"] ? 'has-text-warning' : '' ?>"></i>
+                                </span>
+<?php                       } ?>
+                                <span class="is-size-7 has-text-grey ml-2">
+                                <?php echo date("d-m-Y", strtotime($review["ReviewDate"]))?>
+                                </span>
+                            </div>
+                            <p class="mt-2"><?php echo $review["Review"]?></p>
                         </div>
-                        <p class="mt-2">Excelente curso! Os conteúdos são muito úteis e bem estruturados. Recomendo para quem quer aprofundar os conhecimentos nesta área. Já estou ansioso para aplicar estas técnicas nos meus projetos profissionais.</p>
                     </div>
-                </div>  
+<?php           }?>  
             </div>
         </div>
     </section>

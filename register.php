@@ -176,7 +176,7 @@
             <div class="field">
                 <label class="label" for="password">Password</label>
                 <div class="control has-icons-left has-icons-right">
-                    <input id="password" required class="input"  minlength="10" pattern="^(?=.*[a-zA-Z])(?=.*[\W_]).+$" type="password" placeholder="At least 10 chars, 1 letter & 1 special symbol" >
+                    <input id="password" required class="input"  minlength="10" pattern="^(?=.*[a-zA-Z])(?=.*[\W_]).+$" type="password" placeholder="Pelo menos 10 caracteres, 1 letra e um simbolo" >
 
                     <span class="icon is-small is-right is-clickable" onclick="togglePassword('password', 'toggleIcon')">
                         <i id="toggleIcon" class="fas fa-eye"></i>
