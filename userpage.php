@@ -42,6 +42,11 @@ if (!isset($_SESSION['UserID'])) {
         function toggleProfileModal() {
             document.getElementById('profileModal').classList.toggle('is-active');
         }
+
+        function toggleUserModal(){
+            document.getElementById('usersModal').classList.toggle('is-active');
+        }
+
     </script>
     <style>
         .profile-card {
@@ -130,6 +135,7 @@ if (!isset($_SESSION['UserID'])) {
                     <p class="menu-label">Administracao</p>
                     <ul class="menu-list">
                         <li><a>Configurações</a></li>
+                        <li><a onclick="toggleUserModal()">Utilizadores</a></li>
                         <!--<li>
                             <a class="is-active">Configuracao</a>
                             <ul>
@@ -209,7 +215,56 @@ if (!isset($_SESSION['UserID'])) {
                 </footer>
             </div>
         </div>
-        
+
+        <!-- Modal para Admin vizualizar os utilizadores -->
+        <div id="usersModal" class="modal">
+            <div class="modal-background" onclick="toggleUserModal()"></div>
+            <div class="modal-card" style="width: 80%; max-width: 800px;">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Gestão de Utilizadores</p>
+                    <button class="delete" aria-label="close" onclick="toggleUserModal()"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Tipo</th>
+                                    <th>Data Registo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>1</th>
+                                    <th>João Silva</th>
+                                    <th>joaosilva@gmail.com</th>
+                                    <th>Aluno</th>
+                                    <th>2025-04-02</th>
+                                    <th>
+                                        <div class="buttons">
+                                            <button class="button is-small is-info is-outlined" onclick="">
+                                                <span class="icon">
+                                                    <i class="fas fa-edit"></i>
+                                                </span>
+                                            </button>
+                                            <button class="button is-small is-danger is-outlined" onclick="">
+                                                <span class="icon">
+                                                    <i class="fas fa-trash"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
         <!-- Formulário -->
         <div class="container">
             <div class="box" style="width: 90%;">    
