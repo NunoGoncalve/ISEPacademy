@@ -374,6 +374,7 @@ body {
     background-color: #2e353d !important;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
+    height: 100%;
 }
 
 .custom-footer-bulma .footer-box:hover {
@@ -590,11 +591,6 @@ div::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
-.hero-body{
-    background-image: url('img/cursos/<?php echo $CourseID?>.jpg');
-    background-size: contain;
-}
-
 .lista{
     margin: 2% 5%;
 }
@@ -648,3 +644,7 @@ div::-webkit-scrollbar-thumb {
   .column[style*="display: none"] {
     transition: opacity 0.3s;
   } 
+
+  .spacing{
+    height: 140px;
+  }

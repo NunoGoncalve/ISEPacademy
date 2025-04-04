@@ -220,11 +220,11 @@
             </div>
             <p class="erro" id="FileError"></p>
             <div class="field">
-            <label class="checkbox">
-                <input type="checkbox" id="checkbox" onchange="verification()"/>
-                <span class="checkmark"></span>
-                Pedir cargo de professor
-            </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="checkbox" onchange="verification()"/>
+                    <span class="checkmark"></span>
+                    Pedir cargo de professor
+                </label>
             </div>
             <div class="field" id="verification" hidden="true">
                 <label class="label"> Curriculo</label>

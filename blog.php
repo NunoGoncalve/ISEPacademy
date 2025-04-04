@@ -47,8 +47,8 @@ $posts = getBlog();
                         <figure class="media-left">
                             <p class="image is-64x64">
                             <img src="<?php
-                                if (file_exists("img/users/" . $_SESSION['UserID'] . ".png")) {
-                                    echo "img/users/" . $_SESSION['UserID'] . ".png";
+                                if (file_exists("img/users/" . $post['UserID'] . ".png")) {
+                                    echo "img/users/" . $post['UserID'] . ".png";
                                 } else {
                                     echo "img/users/default.png";
                                 }
@@ -57,7 +57,7 @@ $posts = getBlog();
                         </figure>
                         <div class="media-content blog">
                             <div class="content">
-                                <p>John Smith</p>
+                                <p><?php echo $post["Name"]?></p>
                                 <h3><?php echo $post["Title"]?></h3>
                                 <?php echo $post["Description"]?>
                             
@@ -93,7 +93,7 @@ $posts = getBlog();
                 <div class="buttons">
                     <button class="button is-primary" onclick="newPost()">Save changes</button>
                     <button class="button" onclick="togglePost()">Cancel</button>
-            </div>
+                </div>
             </footer>
         </div>
     </div>
