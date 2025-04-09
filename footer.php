@@ -1,4 +1,4 @@
-<footer class="footer custom-footer-bulma">
+<footer class="footer custom-footer-bulma mt-5">
     <div class="container">
         <!-- Slogan -->
         <div class="has-text-centered mb-6">

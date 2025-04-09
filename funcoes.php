@@ -69,6 +69,27 @@
                 
             break;
 
+            case "updateProfile":
+                if($_POST["Pass"]==""){
+                    $Query = "Update User SET Name='".$_POST["Name"]."',Email='".$_POST["Email"]."' where ID=".$_SESSION["UserID"];
+                }else{
+                    $options = ['cost' => 12];
+                    $Pass = password_hash($_POST["Pass"], PASSWORD_ARGON2ID, $options);
+
+                    $Query = "Update User SET Name='".$_POST["Name"]."',Email='".$_POST["Email"]."',Password='".$Pass."' where ID=".$_SESSION["UserID"];
+                }
+                exeDB($Query);
+                if(isset($_POST["Img"])){
+                    $imgData = $_POST['Img'];
+                    list($type, $data) = explode(';', $imgData);
+                    list(, $data) = explode(',', $data);
+                    $decodedImage = base64_decode($data);
+                    file_put_contents("img/users/".$_SESSION["UserID"].".png", $decodedImage);
+                }
+                echo "ok";
+                
+            break;
+
             case "logout":
                 session_destroy();
                 echo "ok";
@@ -97,7 +118,7 @@
 
             case "newCourse":
                 $NameCourse = $_POST["Name"]; 
-                $DescriptionCourse = $_POST["DescriptionCourse"];
+                $DescriptionCourse = nl2br($_POST["DescriptionCourse"]);
                 $SecondDescription = $_POST["SecondDescription"];
                 $CategoryCourse = $_POST["CategoryCourse"];
                 $StartDate = $_POST["StartDate"];
@@ -291,6 +312,12 @@
         
             break;
 
+            case "newPost":
+                $Query="Insert into Blog (UserID, Title, Description) values (".$_SESSION["UserID"].",'".$_POST["title"]."','".$_POST["desc"]."')";
+                $info = exeDB($Query);
+                echo "ok";
+            break;
+
         }  
     }else if(isset($_GET["Func"])){     
         Switch ($_GET["Func"]){ 
@@ -299,6 +326,8 @@
                 $info = exeDB($Query);
             break;
             case "Upgrade":
+                $file = fopen("curriculos/curriculo".$_GET["ID"].".pdf","w");
+                unlink("test.txt");
                 $Query = "Update User set Role=2 where ID=".$_GET["ID"];
                 exeDB($Query);
             break;
@@ -352,7 +381,7 @@
     }
 
     function getUserSubs(){
-        $Query = "Select C.* from Course C inner join Interaction I on C.ID=I.CourseID where UserID=".$_SESSION["UserID"]." and C.Status=1 and I.Status=1";
+        $Query = "Select C.* from Course C inner join Interaction I on C.ID=I.CourseID where UserID=".$_SESSION["UserID"]." and C.Status=1 and I.Status>=1";
         return exeDBList($Query);
     }
 
@@ -382,6 +411,11 @@
         
     }
 
+    function getBlog() {
+        $Query = "SELECT * FROM Blog";
+        return $result = exeDBList($Query); 
+        
+    }
     function RoleRequest($Email, $ID) {
         //Configuração
         include '../emailconfig.php';
