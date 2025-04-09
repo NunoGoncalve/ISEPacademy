@@ -14,7 +14,7 @@
         $Query="Select ID, Name, Description from Steps where CourseID=".$CourseID;
         $modulos=exeDBList($Query);
 
-        $Query="Select UserID, Name, Rating, Review, ReviewDate from Interaction inner join User on Interaction.UserID=User.ID where CourseID=".$CourseID." and Status=2 and ReviewDate<>'0000-00-00'";
+        $Query="Select UserID, Name, Rating, Review, ReviewDate from Interaction inner join User on Interaction.UserID=User.ID where CourseID=".$CourseID." and ReviewDate<>'0000-00-00'";
         $reviews=exeDBList($Query);
 
         if(empty($CourseInfo)){
@@ -187,6 +187,141 @@
             background-image: url('img/cursos/<?php echo $CourseID?>.jpg');
             background-size: contain;
         }
+
+        .modules-wrapper {
+            --primary-color: #718293;
+            --completed-color: #2ec4b6;
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #e9ecef;
+            --hover-color: #f8f9fa;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    
+        .modules-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+        
+        .modules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .module-card {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            background-color: var(--bg-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .module-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .module-header {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.2s ease;
+        }
+        
+        .module-header:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .module-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 0.75rem;
+        }
+        
+        .module-name {
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--text-color);
+            flex-grow: 1;
+        }
+        
+        .module-toggle {
+            color: #888;
+            transition: transform 0.3s ease;
+        }
+        
+        .module-header.active .module-toggle {
+            transform: rotate(180deg);
+        }
+        
+        .module-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: #fafafa;
+        }
+        
+        .module-header.active + .module-content {
+            padding: 1rem;
+            max-height: 500px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .module-content p {
+            margin: 0 0 1rem;
+            color: #555;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        .module-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .btn-action, .btn-completed {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-action {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-completed {
+            background-color: var(--completed-color);
+            color: white;
+        }
+        
+        .check-icon {
+            stroke: white;
+        }
     </style>
 </head>
 
@@ -275,29 +410,53 @@
                             Boa sorte! Não te esqueças de deixar o teu feedback quando completares o curso<br><br>
                         <!--<a href="cursos/curso<?php echo $CourseID?>.pdf"  class="button is-link is-outlined" target="_blank">Acede ao curso</a>-->
                         </div><br>
-                     <div class="title is-5">
-                         Módulos/Etapas
-                     </div><br>
-                     <?php while ($modulo = mysqli_fetch_assoc($modulos)) : ?>
-                         <details class="module-details">
-                             <summary>
-                                 <h4 class="title is-5 mb-0">
-                                     Módulo <?php echo $modulo['ID']; ?>: 
-                                     <?php echo htmlspecialchars($modulo['Name']); ?>
-                                 </h4>
-                             </summary>
-                             <div class="module-content">
-                                 <p><?php echo $modulo['Description']; ?></p>
-                             </div>
-                             <div class="is-flex is-justify-content-flex-end">
-<?php                           if(in_array($modulo['ID'], $modulosConcluidos)){
-                                    echo '<button class="button is-primary" id="StepBtn'.$modulo['ID'].'">Concluido!</button>';
-                                }else{
-                                    echo '<button class="button is-primary" onclick="save('.$modulo['ID'].')"  id="StepBtn'.$modulo['ID'].'">Marcar como concluido</button>';
-                                }?>
-                            </div>
-                         </details>
-                     <?php endwhile; ?>
+                        <div class="section">
+                        <div class="modules-wrapper">
+    <h3 class="modules-title">Módulos/Etapas</h3>
+    
+    <div class="modules-list">
+        <?php while ($modulo = mysqli_fetch_assoc($modulos)) : ?>
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <div class="module-badge"><?php echo $modulo['ID']; ?></div>
+                    <div class="module-name"><?php echo htmlspecialchars($modulo['Name']); ?></div>
+                    <div class="module-toggle">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="module-content">
+                    <p><?php echo $modulo['Description']; ?></p>
+                    
+                    <div class="module-actions">
+                        <?php if(in_array($modulo['ID'], $modulosConcluidos)): ?>
+                            <button class="btn-completed" id="StepBtn<?php echo $modulo['ID']; ?>">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="check-icon">
+                                    <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Concluído
+                            </button>
+                        <?php else: ?>
+                            <button class="btn-action" onclick="save(<?php echo $modulo['ID']; ?>)" id="StepBtn<?php echo $modulo['ID']; ?>">
+                                Marcar como concluído
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        <?php endwhile; ?>
+    </div>
+</div>
+
+<script>
+    function toggleModule(headerElement) {
+        // Toggle active class for current header
+        headerElement.classList.toggle('active');
+    }
+
+</script>
                  </div>
              </div>
 <?php       } ?>
