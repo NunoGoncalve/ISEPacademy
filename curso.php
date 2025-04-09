@@ -14,7 +14,7 @@
         $Query="Select ID, Name, Description from Steps where CourseID=".$CourseID;
         $modulos=exeDBList($Query);
 
-        $Query="Select UserID, Name, Rating, Review, ReviewDate from Interaction inner join User on Interaction.UserID=User.ID where CourseID=".$CourseID." and Status=2";
+        $Query="Select UserID, Name, Rating, Review, ReviewDate from Interaction inner join User on Interaction.UserID=User.ID where CourseID=".$CourseID." and Status=2 and ReviewDate<>'0000-00-00'";
         $reviews=exeDBList($Query);
 
         if(empty($CourseInfo)){
@@ -23,6 +23,15 @@
         if(isset($_SESSION["UserID"])){
             $Query = "Select Favourite, Status from Interaction where CourseID=".$CourseID." AND UserID=".$_SESSION["UserID"];
             $Info = exeDB($Query);
+            
+            $Query="Select StepID from UserSteps where CourseID=".$CourseID." and Done=1 and UserID=".$_SESSION["UserID"];
+            $temp=exeDBList($Query);
+
+            $modulosConcluidos = [];
+
+            while($row = mysqli_fetch_assoc($temp)) {
+                $modulosConcluidos[] = $row["StepID"];
+            }
             if(empty($Info)){
                 $Info["Favourite"]=0;
                 $Info["Status"]=0;
@@ -32,6 +41,7 @@
             $Info["Favourite"]=0;
             $Info["Status"]=0;
             $Flag=2;
+            $_SESSION["Role"]=0;
         }
         
 	
@@ -88,6 +98,37 @@
             
         }
 
+        function review(){            
+            $.post("funcoes.php",{
+            Func:"review",
+            <?php echo "CourseID:".$CourseID?>,
+            Rating:document.querySelector('[name="rating"]').value,
+            Review:document.getElementById("comment").value
+            },function(data, status){
+                if(data=="ok") { 
+                    alert("Feedback registado");
+                    document.location.reload();
+                }
+            },"text");	          
+        }
+
+        function save(StepID){            
+            $.post("funcoes.php",{
+            Func:"UserStep",
+            <?php echo "CourseID:".$CourseID?>,
+            StepID:StepID
+            },function(data, status){
+                if(data=="ok") { 
+                    document.getElementById("StepBtn"+StepID).innerHTML='Concluido!';
+                    document.getElementById("StepBtn"+StepID).onclick='';
+                }
+                else{
+                    alert("Parabéns acabou o curso! Pode deixar feedback")
+                    document.location.reload();
+                }
+            },"text");	          
+        }
+
         function delCourse(){
             $.post("funcoes.php",{
             Func:"DelCourse",
@@ -101,49 +142,52 @@
             },"text");	
         }
 
-		function onload(){		
-			
-<?php       if(isset($_SESSION["Role"])){?>           
-                if(<?php echo $_SESSION["Role"]?>==1){
-                    if(<?php echo $Info["Favourite"]?>){
-                        document.getElementById("fav").value=0;
-                        document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-solid fa-heart" id="heart"></i></span>Adicionado!';
-                    }else{
-                        document.getElementById("fav").value=1;
-                        document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
-                    }
-                    switch (<?php echo $Info["Status"]?>){
-                        case 0:
-                            document.getElementById("sub").innerHTML='Inscreve-te!';
-                            document.getElementById("sub").onclick="subscribe()";
-                        break;
-                        case 1:
-                            document.getElementById("sub").innerHTML='Inscrito!';
-                            document.getElementById("sub").onclick='';
-                        break;
-                        case 2: 
-    
-                            document.getElementById("sub").innerHTML='Concluido!';
-                        break;
-                    }
-                    
+		function onload(){		          
+            if(<?php echo $_SESSION["Role"]?>==1){
+                if(<?php echo $Info["Favourite"]?>){
+                    document.getElementById("fav").value=0;
+                    document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-solid fa-heart" id="heart"></i></span>Adicionado!';
                 }else{
-                    document.getElementById("sub").innerHTML='Editar curso';
-                    document.getElementById("sub").setAttribute('onclick','document.location="editar_curso.php?ID=<?php echo $CourseID?>"');
-                    document.getElementById("sub").className="button is-info is-outlined";
-                    document.getElementById("fav").innerHTML='Remover curso';
-                    document.getElementById("fav").setAttribute('onclick','delCourse()');
-                    document.getElementById("fav").className="button is-primary";
+                    document.getElementById("fav").value=1;
+                    document.getElementById("fav").innerHTML='<span class="icon" style="margin-right:1%"><i class="far fa-heart" id="heart"></i></span>Adicione aos favoritos';
                 }
-
-<?php       }else{ ?>
+                switch (<?php echo $Info["Status"]?>){
+                    case 0:
+                        document.getElementById("sub").innerHTML='Inscreve-te!';
+                        document.getElementById("sub").setAttribute("onclick", "subscribe()");
+                    break;
+                    case 1:
+                        document.getElementById("sub").innerHTML='Inscrito!';
+                        document.getElementById("sub").onclick='';
+                    break;
+                    case 2:   
+                        document.getElementById("review").className='columns mb-2';
+                        document.getElementById("sub").innerHTML='Concluido!';
+                    break;
+                }
+                
+            }else if(<?php echo $_SESSION["Role"]?>>1){
+                document.getElementById("sub").innerHTML='Editar curso';
+                document.getElementById("sub").setAttribute('onclick','document.location="editar_curso.php?ID=<?php echo $CourseID?>"');
+                document.getElementById("sub").className="button is-info is-outlined";
+                document.getElementById("fav").innerHTML='Remover curso';
+                document.getElementById("fav").setAttribute('onclick','delCourse()');
+                document.getElementById("fav").className="button is-primary";
+            }
+            else{ 
                 document.getElementById("sub").setAttribute("hidden", "hidden");
                 document.getElementById("fav").setAttribute("hidden", "hidden");
                 document.getElementById("sub").className="";
                 document.getElementById("fav").className="";
-<?php       }?>
-		}   
+            }
+        }
     </script>
+    <style>
+        .hero-body{
+            background-image: url('img/cursos/<?php echo $CourseID?>.jpg');
+            background-size: contain;
+        }
+    </style>
 </head>
 
 <body onload="onload()">
@@ -209,28 +253,8 @@
                        
                 </div>
             </div>
-            <div class="boxes columns is-4" style="gap:7rem; margin-top: 2%; padding:2%">
-                 <div class="descricao column box block">
-                     <div class="title is-5">
-                         Módulos/Etapas
-                     </div><br>
-                     <?php while ($modulo = mysqli_fetch_assoc($modulos)) : ?>
-                         <details class="module-details">
-                             <summary>
-                                 <h4 class="title is-5 mb-0">
-                                     Módulo <?php echo htmlspecialchars($modulo['ID']); ?>: 
-                                     <?php echo htmlspecialchars($modulo['Name']); ?>
-                                 </h4>
-                             </summary>
-                             <div class="module-content">
-                                 <p><?php echo $modulo['Description']; ?></p>
-                             </div>
-                         </details>
-                     <?php endwhile; ?>
-                 </div>
-             </div>
-            <?php if($Info["Status"]==1){ ?>
-                <div class="boxes columns is-4" style="margin-top: 2%; padding:2%">
+<?php       if($Info["Status"]>=1 || $_SESSION["Role"]>1){ ?>
+                <!--<div class="boxes columns is-4" style="margin-top: 2%; padding:2%">
                     <div class="descricao column box block">
                         <div class="title is-5">
                         <?php echo $CourseInfo["Name"]?>
@@ -242,13 +266,49 @@
                         </div>
                     </div>
                 </div>
-                <?php } ?>
+                <div class="boxes columns is-4" style="gap:7rem; margin-top: 2%; padding:2%">-->
+                    
+                 <div class="descricao column box block">
+                 <div class="title is-5"> <?php echo $CourseInfo["Name"]?></div>
+                        <div class="subtitle is-6">
+                            Bem vindo ao curso <?php echo $CourseInfo["Name"]?> clica no botão abaixo para teres acesso a toda a informação disponivel.<br>
+                            Boa sorte! Não te esqueças de deixar o teu feedback quando completares o curso<br><br>
+                        <!--<a href="cursos/curso<?php echo $CourseID?>.pdf"  class="button is-link is-outlined" target="_blank">Acede ao curso</a>-->
+                        </div><br>
+                     <div class="title is-5">
+                         Módulos/Etapas
+                     </div><br>
+                     <?php while ($modulo = mysqli_fetch_assoc($modulos)) : ?>
+                         <details class="module-details">
+                             <summary>
+                                 <h4 class="title is-5 mb-0">
+                                     Módulo <?php echo $modulo['ID']; ?>: 
+                                     <?php echo htmlspecialchars($modulo['Name']); ?>
+                                 </h4>
+                             </summary>
+                             <div class="module-content">
+                                 <p><?php echo $modulo['Description']; ?></p>
+                             </div>
+                             <div class="is-flex is-justify-content-flex-end">
+<?php                           if(in_array($modulo['ID'], $modulosConcluidos)){
+                                    echo '<button class="button is-primary" id="StepBtn'.$modulo['ID'].'">Concluido!</button>';
+                                }else{
+                                    echo '<button class="button is-primary" onclick="save('.$modulo['ID'].')"  id="StepBtn'.$modulo['ID'].'">Marcar como concluido</button>';
+                                }?>
+                            </div>
+                         </details>
+                     <?php endwhile; ?>
+                 </div>
+             </div>
+<?php       } ?>
+            
+            
         </div>
     </section>
     <section class="content">
         <div class="container">
             <div class="box" style="margin-top: 2%; padding: 2%">
-                <div class="columns mb-2">
+                <div class="columns mb-2 is-hidden" id="review">
                     <div class="column is-1">
                         <figure class="image is-48x48 ml-5">
                             <img class="is-rounded" src="img/users/default.png" alt="Imagem do utilizador">
@@ -281,7 +341,7 @@
                             
                             <div class="field">
                                 <div class="control">
-                                    <button type="button" class="button is-small is-primary">Enviar Feedback</button>
+                                    <button type="button" class="button is-small is-primary" onclick="review()">Enviar Feedback</button>
                                 </div>
                             </div>
                         </form>

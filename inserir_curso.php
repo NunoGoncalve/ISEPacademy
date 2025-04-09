@@ -27,7 +27,7 @@
                         <div class="columns is-multiline is-mobile">
                             <div class="column is-12">
                                 <div class="field">
-                                    <label class="label">Título do Curso</label>
+                                    <label class="label">Título do Curso*</label>
                                     <div class="control">
                                         <input class="input is-primary" type="text" id="course-title"
                                             placeholder="Digite o título do curso" required>
@@ -38,7 +38,7 @@
                             
                             <div class="column is-12">
                                 <div class="field">
-                                    <label class="label">Descrição do card</label>
+                                    <label class="label">Descrição do card*</label>
                                     <div class="control">
                                         <textarea class="textarea is-primary" id="course-card-description"
                                             placeholder="Descrição detalhada do curso" required></textarea>
@@ -50,7 +50,7 @@
 
                             <div class="column is-12">
                                 <div class="field">
-                                    <label class="label">Descrição Principal</label>
+                                    <label class="label">Descrição Principal*</label>
                                     <div class="control">
                                         <textarea class="textarea is-primary" id="course-description"
                                             placeholder="Descrição detalhada do curso" required></textarea>
@@ -61,7 +61,7 @@
 
                             <div class="column is-6-desktop is-12-mobile">
                                 <div class="field">
-                                    <label class="label">Categoria</label>
+                                    <label class="label">Categoria*</label>
                                     <div class="control">
                                         <div class="select is-primary is-fullwidth">
                                             <select id="course-category" required>
@@ -83,7 +83,7 @@
 
                             <div class="column is-6-desktop is-12-mobile">
                                 <div class="field">
-                                    <label class="label">Imagem do Curso</label>
+                                    <label class="label">Imagem do Curso*</label>
                                     <div id="file-js-example" class="file has-name">
                                             <label class="file-label">
                                                 <input class="file-input" id="course-image" accept="image/jpeg" onchange="file()" type="file" name="curso-imagem" required/>
@@ -104,10 +104,10 @@
                                 <div class="field">
                                     <label class="label">Módulos do Curso</label>
                                     <div id="modulos-container">
-                                        <div class="card module-card" id="modulo-1">
+                                        <div class="card module-card" id="modulo-1" data-module-id=1>
                                             <header class="card-header">
                                                 <p class="card-header-title">
-                                                    Módulo 1
+                                                    Módulo 1*
                                                 </p>
                                                 <button type="button" class="card-header-icon"
                                                     aria-label="remove module" onclick="removerModulo(this)">
@@ -119,14 +119,15 @@
                                             <div class="card-content">
                                                 <div class="module-details">
                                                     <div class="field">
-                                                        <label class="label">Nome do Módulo</label>
+                                                        <label class="label">Nome do Módulo*</label>
                                                         <div class="control">
                                                             <input class="input is-primary module-name" type="text"
                                                                 placeholder="Nome do módulo" required>
+                                                                <input class="module-id" type="text" value="1" hidden>
                                                         </div>
                                                     </div>
                                                     <div class="field">
-                                                        <label class="label">Descrição do Módulo</label>
+                                                        <label class="label">Descrição do Módulo*</label>
                                                         <div class="control">
                                                             <textarea class="textarea module-description"
                                                                 placeholder="Descrição detalhada do módulo"
@@ -148,7 +149,7 @@
 
                             <div class="column is-6-desktop is-12-mobile">
                                 <div class="field">
-                                    <label class="label">Data de Início</label>
+                                    <label class="label">Data de Início*</label>
                                     <div class="control">
                                         <input class="input is-primary" type="date" id="start-date" required>
                                     </div>
@@ -157,7 +158,7 @@
 
                             <div class="column is-6-desktop is-12-mobile">
                                 <div class="field">
-                                    <label class="label">Data de Término</label>
+                                    <label class="label">Data de Término*</label>
                                     <div class="control">
                                         <input class="input is-primary" type="date" id="end-date" required>
                                     </div>
@@ -166,7 +167,7 @@
                             
                             <div class="column is-6-desktop is-12-mobile">
                                 <div class="field">
-                                    <label class="label">Preço</label>
+                                    <label class="label">Preço*</label>
                                     <div class="control">
                                         <input class="input is-primary" type="number" id="price" required>
                                     </div>
@@ -207,7 +208,7 @@
             novoModulo.id = `modulo-${moduloCounter}`;
             novoModulo.innerHTML = `
                 <header class="card-header">
-                    <p class="card-header-title is-size-7">
+                    <p class="card-header-title">
                         Módulo ${moduloCounter}
                     </p>
                     <button type="button" class="card-header-icon" aria-label="remove module" onclick="removerModulo(this)">
@@ -222,6 +223,7 @@
                             <label class="label">Nome do Módulo</label>
                             <div class="control">
                                 <input class="input is-primary module-name" type="text" placeholder="Nome do módulo" required>
+                                <input class="module-id" type="text" value="${moduloCounter}" hidden>
                             </div>
                         </div>
                         <div class="field">
@@ -232,6 +234,7 @@
                         </div>
                     </div>
                 </div>
+                
             `;
             container.appendChild(novoModulo);
         }
@@ -377,10 +380,12 @@
                 // Coletar módulos
                 var modules = [];
                 document.querySelectorAll('.module-card').forEach((modulo, index) => {
+                    var modID = modulo.querySelector('.module-id').value;
                     var modName = modulo.querySelector('.module-name').value;
                     var modDesc = modulo.querySelector('.module-description').value;
 
                     modules.push({
+                        ModuleId: modID,
                         ModuleName: modName,
                         ModuleDescription: modDesc
                     });

@@ -7,6 +7,9 @@ if (!isset($_SESSION['UserID'])) {
 <html data-theme="light" lang="pt">
 
 <head>
+
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ISEP Academy - Conta</title>
@@ -42,6 +45,11 @@ if (!isset($_SESSION['UserID'])) {
         function toggleProfileModal() {
             document.getElementById('profileModal').classList.toggle('is-active');
         }
+
+        function toggleUserModal(){
+            document.getElementById('usersModal').classList.toggle('is-active');
+        }
+
 
         function validatePassword() {
             
@@ -165,26 +173,15 @@ if (!isset($_SESSION['UserID'])) {
                     </div>
                 </div>
                 <aside class="menu mt-4 ml-3 mb-2">
-                    <p class="menu-label">General</p>
-                    <ul class="menu-list">
-                        <li><a>Dashboard</a></li>
-                        <li><a>Customers</a></li>
-                    </ul>
-                    <p class="menu-label">Administracao</p>
-                    <ul class="menu-list">
-                        <li><a>Configurações</a></li>
-                        <!--<li>
-                            <a class="is-active">Configuracao</a>
-                            <ul>
-                                <li><a>Config</a></li>
-                                <li><a>Config</a></li>
-                                <li><a>Config</a></li>
-                            </ul>
-                        </li>
-                        <li><a>Invitations</a></li>
-                        <li><a>Cloud Storage Environment Settings</a></li>
-                        <li><a>Authentication</a></li>-->
-                    </ul>
+                   
+<?php               if($_SESSION["Role"]==3){?>
+                        <p class="menu-label">Administracao</p>
+                        <ul class="menu-list">
+                            <li><a href="inserir_curso.php">Novo curso</a></li>
+                            <li><a onclick="toggleUserModal()">Utilizadores</a></li>
+                        </ul>
+<?php               } ?>
+                    
                 </aside>
             </div>
         </div>
@@ -251,7 +248,59 @@ if (!isset($_SESSION['UserID'])) {
                 </footer>
             </div>
         </div>
-        
+
+        <!-- Modal para Admin vizualizar os utilizadores -->
+        <div id="usersModal" class="modal">
+            <div class="modal-background" onclick="toggleUserModal()"></div>
+            <div class="modal-card" style="width: 80%; max-width: 800px;">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Gestão de Utilizadores</p>
+                    <button class="delete" aria-label="close" onclick="toggleUserModal()"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Tipo</th>
+                                    <th>Data Registo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $users=getUsers();
+                                while ($user = mysqli_fetch_assoc($users)){?>
+                                <tr>
+                                    <th><?php echo $user["ID"];?></th>
+                                    <th><?php echo $user["Name"];?></th>
+                                    <th><?php echo $user["Email"];?></th>
+                                    <th><?php echo $user["Role"];?></th>
+                                    <th><?php echo $user["RegisterDate"];?></th>
+                                    <th>
+                                        <div class="buttons">
+                                            <button class="button is-small is-info is-outlined" onclick="">
+                                                <span class="icon">
+                                                    <i class="fas fa-edit"></i>
+                                                </span>
+                                            </button>
+                                            <button class="button is-small is-danger is-outlined" onclick="">
+                                                <span class="icon">
+                                                    <i class="fas fa-trash"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <?php }?>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
         <!-- Formulário -->
         <div class="container">
             <div class="box" style="width: 90%;">    
@@ -261,14 +310,14 @@ if (!isset($_SESSION['UserID'])) {
 <?php                       $courses = getUserSubs();
                             while ($CourseInfo = mysqli_fetch_assoc($courses)) {?>
                                 <div class="column is-4-desktop is-4-tablet is-6-mobile" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
-                                <div class="card product-card small-card " style="max-height: fit-content">               
+                                <div class="card product-card small-card ">               
                                     <div class="card-image">
                                         <div class="product-image">
                                             <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>"
                                                 alt="<?php echo $CourseInfo['Name']; ?>">
                                         </div>
                                     </div>
-                                    <div class="card-content product-content" style="height: 60%;">
+                                    <div class="card-content product-content" >
                                         <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
                                         <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
                                         
@@ -339,7 +388,7 @@ if (!isset($_SESSION['UserID'])) {
                                             <div class="buttons">
 <?php                                           Switch ($CourseInfo["Status"]){
                                                     case 1: ?>
-                                                        <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>" class="button is-info is-outlined is-fullwidth">Editar Curso</a>
+                                                        <a href="editar_curso.php?ID=<?php echo $CourseInfo['ID']; ?>" class="button is-info is-outlined is-fullwidth">Editar Curso</a>
                                                         <button class="button is-primary is-fullwidth is-red" onclick="DelCourse('<?php echo $CourseInfo['ID'] ?>')">Remover</button>
 <?php                                               break;
                                                     case 2: ?>
@@ -359,7 +408,8 @@ if (!isset($_SESSION['UserID'])) {
 <?php           }?>
             </div>
         </div>
-    </div> 
+    </div>
+    <div class="spacing"></div>
     <?php include 'footer.php'; ?>
 </body>
 </html>

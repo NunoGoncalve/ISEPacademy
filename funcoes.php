@@ -131,7 +131,7 @@
 
                 if ($info["contCourse"] == 0) {
                     // Inserir o curso na base de dados
-                    $Query = "INSERT INTO Course (TeacherID, Name, CardDesc, PagDesc, Category, StartDate, EndDate, Price) 
+                    $Query = "INSERT INTO Course (TeacherID, Name, PagDesc, CardDesc, Category, StartDate, EndDate, Price) 
                             VALUES (9,'$NameCourse', '$DescriptionCourse', '$SecondDescription', '$CategoryCourse', '$StartDate', '$EndDate', '$Price')";
                     exeDB($Query);
 
@@ -144,12 +144,13 @@
                     if (isset($_POST["Modules"])) {
                         $modules = json_decode($_POST["Modules"], true);
                         foreach ($modules as $module) {
+                            $ModuleID =$module["ModuleId"];
                             $ModuleName = $module["ModuleName"];
-                            $ModuleDescription = $module["ModuleDescription"];
+                            $ModuleDescription = nl2br($module["ModuleDescription"]);
                             
                             // Inserir cada módulo associado ao curso
-                            $Query = "INSERT INTO Steps (CourseID, Name, Description) 
-                                    VALUES ('$CourseID', '$ModuleName', '$ModuleDescription')";
+                            $Query = "INSERT INTO Steps (CourseID, ID, Name, Description) 
+                                    VALUES ($CourseID, $ModuleID, '$ModuleName', '$ModuleDescription')";
                             exeDB($Query);
                         }
                     }
@@ -160,11 +161,14 @@
                         list($type, $data) = explode(';', $imgData);
                         list(, $data) = explode(',', $data);
                         $decodedImage = base64_decode($data);
-                        file_put_contents("img/layout/img" . $CourseID . ".jpg", $decodedImage);
+                        file_put_contents("img/layout/" . $CourseID . ".jpg", $decodedImage);
                     }
+
+                    newCourse($NameCourse);
+
                     echo "ok";
                 } else {
-                    echo "ErroName";
+                    echo "Nome já existente";
                 }
             break;
             case "updateCourse":
@@ -204,11 +208,11 @@
                         for($i = 0; $i < sizeof($modules); $i++) {
                             if($i >= $info["contStep"]){
                                 $Query = "INSERT INTO Steps (ID, CourseID, Name, Description) 
-                                        VALUES (".$modules[$i]["ModuleId"].", $CourseID, '".$modules[$i]["ModuleName"]."', '".$modules[$i]["ModuleDescription"]."')";
+                                        VALUES (".$modules[$i]["ModuleId"].", $CourseID, '".$modules[$i]["ModuleName"]."', '".nl2br($modules[$i]["ModuleDescription"])."')";
                                 exeDB($Query);
                             }
                             else{
-                                $Query = "UPDATE Steps SET Name='".$modules[$i]["ModuleName"]."', Description='".$modules[$i]["ModuleDescription"]."' 
+                                $Query = "UPDATE Steps SET Name='".$modules[$i]["ModuleName"]."', Description='".nl2br($modules[$i]["ModuleDescription"])."' 
                                         WHERE CourseID=$CourseID AND ID=".$modules[$i]["ModuleId"];
                                 exeDB($Query);
                             }
@@ -237,11 +241,11 @@
                         }*/
                         
                         // Salva a nova imagem
-                        file_put_contents("img/layout/img" . $CourseID . ".jpg", $decodedImage);
+                        file_put_contents("img/layout/" . $CourseID . ".jpg", $decodedImage);
                     }
                     echo "ok";
                 } else {
-                    echo "ErroMail";
+                    echo "Nome já existente";
                 }
                 
             break;
@@ -318,11 +322,34 @@
                 echo "ok";
             break;
 
+            case"review":
+                $Query="Update Interaction Set Rating=".$_POST["Rating"].", Review='".$_POST["Review"]."', ReviewDate='".date("Y-m-d")."'";
+                $info = exeDB($Query);
+                echo "ok";
+            break;
+
+            case "UserStep":
+                
+                $Query="Insert into UserSteps (UserID, CourseID, StepID, Done) values (".$_SESSION["UserID"].",".$_POST["CourseID"].",".$_POST["StepID"].", 1)";
+                $info = exeDB($Query);
+
+                $Query="Select Count(CourseID) from Steps where CourseID=".$_POST["CourseID"];
+                $info = exeDB($Query);
+                $Query="Select Count(CourseID) from UserSteps where CourseID=".$_POST["CourseID"]." and Done=1 and UserID=".$_SESSION["UserID"];
+                $info2 = exeDB($Query);
+                if($info["Count(CourseID)"]==$info2["Count(CourseID)"]){
+                    $Query="Update Interaction Set Status=2 where CourseID=".$_POST["CourseID"]." and UserID=".$_SESSION["UserID"];
+                    $info = exeDB($Query);
+                    echo "ok";
+                }
+                echo "ok";
+            break;
+
         }  
     }else if(isset($_GET["Func"])){     
         Switch ($_GET["Func"]){ 
             case "DelCourse":
-                $Query="Update Course Set Status=0 Where ID=".$_GET["CourseID"];
+                $Query="Update Course Set Status=3 Where ID=".$_GET["CourseID"];
                 $info = exeDB($Query);
             break;
             case "Upgrade":
@@ -330,6 +357,10 @@
                 unlink("test.txt");
                 $Query = "Update User set Role=2 where ID=".$_GET["ID"];
                 exeDB($Query);
+            break;
+            case "Uprove":
+                $Query="Update Course Set Status=1 Where Name like '".$_GET["Course"]."'";
+                $info = exeDB($Query);
             break;
         }
         ?><!DOCTYPE html>
@@ -411,8 +442,13 @@
         
     }
 
+    function getUsers(){
+        $Query = "SELECT * FROM User";
+        return $result = exeDBList($Query); 
+    }
+
     function getBlog() {
-        $Query = "SELECT * FROM Blog";
+        $Query = "SELECT Blog.*, User.Name FROM Blog inner join User on Blog.UserID=User.ID";
         return $result = exeDBList($Query); 
         
     }
@@ -430,6 +466,27 @@
         <a style="display: inline-block; background-color: #444f5a; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;" 
         href="https://isepacademy.fixstuff.net/Master/funcoes.php?Func=Upgrade&ID='.$ID.'">Aceitar</a>  <a style="display: inline-block; background-color: #444f5a; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;" 
         href="https://isepacademy.fixstuff.net/Master/curriculos/curriculo'.$ID.'.pdf">Abrir curriculo</a></h2>'; 
+        $mail->send();    
+    }
+
+    function newCourse($Course) {
+        //Configuração
+        include '../emailconfig.php';
+                
+        $Query="Select ID from Course where Name like '".$Course."'";
+        $CourseID= exeDB($Query);
+
+        //Composição do email
+        $mail->setFrom('no_reply@IsepAcademy.fixstuff.net');
+        $mail->addAddress('nunotmg@gmail.com');
+                    
+        $mail->isHTML(true);
+        $mail->Subject = "Pedido de criação de curso";
+        $mail->Body  = '<h2> Foi pedida a criação do <b>curso:<br> '.$Course.'</b><br>
+        <a style="display: inline-block; background-color: #444f5a; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;" 
+        href="https://isepacademy.fixstuff.net/Master/funcoes.php?Func=Uprove&Course='.$Course.'">Aceitar</a>
+        <a style="display: inline-block; background-color: #444f5a; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;" 
+        href="https://isepacademy.fixstuff.net/Master/curso.php?ID='.$CourseID["ID"].'">Visualizar</a></h2>'; 
         $mail->send();    
     }
 ?>
