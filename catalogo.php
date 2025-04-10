@@ -15,24 +15,7 @@ include 'funcoes.php'; ?>
 </head>
 <style>
     /* Estilos para o dropdown personalizado */
-.dropdown-checkbox-item {
-  padding: 0.5rem 1rem;
-}
-
-.dropdown-checkbox-item:hover {
-  background-color: #f5f5f5;
-}
-
-/* Certificar que o dropdown fica sobre outros elementos */
-.dropdown.is-active .dropdown-menu {
-  display: block;
-  z-index: 100;
-}
-
-/* Estilo para cards filtrados */
-.column[style*="display: none"] {
-  transition: opacity 0.3s;
-}   
+  
 </style>
 <body>
 

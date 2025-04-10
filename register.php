@@ -176,7 +176,7 @@
             <div class="field">
                 <label class="label" for="password">Password</label>
                 <div class="control has-icons-left has-icons-right">
-                    <input id="password" required class="input"  minlength="10" pattern="^(?=.*[a-zA-Z])(?=.*[\W_]).+$" type="password" placeholder="At least 10 chars, 1 letter & 1 special symbol" >
+                    <input id="password" required class="input"  minlength="10" pattern="^(?=.*[a-zA-Z])(?=.*[\W_]).+$" type="password" placeholder="Pelo menos 10 caracteres, 1 letra e um simbolo" >
 
                     <span class="icon is-small is-right is-clickable" onclick="togglePassword('password', 'toggleIcon')">
                         <i id="toggleIcon" class="fas fa-eye"></i>
@@ -220,11 +220,11 @@
             </div>
             <p class="erro" id="FileError"></p>
             <div class="field">
-            <label class="checkbox">
-                <input type="checkbox" id="checkbox" onchange="verification()"/>
-                <span class="checkmark"></span>
-                Pedir cargo de professor
-            </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="checkbox" onchange="verification()"/>
+                    <span class="checkmark"></span>
+                    Pedir cargo de professor
+                </label>
             </div>
             <div class="field" id="verification" hidden="true">
                 <label class="label"> Curriculo</label>

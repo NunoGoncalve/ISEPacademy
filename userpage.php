@@ -7,6 +7,9 @@ if (!isset($_SESSION['UserID'])) {
 <html data-theme="light" lang="pt">
 
 <head>
+
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ISEP Academy - Conta</title>
@@ -42,38 +45,86 @@ if (!isset($_SESSION['UserID'])) {
         function toggleProfileModal() {
             document.getElementById('profileModal').classList.toggle('is-active');
         }
+
+        function toggleUserModal(){
+            document.getElementById('usersModal').classList.toggle('is-active');
+        }
+
+
+        function validatePassword() {
+            
+            let password = document.getElementById("password");
+            let confirm = document.getElementById("c-password");
+
+            if(password.value != confirm.value && confirm.value!="") {
+                document.getElementById("erro").innerHTML="Passwords não correspondem";
+                document.getElementById("c-password").style="border-color:red";
+            }else{
+                document.getElementById("erro").innerHTML="";
+                document.getElementById("c-password").style="";
+            }
+
+        }
+
+        function save() {
+            const fileInput = document.getElementById("FileInput");
+            let imageBase64 = "";
+
+            function checkAndSend() {
+                sendData(imageBase64);
+            }
+
+            if (fileInput.files.length > 0) {
+                readFile(fileInput, (base64) => {
+                    imageBase64 = base64;
+                    checkAndSend();
+                });
+            } else {
+                checkAndSend();
+            }
+        }
+
+        function readFile(input, callback) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                callback(event.target.result);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        function sendData(imageBase64) {
+            $.post("funcoes.php", {
+                Func: "updateProfile",
+                Name: document.getElementById("name").value,
+                Email: document.getElementById("email").value,
+                Pass: document.getElementById("password").value,
+                Img: imageBase64
+            }, function (data) {
+                if (data === "ok") {
+                    alert("Dados atualizados com sucesso")
+                    document.location.reload();
+                }
+            }, "text");
+        }
+
+        function file(){
+            var fileInput = document.getElementById("FileInput");
+
+            if (fileInput.files.length > 0) {
+                var fileType = fileInput.files[0].type; // Obtém o tipo MIME
+
+                if (fileType !== "image/png") {
+                    document.getElementById("FileError").innerHTML="Apenas .png são aceites";
+                    fileInput.value="";
+                }else{
+                    document.getElementById("FileError").innerHTML="";
+                    document.getElementById("FileName").textContent = document.getElementById("FileInput").files[0].name;
+                }
+            }
+        }
+
     </script>
-    <style>
-        .profile-card {
-            position: relative;
-        }
-        
-        .profile-pen-icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            padding: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-        
-        .profile-pen-icon:hover {
-            background-color: rgba(255, 255, 255, 0.9);
-            transform: rotate(360deg);
-        }
 
-        .menu-list li a {
-            background-color: transparent;
-        }
-
-        .menu-list li a:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-    </style>
 </head>
 
 <body>
@@ -122,26 +173,16 @@ if (!isset($_SESSION['UserID'])) {
                     </div>
                 </div>
                 <aside class="menu mt-4 ml-3 mb-2">
-                    <p class="menu-label">General</p>
-                    <ul class="menu-list">
-                        <li><a>Dashboard</a></li>
-                        <li><a>Customers</a></li>
-                    </ul>
-                    <p class="menu-label">Administracao</p>
-                    <ul class="menu-list">
-                        <li><a>Configurações</a></li>
-                        <!--<li>
-                            <a class="is-active">Configuracao</a>
-                            <ul>
-                                <li><a>Config</a></li>
-                                <li><a>Config</a></li>
-                                <li><a>Config</a></li>
-                            </ul>
-                        </li>
-                        <li><a>Invitations</a></li>
-                        <li><a>Cloud Storage Environment Settings</a></li>
-                        <li><a>Authentication</a></li>-->
-                    </ul>
+                   
+<?php               if($_SESSION["Role"]==3){?>
+                        <p class="menu-label">Administracao</p>
+                        <ul class="menu-list">
+                            <li><a href="inserir_curso.php">Novo curso</a></li>
+                            <li><a onclick="toggleUserModal()">Utilizadores</a></li>
+                            <li><a href="metricas.php">Metricas</a></li>
+                        </ul>
+<?php               } ?>
+                    
                 </aside>
             </div>
         </div>
@@ -159,74 +200,125 @@ if (!isset($_SESSION['UserID'])) {
                         <label class="label">Alterar foto de perfil</label>
                         <div class="file has-name is-fullwidth">
                             <label class="file-label">
-                                <input class="file-input" type="file" name="profile_photo" accept="image/*">
+                                <input class="file-input" type="file" id="FileInput" name="profile_photo" accept="image/png" onchange="file()">
                                 <span class="file-cta">
                                     <span class="file-icon">
                                         <i class="fas fa-upload"></i>
                                     </span>
-                                    <span class="file-label">
-                                        Escolher arquivo
-                                    </span>
+                                    <span class="file-label"> Escolher arquivo </span>
                                 </span>
-                                <span class="file-name">
-                                    Nenhum arquivo selecionado
-                                </span>
+                                <span class="file-name" id="FileName"> Nenhum arquivo selecionado </span>
                             </label>
                         </div>
-                    </div>
-                    
+                        <p class="erro" id="FileError"></p>
+                    </div>  
                     <div class="field">
                         <label class="label">Nome</label>
                         <div class="control">
-                            <input class="input" type="text" value="<?php echo $UserInfo['Name']; ?>">
+                            <input class="input" type="text" id="name" value="<?php echo $UserInfo['Name']; ?>">
                         </div>
                     </div>
                     
                     <div class="field">
                         <label class="label">Email</label>
                         <div class="control">
-                            <input class="input" type="email" value="<?php echo $UserInfo['Email']; ?>">
+                            <input class="input" type="email" id="email" value="<?php echo $UserInfo['Email']; ?>">
                         </div>
                     </div>
                     
                     <div class="field">
                         <label class="label">Nova Palavra Passe</label>
                         <div class="control">
-                            <input class="input" type="password" placeholder="Deixe em branco para manter a palavra passe atual">
+                            <input class="input" type="password" id="password" minlength="10" pattern="^(?=.*[a-zA-Z])(?=.*[\W_]).+$" placeholder="Deixe em branco para manter a palavra passe atual">
+                            <p>Pelo menos 10 caracteres, 1 letra e um simbolo</p>
                         </div>
                     </div>
                     
                     <div class="field">
                         <label class="label">Confirmar Nova Palavra Passe</label>
                         <div class="control">
-                            <input class="input" type="password" placeholder="Confirme a nova palavra passe">
+                            <input class="input" type="password" id="c-password" onchange="validatePassword()" placeholder="Confirme a nova palavra passe">
+                            <p class="erro" id="erro"></p>
                         </div>
+                        
                     </div>
                 </section>
                 <footer class="modal-card-foot">
-                    <button class="button is-primary mr-3">Salvar Alterações</button>
+                    <button class="button is-primary mr-3" onclick="save()">Salvar Alterações</button>
                     <button class="button" onclick="toggleProfileModal()">Cancelar</button>
                 </footer>
             </div>
         </div>
-        
+
+        <!-- Modal para Admin vizualizar os utilizadores -->
+        <div id="usersModal" class="modal">
+            <div class="modal-background" onclick="toggleUserModal()"></div>
+            <div class="modal-card" style="width: 80%; max-width: 800px;">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Gestão de Utilizadores</p>
+                    <button class="delete" aria-label="close" onclick="toggleUserModal()"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Tipo</th>
+                                    <th>Data Registo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $users=getUsers();
+                                while ($user = mysqli_fetch_assoc($users)){?>
+                                <tr>
+                                    <th><?php echo $user["ID"];?></th>
+                                    <th><?php echo $user["Name"];?></th>
+                                    <th><?php echo $user["Email"];?></th>
+                                    <th><?php echo $user["Role"];?></th>
+                                    <th><?php echo $user["RegisterDate"];?></th>
+                                    <th>
+                                        <div class="buttons">
+                                            <button class="button is-small is-info is-outlined" onclick="">
+                                                <span class="icon">
+                                                    <i class="fas fa-edit"></i>
+                                                </span>
+                                            </button>
+                                            <button class="button is-small is-danger is-outlined" onclick="">
+                                                <span class="icon">
+                                                    <i class="fas fa-trash"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <?php }?>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
         <!-- Formulário -->
         <div class="container">
             <div class="box" style="width: 90%;">    
 <?php           if ($_SESSION['Role'] == 1) { ?>
-                    <label class="label">Cursos Inscritos:</label>
+                    <label class="label">Cursos Inscritos/concluidos:</label>
                     <div class="columns is-multiline">
 <?php                       $courses = getUserSubs();
                             while ($CourseInfo = mysqli_fetch_assoc($courses)) {?>
                                 <div class="column is-4-desktop is-4-tablet is-6-mobile" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
-                                <div class="card product-card small-card " style="max-height: fit-content">               
+                                <div class="card product-card small-card ">               
                                     <div class="card-image">
                                         <div class="product-image">
                                             <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>"
                                                 alt="<?php echo $CourseInfo['Name']; ?>">
                                         </div>
                                     </div>
-                                    <div class="card-content product-content" style="height: 60%;">
+                                    <div class="card-content product-content" >
                                         <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
                                         <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
                                         
@@ -246,7 +338,7 @@ if (!isset($_SESSION['UserID'])) {
                         
 <?php                       $courses = getUserFavs();
                             while ($CourseInfo = mysqli_fetch_assoc($courses)) {?>
-                                <div class="column is-4-desktop is-4-tablet is-6-mobile <?php echo ($CourseInfo["Status"] == 2) ? 'unavailable-card' : '';?>" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
+                                <div class="column is-4-desktop is-4-tablet is-6-mobile" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
                                 <div class="card product-card small-card " style="max-height: fit-content">               
                                     <div class="card-image">
                                         <div class="product-image">
@@ -269,45 +361,20 @@ if (!isset($_SESSION['UserID'])) {
 <?php                       }?>
                         
                     </div>                     
-<?php           }else if ($_SESSION["Role"] == 2) { ?>
-                    <label class="label">Cursos criados: </label>
+<?php           }else { 
+                    if($_SESSION['Role']==2){  
+                        echo '<label class="label">Cursos criados: </label>';
+                        $courses = getUserCreated();
+                    }
+                    else{ 
+                        echo '<label class="label">Cursos: </label>'; 
+                        $courses = getAllCourses();
+                    }?>
                     <div class="columns is-multiline">
-<?php                   $courses = getUserCreated();
+<?php                   
                         while ($CourseInfo = mysqli_fetch_assoc($courses)) { ?>
-                            <div class="column is-4-desktop is-4-tablet is-6-mobile <?php echo ($CourseInfo["Status"] == 2) ? 'unavailable-card' : '';?>" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
-                                <div class="card product-card small-card " style="max-height: fit-content">               
-                                    <div class="card-image">
-                                        <div class="product-image">
-                                            <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>"
-                                                alt="<?php echo $CourseInfo['Name']; ?>">
-                                        </div>
-                                    </div>
-                                    <div class="card-content product-content" style="height: 60%;">
-                                        <p class="subtitle is-6"><?php echo $CourseInfo['Category']; ?></p>
-                                        <p class="title is-5"><?php echo $CourseInfo['Name']; ?></p>
-                                        
-                                        <div class="product-actions">
-                                            <div class="buttons">
-                                            <?php if($CourseInfo["Status"]!=2){?> 
-                                                    <a href="editar_curso.php?ID=<?php echo $CourseInfo['ID']; ?>" class="button is-info is-outlined is-fullwidth">Editar Curso</a>
-                                                    <button class="button is-primary is-fullwidth" onclick="DelCourse('<?php echo $CourseInfo['ID'] ?>')">Remover</button>
-                                                <?php } else{?>
-                                                    <button class="button is-primary is-fullwidth ">Em analise</button>
-                                                <?php } ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>                                                                        
-<?php                   }  ?> 
-                    </div>
-<?php               }else{ ?>
-                        <label class="label">Cursos: </label>
-                        <div class="columns is-multiline">
-<?php                   $courses = getAllCourses();
-                        while ($CourseInfo = mysqli_fetch_assoc($courses)) { ?>
-                            <article class="column is-3-desktop is-4-tablet is-6-mobile">                            
-                                <div class="card product-card small-card <?php echo ($CourseInfo["Status"] > 1) ? 'unavailable-card' : '';?>" style="max-height: fit-content" href="curso.php?ID=<?php echo $CourseInfo['ID']?>">               
+                            <article class="column is-3-desktop is-4-tablet is-6-mobile <?php echo ($CourseInfo["Status"] > 1) ? 'unavailable-card' : '';?>" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
+                                <div class="card product-card small-card" style="max-height: fit-content">               
                                     <div class="card-image">
                                         <div class="product-image">
                                             <img src="<?php echo "img/layout/".$CourseInfo['ID'].".jpg"; ?>"
@@ -322,7 +389,7 @@ if (!isset($_SESSION['UserID'])) {
                                             <div class="buttons">
 <?php                                           Switch ($CourseInfo["Status"]){
                                                     case 1: ?>
-                                                        <a href="curso.php?ID=<?php echo $CourseInfo['ID']; ?>" class="button is-info is-outlined is-fullwidth">Editar Curso</a>
+                                                        <a href="editar_curso.php?ID=<?php echo $CourseInfo['ID']; ?>" class="button is-info is-outlined is-fullwidth">Editar Curso</a>
                                                         <button class="button is-primary is-fullwidth is-red" onclick="DelCourse('<?php echo $CourseInfo['ID'] ?>')">Remover</button>
 <?php                                               break;
                                                     case 2: ?>
@@ -336,29 +403,14 @@ if (!isset($_SESSION['UserID'])) {
                                         </div>
                                     </div>
                                 </div>
-                            </article>
+                            </article>                                                                     
 <?php                   }  ?> 
-                        </div>
-<?php               }?>
+                    </div>
+<?php           }?>
             </div>
         </div>
-    </div> 
+    </div>
+    <div class="spacing"></div>
     <?php include 'footer.php'; ?>
-    
-    <script>
-        // Script to update file name when file is selected
-        document.addEventListener('DOMContentLoaded', function() {
-            const fileInput = document.querySelector('.file-input');
-            const fileName = document.querySelector('.file-name');
-            
-            fileInput.addEventListener('change', function() {
-                if (fileInput.files.length > 0) {
-                    fileName.textContent = fileInput.files[0].name;
-                } else {
-                    fileName.textContent = 'Nenhum arquivo selecionado';
-                }
-            });
-        });
-    </script>
 </body>
 </html>

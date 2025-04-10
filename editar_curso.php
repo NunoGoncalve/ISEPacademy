@@ -180,7 +180,7 @@ $modules = getModulesByCourseId($course_id);
                                                 <label class="label">Descrição do Módulo</label>
                                                 <div class="control">
                                                     <textarea class="textarea module-description"
-                                                        required><?php echo $module['Description']; ?></textarea>
+                                                        required><?php echo preg_replace('/<br\s\/>/i', "", $module['Description']); ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
