@@ -192,7 +192,8 @@ if (!isset($_SESSION['UserID'])) {
                         <p class="menu-label">Administracao</p>
                         <ul class="menu-list">
                             <li><a href="inserir_curso.php">Novo curso</a></li>
-<?php                       if($_SESSION["Role"]==3){ ?><li><a onclick="toggleUserModal()">Utilizadores</a></li><?php }?>
+                            <li><a onclick="toggleUserModal()">Utilizadores</a></li>
+                            <li><a href="metricas.php">Metricas</a></li>
                         </ul>
 <?php               } ?>
                     

@@ -202,7 +202,7 @@ body {
     transform: translateY(-5px);
 }
 
-.stats-number {
+.stats-numberr {
     font-size: 2.5rem;
     font-weight: bold;
     color: #363636;
@@ -666,3 +666,66 @@ div::-webkit-scrollbar-thumb {
     width: 100%;
 }
 
+
+
+
+  /*Metricas Style*/
+  .dashboard-section {
+    padding: 2rem 1.5rem;
+  }
+  
+  .stats-card {
+    height: 100%;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+  }
+  
+  .card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+  }
+  
+  .stats-number {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 1rem 0;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    word-break: break-word;
+  }
+  
+  .stats-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .card-users::before { background: linear-gradient(90deg, #718293, #5a6877); }
+  .card-bestseller::before { background: linear-gradient(90deg, #718293, #5a6877); }
+  .card-incomplete::before { background: linear-gradient(90deg, #718293, #5a6877); }
+  .card-least::before { background: linear-gradient(90deg, #718293, #5a6877); }
+  .card-certs::before { background: linear-gradient(90deg, #718293, #5a6877); }
+  .card-courses::before { background: linear-gradient(90deg, #718293, #5a6877); }
