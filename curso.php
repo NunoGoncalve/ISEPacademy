@@ -103,8 +103,15 @@
             StepID:StepID
             },function(data, status){
                 if(data=="ok") { 
-                    document.getElementById("StepBtn"+StepID).innerHTML='Concluido!';
+                    document.getElementById("StepBtn"+StepID).innerHTML=
+                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"'+
+                    'xmlns="http://www.w3.org/2000/svg" class="check-icon">'+
+                    '<path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'+
+                    '</svg>Concluído';
                     document.getElementById("StepBtn"+StepID).onclick='';
+                    document.getElementById("StepBtn"+StepID).className='btn-completed';
+                    document.getElementById("badge"+StepID).className='.module-badge completed';
+
                 }
                 else{
                     alert("Parabéns acabou o curso! O certificado foi enviado para o seu email. Não se esqueça de deixar feedback")
@@ -172,6 +179,20 @@
                 document.getElementById("fav").className="";
             }
         }
+        
+    function toggleModule(headerElement) {
+        // Toggle active class for current header
+        headerElement.classList.toggle('active');
+    }
+
+    function togglePdf(id){
+        document.getElementById('PdfModal').classList.toggle('is-active');
+        if(id>0){
+            document.getElementById('Framepdf').src="cursos/<?php echo $CourseID?>/"+id+".pdf";
+        }
+        
+    }
+
     </script>
     <style>
         .hero-body{
@@ -211,7 +232,6 @@
             overflow: hidden;
             background-color: var(--bg-color);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: box-shadow 0.3s ease;
         }
         
         .module-card:hover {
@@ -244,6 +264,11 @@
             font-size: 0.9rem;
             margin-right: 0.75rem;
         }
+
+        .module-badge.completed {
+            background-color: var(--completed-color);
+            
+        }
         
         .module-name {
             font-weight: 500;
@@ -263,6 +288,8 @@
         
         .module-content {
             padding: 0;
+            padding-left: 1rem;
+            padding-right: 1rem;
             max-height: 0;
             overflow: hidden;
             transition: all 0.3s ease;
@@ -271,7 +298,7 @@
         
         .module-header.active + .module-content {
             padding: 1rem;
-            max-height: 500px;
+            max-height: 90%;
             border-top: 1px solid var(--border-color);
         }
         
@@ -284,7 +311,7 @@
         
         .module-actions {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
         }
         
         .btn-action, .btn-completed {
@@ -380,65 +407,75 @@
                 </div>
             </div>
 <?php       if($Info["Status"]>=1 || $_SESSION["Role"]>1){ ?>             
-                 <div class="descricao column box block">
-                 <div class="title is-5"> <?php echo $CourseInfo["Name"]?></div>
+                <div class="descricao column box block">
+                    <div class="title is-5"> <?php echo $CourseInfo["Name"]?></div>
                         <div class="subtitle is-6">
                             Bem vindo ao curso <?php echo $CourseInfo["Name"]?> abaixo tens acesso a toda a informação disponivel.<br>
                             Não te esqueças de deixar o teu feedback quando completares o curso.<br> Boa sorte!<br>
-                        <!--<a href="cursos/curso<?php echo $CourseID?>.pdf"  class="button is-link is-outlined" target="_blank">Acede ao curso</a>-->
+                            
                         </div><br>
                         <div class="section">
-                        <div class="modules-wrapper">
-    <h3 class="modules-title">Módulos/Etapas</h3>
-    
-    <div class="modules-list">
-        <?php while ($modulo = mysqli_fetch_assoc($modulos)) : ?>
-            <div class="module-card">
-                <div class="module-header" onclick="toggleModule(this)">
-                    <div class="module-badge"><?php echo $modulo['ID']; ?></div>
-                    <div class="module-name"><?php echo htmlspecialchars($modulo['Name']); ?></div>
-                    <div class="module-toggle">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                            <div class="modules-wrapper">
+                            <h3 class="modules-title">Módulos/Etapas</h3>
+                                <div class="modules-list">
+<?php                               while ($modulo = mysqli_fetch_assoc($modulos)) : ?>
+                                        <div class="module-card">
+                                            <div class="module-header" onclick="toggleModule(this)">
+                                                <div class="module-badge <?php if(in_array($modulo['ID'], $modulosConcluidos)){ echo "completed";} ?>" id="badge<?php echo $modulo['ID']; ?>"><?php echo $modulo['ID']; ?></div>
+                                                <div class="module-name"><?php echo htmlspecialchars($modulo['Name']); ?></div>
+                                                <div class="module-toggle">
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="module-content">
+                                                <p><?php echo $modulo['Description']; ?></p>
+                                                
+                                                <div class="module-actions">
+
+                                                    <button onclick="togglePdf(<?php echo $modulo['ID']; ?>)" class="button is-link is-outlined">Abrir ficheiro</button>
+<?php                                               
+                                                    if($_SESSION["Role"]>1):
+
+                                                    elseif(in_array($modulo['ID'], $modulosConcluidos)): ?>
+                                                        <button class="btn-completed" id="StepBtn<?php echo $modulo['ID']; ?>">
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="check-icon">
+                                                                <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                            </svg>
+                                                            Concluído
+                                                        </button>
+                                                    <?php else: ?>
+                                                        <button class="btn-action" onclick="save(<?php echo $modulo['ID']; ?>)" id="StepBtn<?php echo $modulo['ID']; ?>">
+                                                            Marcar como concluído
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        </div>
+    <?php                           endwhile; ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="module-content">
-                    <p><?php echo $modulo['Description']; ?></p>
-                    
-                    <div class="module-actions">
-                        <?php if(in_array($modulo['ID'], $modulosConcluidos)): ?>
-                            <button class="btn-completed" id="StepBtn<?php echo $modulo['ID']; ?>">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="check-icon">
-                                    <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                Concluído
-                            </button>
-                        <?php else: ?>
-                            <button class="btn-action" onclick="save(<?php echo $modulo['ID']; ?>)" id="StepBtn<?php echo $modulo['ID']; ?>">
-                                Marcar como concluído
-                            </button>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-        <?php endwhile; ?>
-    </div>
-</div>
-
-<script>
-    function toggleModule(headerElement) {
-        // Toggle active class for current header
-        headerElement.classList.toggle('active');
-    }
-
-</script>
-                 </div>
-             </div>
 <?php       } ?>        
         </div>
     </section>
+    <div class="modal" id="PdfModal">
+        <div class="modal-background"></div>
+            <div class="modal-card pdf" >
+            <header class="modal-card-head">
+                    <p class="modal-card-title">Módulo</p>
+                    <button class="delete" aria-label="close" onclick="togglePdf()"></button>
+                </header>
+                <section class="modal-card-body">
+                <div class="field pdf">
+                <iframe class="Framepdf" title="Iframe Example" id="Framepdf"></iframe>
+                </div>
+                </section>
+        </div>
+    </div>
     <section class="content">
         <div class="container">
             <div class="box" style="margin-top: 2%; padding: 2%">

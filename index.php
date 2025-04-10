@@ -1,4 +1,23 @@
-<?php session_start(); include 'funcoes.php'; ?>
+<?php session_start(); include 'funcoes.php'; 
+$Query="Select Count(DISTINCT UserID) as c from Interaction where Status=2";
+$temp=exeDB($Query);
+$AlunosFormados=$temp["c"];
+
+$Query="Select Count(ID) as c from User where Role=2";
+$temp=exeDB($Query);
+$professores=$temp["c"];
+
+$Query="Select Count(ID) as c from Course where Status=1";
+$temp=exeDB($Query);
+$cursos=$temp["c"];
+
+$Query="Select Count(DISTINCT CourseID) as c from Interaction where Status=2";
+$temp=exeDB($Query);
+$CursosFinalizados=$temp["c"];
+
+$TaxaFinalizacao=($CursosFinalizados/$cursos)*100;
+
+?>
 <!DOCTYPE html>
 <html data-theme="light" lang="pt">
 <head>
@@ -36,7 +55,7 @@
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-user-graduate fa-2x"></i>
                                     </span>
-                                    <p class="stats-number">0000+</p>
+                                    <p class="stats-numberr"><?php echo $AlunosFormados?></p>
                                     <p class="has-text-grey">Alunos Formados</p>
                                 </div>
                             </div>
@@ -45,8 +64,8 @@
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-briefcase fa-2x"></i>
                                     </span>
-                                    <p class="stats-number">00%</p>
-                                    <p class="has-text-grey">Taxa de Empregabilidade</p>
+                                    <p class="stats-numberr"><?php echo $TaxaFinalizacao?>%</p>
+                                    <p class="has-text-grey">Taxa de finalização</p>
                                 </div>
                             </div>
                             <div class="column is-6">
@@ -54,7 +73,7 @@
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-chalkboard-teacher fa-2x"></i>
                                     </span>
-                                    <p class="stats-number">00+</p>
+                                    <p class="stats-numberr"><?php echo $professores?></p>
                                     <p class="has-text-grey">Instrutores Especialistas</p>
                                 </div>
                             </div>
@@ -63,8 +82,8 @@
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-handshake fa-2x"></i>
                                     </span>
-                                    <p class="stats-number">000+</p>
-                                    <p class="has-text-grey">Cursos Completados</p>
+                                    <p class="stats-numberr"><?php echo $cursos?></p>
+                                    <p class="has-text-grey">Cursos disponiveis</p>
                                 </div>
                             </div>
                         </div>

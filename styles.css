@@ -628,23 +628,41 @@ div::-webkit-scrollbar-thumb {
 
 .dropdown-checkbox-item {
     padding: 0.5rem 1rem;
-  }
+}
   
-  .dropdown-checkbox-item:hover {
+.dropdown-checkbox-item:hover {
     background-color: #f5f5f5;
-  }
-  
-  /* Certificar que o dropdown fica sobre outros elementos */
-  .dropdown.is-active .dropdown-menu {
+}
+
+/* Certificar que o dropdown fica sobre outros elementos */
+.dropdown.is-active .dropdown-menu {
     display: block;
     z-index: 100;
-  }
-  
-  /* Estilo para cards filtrados */
-  .column[style*="display: none"] {
-    transition: opacity 0.3s;
-  } 
+}
 
-  .spacing{
+/* Estilo para cards filtrados */
+.column[style*="display: none"] {
+    transition: opacity 0.3s;
+} 
+
+.spacing{
     height: 140px;
-  }
+}
+
+.modal-card.pdf{
+    width: 70%;
+    height: 90%;
+}
+
+.Framepdf{
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+}
+
+.field.pdf{
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+

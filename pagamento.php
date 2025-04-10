@@ -2,11 +2,17 @@
 session_start(); include 'funcoes.php'; 
 
 
-if(isset($_GET["CourseID"])){
+if(isset($_GET["CourseID"]) && isset($_SESSION["UserID"])){
     $CourseID=$_GET["CourseID"];
     $Course=getCourseById($CourseID);
-    $Flag=1;
-    if(!isset($_SESSION["UserID"])) { $Flag=2; }    
+    $Query = "Select Favourite, Status from Interaction where CourseID=".$CourseID." AND UserID=".$_SESSION["UserID"];
+    $Info = exeDB($Query);
+    if(empty($Info)){
+        $Flag=1;
+    }else{
+        $Flag=0;
+    }
+      
 }
 else{
     echo '<script type="text/javascript">document.location.href="catalogo.php"</script>';
@@ -42,11 +48,6 @@ else{
         } 
     </script>
     <style>
-        /*body {
-            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-            min-height: 100vh;
-            padding: 2rem 1rem;
-        }*/
 
         .payment-box {
             background-color: white;
@@ -65,6 +66,7 @@ else{
         .title {
             font-size: 2.2rem;
             margin-bottom: 2rem;
+            padding-bottom: 5px;
             background: linear-gradient(45deg, #363636, #4a4a4a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -81,8 +83,7 @@ else{
         }
 
         .notification.is-light {
-            background: rgba(250, 250, 250, 0.7);
-            backdrop-filter: blur(10px);
+            background: rgba(240, 240, 240, 0.7);
             border: 1px solid rgba(238, 238, 238, 0.5);
             border-radius: 12px;
             transition: all 0.3s ease;
@@ -90,7 +91,7 @@ else{
 
         .notification.is-light:hover {
             background: rgba(255, 255, 255, 0.9);
-            transform: scale(1.02);
+            transform: scale(1.01);
         }
 
         .price {
@@ -195,7 +196,6 @@ else{
                                 </div>
                             </div>
                         </div>
-
                         <div class="tabs is-toggle is-toggle-rounded is-fullwidth mb-5">
                             <ul>
                                 <li class="is-active" data-target="cartao">
@@ -216,13 +216,12 @@ else{
                                 </li>
                             </ul>
                         </div>
-
-                        <div id="cartao" class="payment-method is-active">
-                            <form>
+                        <form action="javascript:Pay()">
+                            <div id="cartao" class="payment-method is-active">
                                 <div class="field">
                                     <label class="label has-text-grey-dark">Nome no Cartão</label>
                                     <div class="control has-icons-left">
-                                        <input class="input" type="text" placeholder="Como aparece no cartão">
+                                        <input class="input" type="text" placeholder="Como aparece no cartão" required>
                                         <span class="icon is-left">
                                             <i class="fas fa-user"></i>
                                         </span>
@@ -232,7 +231,7 @@ else{
                                 <div class="field">
                                     <label class="label has-text-grey-dark">Número do Cartão</label>
                                     <div class="control has-icons-left">
-                                        <input class="input" type="text" placeholder="0000 0000 0000 0000">
+                                        <input class="input" type="text" placeholder="0000 0000 0000 0000" required pattern="^(?:\d{4} ?){4}$">
                                         <span class="icon is-left">
                                             <i class="fas fa-credit-card"></i>
                                         </span>
@@ -244,7 +243,7 @@ else{
                                         <div class="field">
                                             <label class="label has-text-grey-dark">Validade</label>
                                             <div class="control has-icons-left">
-                                                <input class="input" type="text" placeholder="MM/AA">
+                                                <input class="input" type="text" placeholder="MM/AA" required  pattern="^(0[1-9]|1[0-2])\/\d{2}$">
                                                 <span class="icon is-left">
                                                     <i class="fas fa-calendar"></i>
                                                 </span>
@@ -255,7 +254,7 @@ else{
                                         <div class="field">
                                             <label class="label has-text-grey-dark">CVV</label>
                                             <div class="control has-icons-left">
-                                                <input class="input" type="text" placeholder="123">
+                                                <input class="input" type="text" placeholder="123" required pattern="^\d{3,4}$">
                                                 <span class="icon is-left">
                                                     <i class="fas fa-lock"></i>
                                                 </span>
@@ -263,27 +262,25 @@ else{
                                         </div>
                                     </div>
                                 </div>
-
+                                
                                 <div class="field">
                                     <label class="label has-text-grey-dark">NIF</label>
                                     <div class="control has-icons-left">
-                                        <input class="input" type="text" placeholder="000000000">
+                                        <input class="input" type="text" placeholder="000000000" required pattern="^\d{9}$"> 
                                         <span class="icon is-left">
                                             <i class="fas fa-id-card"></i>
                                         </span>
                                     </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div id="mb" class="payment-method">
+                                </div>                                
+                            </div>
+                            <div id="mb" class="payment-method">
                             <div class="notification is-light">
                                 <h3 class="subtitle is-5 mb-4">Dados para Transferência MB WAY</h3>
                                 
                                 <div class="field">
                                     <label class="label has-text-grey-dark">Telemóvel MB WAY</label>
                                     <div class="control has-icons-left">
-                                        <input class="input" type="tel" placeholder="9XXXXXXXX">
+                                        <input class="input" type="tel" placeholder="9XXXXXXXX" required pattern="^\d{9}$">
                                         <span class="icon is-left">
                                             <i class="fas fa-mobile-alt"></i>
                                         </span>
@@ -293,7 +290,7 @@ else{
                                 <div class="field">
                                     <label class="label has-text-grey-dark">NIF</label>
                                     <div class="control has-icons-left">
-                                        <input class="input" type="text" placeholder="000000000">
+                                        <input class="input" type="text" placeholder="000000000" required pattern="^\d{9}$">
                                         <span class="icon is-left">
                                             <i class="fas fa-id-card"></i>
                                         </span>
@@ -301,18 +298,18 @@ else{
                                 </div>
                             </div>
                         </div>
-
-                        <div class="field mt-6">
-                            <div class="control">
-                                <button class="button is-fullwidth payment-button" id="pay" onclick="Pay()">
-                                    <span class="icon-text">
-                                        <span class="icon"><i class="fas fa-lock"></i></span>
-                                        <span>Pagar Agora</span>
-                                    </span>
-                                </button>
+                            <div class="field mt-6">
+                                <div class="control">
+                                    <button class="button is-fullwidth payment-button" id="pay" type="submit">
+                                        <span class="icon-text">
+                                            <span class="icon"><i class="fas fa-lock"></i></span>
+                                            <span>Pagar Agora</span>
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-
+                            
+                        </form>
                         <p class="has-text-centered has-text-grey mt-4">
                             <span class="icon-text">
                                 <span class="icon"><i class="fas fa-shield-alt"></i></span>
