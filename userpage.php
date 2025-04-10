@@ -179,6 +179,7 @@ if (!isset($_SESSION['UserID'])) {
                         <ul class="menu-list">
                             <li><a href="inserir_curso.php">Novo curso</a></li>
                             <li><a onclick="toggleUserModal()">Utilizadores</a></li>
+                            <li><a href="metricas.php">Metricas</a></li>
                         </ul>
 <?php               } ?>
                     
