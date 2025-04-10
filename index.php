@@ -36,7 +36,7 @@
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-user-graduate fa-2x"></i>
                                     </span>
-                                    <p class="stats-number">0000+</p>
+                                    <p class="stats-numberr">0000+</p>
                                     <p class="has-text-grey">Alunos Formados</p>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-briefcase fa-2x"></i>
                                     </span>
-                                    <p class="stats-number">00%</p>
+                                    <p class="stats-numberr">00%</p>
                                     <p class="has-text-grey">Taxa de Empregabilidade</p>
                                 </div>
                             </div>
@@ -54,7 +54,7 @@
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-chalkboard-teacher fa-2x"></i>
                                     </span>
-                                    <p class="stats-number">00+</p>
+                                    <p class="stats-numberr">00+</p>
                                     <p class="has-text-grey">Instrutores Especialistas</p>
                                 </div>
                             </div>
@@ -63,7 +63,7 @@
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-handshake fa-2x"></i>
                                     </span>
-                                    <p class="stats-number">000+</p>
+                                    <p class="stats-numberr">000+</p>
                                     <p class="has-text-grey">Cursos Completados</p>
                                 </div>
                             </div>

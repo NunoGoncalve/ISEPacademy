@@ -52,13 +52,9 @@ $CursosCompletados=$PessoasComCompletados/$total*100;
 
 <body>
     <?php include 'navbar.php'; ?>
-
-    <section class="hero is-medium">
-        <div class="hero-body">
-            <!-- Conteúdo do hero section -->
-        </div>
-    </section>
-
+    <div class="spacing"></div>
+    <h1 class="title is-1 has-text-centered mb-6">Métricas de Isep Academy</h1>
+    
     <section class="dashboard-section">
         <div class="container">
             <div class="columns is-multiline is-variable is-4">
