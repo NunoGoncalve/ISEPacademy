@@ -40,7 +40,7 @@
         <nav class="navbar p-6">
             <a class="navbar-item is-size-4" href="index.php">Inicio</a>
             <a class="navbar-item is-size-4" href="catalogo.php">Cursos</a>
-            <a class="navbar-item is-size-4" href="#">Blog</a>
+            <a class="navbar-item is-size-4" href="blog.php">Blog</a>
             <a class="navbar-item is-size-4" href="#">Forum</a>
         </nav>
 

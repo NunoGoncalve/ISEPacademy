@@ -230,7 +230,7 @@
                 <label class="label"> Curriculo</label>
                 <div id="file-js-example" class="file has-name" >
                     <label class="file-label">
-                        <input class="file-input" id="Curriculo" accept="application/pdf" onchange="file()" type="file" required/>
+                        <input class="file-input" id="Curriculo" accept="application/pdf" onchange="file()" type="file" required disabled/>
                         <span class="file-cta">
                         <span class="file-icon">
                             <i class="fas fa-upload"></i>

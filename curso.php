@@ -57,22 +57,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
-        function subscribe(){            
-            $.post("funcoes.php",{
-            Func:"subscribe",
-            <?php echo "CourseID:".$CourseID.",
-            Flag:".$Flag?>
-            },function(data, status){
-                if(data=="ok") { 
-                    document.getElementById("sub").innerHTML='Inscrito!';
-                    document.getElementById("sub").onclick='';
-                    alert("Inscrito com sucesso");
-                    document.location="curso.php?ID=<?php echo $CourseID?>";
-                }
-                else{}
-            },"text");	          
-        }
-
         function favourite(){
             fav = document.getElementById("fav");
             $.post("funcoes.php",{
@@ -102,7 +86,7 @@
             $.post("funcoes.php",{
             Func:"review",
             <?php echo "CourseID:".$CourseID?>,
-            Rating:document.querySelector('[name="rating"]').value,
+            Rating:document.querySelector('[name="rating"]:checked').value,
             Review:document.getElementById("comment").value
             },function(data, status){
                 if(data=="ok") { 
@@ -123,7 +107,7 @@
                     document.getElementById("StepBtn"+StepID).onclick='';
                 }
                 else{
-                    alert("Parabéns acabou o curso! Pode deixar feedback")
+                    alert("Parabéns acabou o curso! O certificado foi enviado para o seu email. Não se esqueça de deixar feedback")
                     document.location.reload();
                 }
             },"text");	          
@@ -153,8 +137,15 @@
                 }
                 switch (<?php echo $Info["Status"]?>){
                     case 0:
-                        document.getElementById("sub").innerHTML='Inscreve-te!';
-                        document.getElementById("sub").setAttribute("onclick", "subscribe()");
+<?php                   $startDate = strtotime($CourseInfo["StartDate"]); // Converte a string da data do curso para timestamp
+                        $today = strtotime(date("d-m-Y"));
+                        if($startDate>$today){?>
+                            document.getElementById("sub").innerHTML='Inscreve-te!';
+                            document.getElementById("sub").setAttribute("onclick", "location.href='pagamento.php?CourseID=<?php echo $CourseID?>';");
+<?php                   }else{?>
+                            document.getElementById("sub").innerHTML='Fechado!';
+                            document.getElementById("sub").setAttribute("onclick", "");
+<?php                   }?>
                     break;
                     case 1:
                         document.getElementById("sub").innerHTML='Inscrito!';
@@ -383,31 +374,17 @@
                     <div class="title is-6">
                         Data de Fim: <?php echo date("d-m-Y", strtotime($CourseInfo['EndDate']));;?>
                     </div>                                   
-                    <button class="button is-primary" id="sub" onclick="subscribe()" style="width: 100%"> </button>
+                    <button class="button is-primary" id="sub" onclick="location.href='pagamento.php';"" style="width: 100%"> </button>
                     <button class="button is-link is-outlined" id="fav" onclick="favourite()" style="width: 100%; margin-top: 2%"> </button>
                        
                 </div>
             </div>
-<?php       if($Info["Status"]>=1 || $_SESSION["Role"]>1){ ?>
-                <!--<div class="boxes columns is-4" style="margin-top: 2%; padding:2%">
-                    <div class="descricao column box block">
-                        <div class="title is-5">
-                        <?php echo $CourseInfo["Name"]?>
-                        </div>
-                        <div class="subtitle is-6">
-                            Bem vindo ao curso <?php echo $CourseInfo["Name"]?> clica no botão abaixo para teres acesso a toda a informação disponivel.<br>
-                            Boa sorte! Não te esqueças de deixar o teu feedback quando completares o curso<br><br>
-                        <a href="cursos/curso<?php echo $CourseID?>.pdf"  class="button is-link is-outlined" target="_blank">Acede ao curso</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="boxes columns is-4" style="gap:7rem; margin-top: 2%; padding:2%">-->
-                    
+<?php       if($Info["Status"]>=1 || $_SESSION["Role"]>1){ ?>             
                  <div class="descricao column box block">
                  <div class="title is-5"> <?php echo $CourseInfo["Name"]?></div>
                         <div class="subtitle is-6">
-                            Bem vindo ao curso <?php echo $CourseInfo["Name"]?> clica no botão abaixo para teres acesso a toda a informação disponivel.<br>
-                            Boa sorte! Não te esqueças de deixar o teu feedback quando completares o curso<br><br>
+                            Bem vindo ao curso <?php echo $CourseInfo["Name"]?> abaixo tens acesso a toda a informação disponivel.<br>
+                            Não te esqueças de deixar o teu feedback quando completares o curso.<br> Boa sorte!<br>
                         <!--<a href="cursos/curso<?php echo $CourseID?>.pdf"  class="button is-link is-outlined" target="_blank">Acede ao curso</a>-->
                         </div><br>
                         <div class="section">
@@ -459,9 +436,7 @@
 </script>
                  </div>
              </div>
-<?php       } ?>
-            
-            
+<?php       } ?>        
         </div>
     </section>
     <section class="content">
