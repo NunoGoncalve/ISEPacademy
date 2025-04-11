@@ -1,6 +1,5 @@
-<?php session_start(); include 'funcoes.php';
+<?php session_start(); include 'funcoes.php'; 
 
-$posts = getBlog();
 
 ?>
 
@@ -16,88 +15,117 @@ $posts = getBlog();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="vendor/jquery/jquery.min.js"></script>
-    <script>
-        function togglePost(){
-            document.getElementById('modal').classList.toggle('is-active');
-        }
-        function newPost(){
-            $.post("funcoes.php", {
-                Func: "newPost",
-                title: document.getElementById("title").value,
-                desc: document.getElementById("desc").value
-            }, function (data) {
-                if (data=="ok") {
-                    document.location = "blog.php";
-                }
-            }, "text");
-        }
-    </script>
 </head>
 
 <body>
 
     <?php include 'navbar.php'; ?>
         
-    <!-- Contenido principal -->
-    <article class="section ">
-        <div class="container blog">
-            <div class="scroll">
-<?php           while($post = mysqli_fetch_assoc($posts)){?>
-                    <article class="media">
-                        <figure class="media-left">
-                            <p class="image is-64x64">
-                            <img src="<?php
-                                if (file_exists("img/users/" . $post['UserID'] . ".png")) {
-                                    echo "img/users/" . $post['UserID'] . ".png";
-                                } else {
-                                    echo "img/users/default.png";
-                                }
-                                ?>" alt="Foto de perfil" style="max-height:256px;max-width:256px">
-                            </p>
+    <div class="section">
+        <div class="columns is-centered  is-multiline">
+            <?php $posts = getBlogPosts();
+
+                while ($post = mysqli_fetch_assoc($posts)) {
+
+                
+            ?>
+            <div class="column  is-3" >
+                <a href="post.php?id=<?php echo $post['ID']?>">
+                <div class="card on-hover-up" style="height: 400px;" >
+                    <div class="card-image">
+                        <figure class="image is-4by3">
+                            <img src="img/layout/1.jpg" alt="">
                         </figure>
-                        <div class="media-content blog">
-                            <div class="content">
-                                <p><?php echo $post["Name"]?></p>
-                                <h3><?php echo $post["Title"]?></h3>
-                                <?php echo $post["Description"]?>
-                            
-                            </div>
-                        </div>
-                    </article>
-<?php           } ?>
-            </div><br>
-            
-            <div class="is-flex is-justify-content-flex-end"><button class="button is-primary" onclick="togglePost()">Adicionar post</button></div>
-        </div>
-    </article>
-    <div class="modal" id="modal">
-        <div class="modal-background"></div>
-            <div class="modal-card">
-                <header class="modal-card-head">
-                    <p class="modal-card-title">New post</p>
-                    <button class="delete" aria-label="close" onclick="togglePost()"></button>
-                </header>
-                <section class="modal-card-body">
-                <div class="field">
-                    <label class="label" >Titulo</label>    
-                    <input required class="input" id="title">
-                </div>
-                <div class="field">
-                    <div class="control">
-                        <textarea class="textarea is-primary" id="desc" required></textarea>
-                        <p class="help is-danger" id="course-description-error"></p>
+                    </div>
+
+                    <div class="card-content">
+                        <h2 class="title is-5">
+                        <?php    echo $post["Title"]?>
+                        </h2>
+
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempors</p>
                     </div>
                 </div>
-                </section>
-                <footer class="modal-card-foot">
-                <div class="buttons">
-                    <button class="button is-primary" onclick="newPost()">Save changes</button>
-                    <button class="button" onclick="togglePost()">Cancel</button>
-                </div>
-            </footer>
+                </a>
+            </div>
+
+<?php       }?>
         </div>
-    </div>
-    <?php include 'footer.php';?>
+
+
+    
+        <div class="columns is-centered my-6">
+
+
+
+
+            <div class="column is-9">
+                <nav class="pagination is-right" role="navigation" aria-label="pagination">
+            
+            <?php 
+                $pages = CountPages();
+                    if(isset($_GET['page']) && $_GET['page'] > 1) {
+
+                        ?>
+                        <a href="?page=<?php echo $_GET['page'] - 1 ?>" class="pagination-previous">Previous</a>
+                        <?php 
+                    }    
+                ?>
+                
+                
+                <?php 
+                    if(isset($_GET['page']) && $_GET['page'] < $pages) {
+                        ?>
+                        <a href="?page=<?php echo $_GET['page'] + 1 ?>" class="pagination-next">Next page</a>
+                        <?php 
+                    }    
+                ?>  
+
+
+
+                <ul class="pagination-list">
+                    
+                    
+                    <?php 
+                    if($pages <= 5 ) {
+                        for ($i = 1; $i <= $pages; $i++) {
+                            echo '<li><a href="?page=' . $i . '" class="pagination-link">'. $i .'</a></li>'; 
+                        }
+                    }
+                    else {
+                        echo '<li><a href="?page=1" class="pagination-link" aria-label="Goto page 1">1</a></li>';
+                        echo '<li><span class="pagination-ellipsis">&hellip;</span></li>';
+                        
+                        $middle = intdiv($pages, 2);
+                        
+                        if($pages % 2 == 0) {
+                            
+                            echo '<li><a href="?page=' . $middle . '" class="pagination-link">'. $middle .'</a></li>'; 
+                            echo '<li><a href="?page=' . $middle + 1 . '" class="pagination-link">'. $middle + 1 .'</a></li>'; 
+                        } 
+                        else {
+                            echo '<li><a href="?page=' . $middle . '" class="pagination-link">'. $middle .'</a></li>';
+                            echo '<li><a href="?page=' . $middle - 1 . '" class="pagination-link">'. $middle - 1 .'</a></li>'; 
+                            echo '<li><a href="?page=' . $middle + 1 . '" class="pagination-link">'. $middle + 1 .'</a></li>'; 
+                        }
+
+                        echo '<li><span class="pagination-ellipsis">&hellip;</span></li>';
+                        echo '<li><a href="?page='. $pages .' " class="pagination-link" aria-label="Goto page 86">'. $pages .'</a></li>';
+
+                    }
+                    ?>
+
+                    
+                    
+                    
+                    
+                </ul>
+            </nav>
+                </div>
+        </div>
+        <div class="spacing"></div>            
+        
+    </div> 
 </body>
 
 </html>

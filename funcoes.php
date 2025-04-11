@@ -317,8 +317,22 @@
             break;
 
             case "newPost":
-                $Query="Insert into Blog (UserID, Title, Description) values (".$_SESSION["UserID"].",'".$_POST["title"]."','".$_POST["desc"]."')";
+                include 'conexao.php';
+                $Query="Insert into Blog (UserID, Title, Description, Content, PublishedDate) values (".$_SESSION["UserID"].",'".$_POST["Title"]."','".$_POST["Description"]."','".$_POST["Content"].")";
                 $info = exeDB($Query);
+                
+                mysqli_query($conexao, $Query);
+                $insertedId = mysqli_insert_id($conexao);
+
+                // Verifica se há uma imagem enviada
+                if (isset($_POST["Image"])) {
+                    $imgData = $_POST['Image'];
+                    list($type, $data) = explode(';', $imgData);
+                    list(, $data) = explode(',', $data);
+                    $decodedImage = base64_decode($data);
+                    file_put_contents("img/layout/blog/" . $insertedId . ".jpg", $decodedImage);
+                }
+                
                 echo "ok";
             break;
 
@@ -392,6 +406,8 @@
         }
     }
 
+
+
     function exeDBList($Query)  {
         include 'conexao.php';
         return mysqli_query($conexao, $Query);
@@ -452,6 +468,39 @@
         return $result = exeDBList($Query); 
         
     }
+
+    function getBlogPosts() {
+        
+        $start_from = 0;
+
+        $posts_per_page = 3;
+
+        if(isset($_GET['page'])) {
+
+            $page = $_GET['page'] - 1;
+
+            $start_from = $page * $posts_per_page;
+        }
+
+
+        $Query = "SELECT *  FROM Blog ORDER BY PublishDate LIMIT $start_from, $posts_per_page";
+       
+        $result = exeDBList($Query); 
+        
+        $num_rows = mysqli_num_rows($result);
+
+        $pages = ceil($num_rows / $posts_per_page);
+
+        return $result;
+    }
+
+    function CountPages() {
+        $Query = "SELECT COUNT(Title) FROM Blog";
+        $result = exeDB($Query); 
+        return ceil($result["COUNT(Title)"] / 3);
+    }
+
+
     function RoleRequest($Email, $ID) {
         //Configuração
         include '../emailconfig.php';
