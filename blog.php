@@ -27,25 +27,27 @@
 
                 while ($post = mysqli_fetch_assoc($posts)) {
 
-                
             ?>
-            <div class="column  is-3" >
+            <div class="column is-3" >
                 <a href="post.php?id=<?php echo $post['ID']?>">
-                <div class="card on-hover-up" style="height: 400px;" >
-                    <div class="card-image">
-                        <figure class="image is-4by3">
-                            <img src="img/layout/1.jpg" alt="">
-                        </figure>
-                    </div>
+                    <div class="card on-hover-up" style="height: 100%;" >
+                        <div class="card-image">
+                            <figure class="image is-4by3">
+                                <img src="<?php echo "img/blog/".$post['ID'].".jpg"; ?>" alt="">
+                            </figure>
+                        </div>
 
-                    <div class="card-content">
-                        <h2 class="title is-5">
-                        <?php    echo $post["Title"]?>
-                        </h2>
+                        <div class="card-content">
+                            <h2 class="title is-5">
+                            <?php echo $post["Title"]?>
+                            </h2>
 
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempors</p>
+                            <p><?php echo $post["Description"]?></p>
+                            
+                        </div>
+
+                        
                     </div>
-                </div>
                 </a>
             </div>
 
@@ -55,9 +57,6 @@
 
     
         <div class="columns is-centered my-6">
-
-
-
 
             <div class="column is-9">
                 <nav class="pagination is-right" role="navigation" aria-label="pagination">

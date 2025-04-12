@@ -332,8 +332,8 @@
 
             case "newPost":
                 include 'conexao.php';
-                $Query="Insert into Blog (UserID, Title, Description, Content, PublishedDate) values (".$_SESSION["UserID"].",'".$_POST["Title"]."','".$_POST["Description"]."','".$_POST["Content"].")";
-                $info = exeDB($Query);
+                $Query="Insert into Blog (UserID, Title, Description, Content, PublishDate) values (".$_SESSION["UserID"].",'".$_POST["Title"]."','".$_POST["Description"]."','".$_POST["Content"]."', ' ".date("Y-m-d"). "')";
+
                 
                 mysqli_query($conexao, $Query);
                 $insertedId = mysqli_insert_id($conexao);
@@ -344,7 +344,7 @@
                     list($type, $data) = explode(';', $imgData);
                     list(, $data) = explode(',', $data);
                     $decodedImage = base64_decode($data);
-                    file_put_contents("img/layout/blog/" . $insertedId . ".jpg", $decodedImage);
+                    file_put_contents("img/blog/" . $insertedId . ".jpg", $decodedImage);
                 }
                 
                 echo "ok";

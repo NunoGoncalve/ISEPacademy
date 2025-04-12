@@ -41,6 +41,20 @@ if (!isset($_SESSION['UserID'])) {
                 },"text");	
             }
         }
+
+        function delBlogPost(PostID){ 
+            if (confirm("Tem a certeza que deseja remover o post?")) {
+                $.post("funcoes.php",{
+                Func:"delBlogPost",
+                PostID:PostID
+                },function(data, status){
+                    if(data=="ok") {   
+                        document.location.reload();
+                    }
+                    else{}
+                },"text");	
+            }
+        }
         
         function toggleProfileModal() {
             document.getElementById('profileModal').classList.toggle('is-active');
@@ -48,6 +62,10 @@ if (!isset($_SESSION['UserID'])) {
 
         function toggleUserModal(){
             document.getElementById('usersModal').classList.toggle('is-active');
+        }
+
+        function togglePostsModal(){
+            document.getElementById('postModal').classList.toggle('is-active');
         }
 
 
@@ -192,8 +210,10 @@ if (!isset($_SESSION['UserID'])) {
                         <p class="menu-label">Administracao</p>
                         <ul class="menu-list">
                             <li><a href="inserir_curso.php">Novo curso</a></li>
+                            <li><a href="new-post.php">Novo Blog-Post</a></li>
+                            <li><a onclick="togglePostsModal()">Gerir Posts</a></li>
                             <li><a onclick="toggleUserModal()">Utilizadores</a></li>
-                            <li><a href="metricas.php">Metricas</a></li>
+                            
                         </ul>
 <?php               } ?>
                     
@@ -296,8 +316,59 @@ if (!isset($_SESSION['UserID'])) {
                                     <th><?php echo $user["RegisterDate"];?></th>
                                     <th>
                                         <div class="buttons">
-                                         
-                                            <button class="button is-small is-danger is-outlined is-fullwidth" onclick="DelUser(<?php echo $user["ID"];?>)">
+                                            <button class="button is-small is-info is-outlined" onclick="">
+                                                <span class="icon">
+                                                    <i class="fas fa-edit"></i>
+                                                </span>
+                                            </button>
+                                            <button class="button is-small is-danger is-outlined" onclick="">
+                                                <span class="icon">
+                                                    <i class="fas fa-trash"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <?php }?>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Modal para Admin vizualizar os Blog-Posts -->
+        <div id="postModal" class="modal">
+            <div class="modal-background" onclick="togglePostsModal()"></div>
+            <div class="modal-card" style="width: 80%; max-width: 800px;">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Gestão de Utilizadores</p>
+                    <button class="delete" aria-label="close" onclick="togglePostsModal()"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-striped">
+                            <thead>
+                                <tr>
+                                    <th>Post ID</th>
+                                    <th>Publicado por</th>
+                                    <th>Título</th>
+                                    <th>Descrição</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $posts=getBlogPosts();
+                                while ($post = mysqli_fetch_assoc($posts)){
+                                    $user = getUserPost($post["UserID"]);?>
+                                <tr>
+                                    <th><?php echo $post["ID"];?></th>
+                                    <th><?php echo $post["Title"];?></th>
+                                    <th><?php echo $post["PublishDate"];?></th>
+                                    <th><?php echo $user;?></th>
+                                    <th>
+                                        <div class="buttons">
+                                            <button class="button is-small is-danger is-outlined is-fullwidth" onclick="delBlogPost(<?php echo $post['ID']; ?>)">
                                                 <span class="icon">
                                                     <i class="fas fa-trash"></i>
                                                 </span>

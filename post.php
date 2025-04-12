@@ -21,10 +21,10 @@
 
         if(isset($_GET["id"])) {
             $postId = $_GET["id"];
-            $Query = "SELECT * FROM Blog WHERE ID = $postId";
+            $Query = "SELECT * FROM Blog WHERE ID=".$postId;
             $post = exeDB($Query);
             $content = json_decode($post['Content'], true);
-        }
+        }   
     ?>
 
     <div class="section">
@@ -33,7 +33,7 @@
                 <div class="card">
                     <div class="card-image">
                         <figure class="image">
-                            <img src="img/layout/blog/<?php echo $postId . '.jpg'  ?>" alt=""  style="height: 350px;">
+                            <img src="img/blog/<?php echo $postId . '.jpg'  ?>" alt=""  style="height: 350px;">
                         </figure>
                     </div>
                     <div class="card-content">
@@ -77,7 +77,7 @@
                         <a class="media" href="?id=<?php echo $post["ID"]?>">
                             <div class="media-left">
                                 <figure class="image is-64x64">
-                                    <img src="img/layout/1.jpg" alt="" style="height: 100%;">
+                                    <img src="img/blog/<?php echo $post['ID'] . '.jpg'  ?>" alt="" style="height: 100%;">
                                 </figure>
                             </div>
         

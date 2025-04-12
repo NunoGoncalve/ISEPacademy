@@ -32,8 +32,10 @@ $TaxaFinalizacao=($CursosFinalizados/$cursos)*100;
 <body>
     <?php include 'navbar.php'; ?>
 
-    <section class="hero is-medium">
-        <div class="hero-body">
+    <section class="hero is-medium" style="height: 400px;">
+        <div class="hero-body" 
+            style=" background-image: url('img/layout/hero-image.jpg'); background-size:cover; background-position: center;
+                    background-repeat: no-repeat;" >
             <!-- Conteúdo do hero section -->
         </div>
     </section>

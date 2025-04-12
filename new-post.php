@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php session_start(); 
+    if (!isset($_SESSION['UserID'])) {
+        echo '<script type="text/javascript">document.location.href="login.php"</script>'; 
+    }
+?>
 
 
 <!DOCTYPE html>
@@ -26,7 +30,7 @@
             </div>
 
             <div class="card-content">
-                    <form id="new-post-form" action="" method="POST" >
+                    <form id="new-post-form" action="javascript:save()">
                         <div class="columns is-multiline is-mobile">
                                 <div id="fields" class="column is-12">
                                     <div class="field">
@@ -52,7 +56,7 @@
                                         <label class="label">Image</label>
                                             <div class="file has-name">
                                                 <label class="file-label">
-                                                    <input id="FileInput" class="file-input" accept="image/jpeg" type="file" name="resume" onchange="file()"/>
+                                                    <input id="FileInput" class="file-input" accept="image/jpeg" type="file" name="resume" onchange="file()" required/>
                                                     <span class="file-cta">
                                                     <span class="file-icon">
                                                         <i class="fas fa-upload"></i>
@@ -104,15 +108,17 @@
 
 
 
-                                    <div class="column">
+                                    <div class="field" style="display: flex; justify-content: space-between;">
+                                        <div class="field">
                                             <div class="control">
                                                 <button type="button" onclick="addPostBlock()" class="button is-primary">Novo Bloco</button>
                                             </div>
-                                    </div>
+                                        </div>
 
-                                    <div class="field">
-                                        <div class="control">
-                                            <button onclick="save()" class="button is-primary">Submeter</button>
+                                        <div class="field">
+                                            <div class="control">
+                                                <button type="sumbmit" class="button is-primary">Submeter</button>
+                                            </div>
                                         </div>
                                     </div>
                                     
@@ -129,7 +135,6 @@
     <script>
         
         function save() {
-            alert("a");
             const fileInput = document.getElementById("FileInput");
             let imageBase64 = "";
             
