@@ -11,11 +11,11 @@ $Query="Select Count(ID) as c from Course where Status=1";
 $temp=exeDB($Query);
 $cursos=$temp["c"];
 
-$Query="Select Count(DISTINCT CourseID) as c from Interaction where Status=2";
+$Query="Select Count(StepID) as c from UserSteps where Done=1";
 $temp=exeDB($Query);
-$CursosFinalizados=$temp["c"];
+$modulosConcluidos=$temp["c"];
 
-$TaxaFinalizacao=($CursosFinalizados/$cursos)*100;
+
 
 ?>
 <!DOCTYPE html>
@@ -26,7 +26,7 @@ $TaxaFinalizacao=($CursosFinalizados/$cursos)*100;
     <title>ISEP Academy</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
@@ -66,8 +66,8 @@ $TaxaFinalizacao=($CursosFinalizados/$cursos)*100;
                                     <span class="icon is-large has-text-grey-dark mb-4">
                                         <i class="fas fa-briefcase fa-2x"></i>
                                     </span>
-                                    <p class="stats-numberr"><?php echo $TaxaFinalizacao?>%</p>
-                                    <p class="has-text-grey">Taxa de finalização</p>
+                                    <p class="stats-numberr"><?php echo $modulosConcluidos?></p>
+                                    <p class="has-text-grey">Módulos concluidos</p>
                                 </div>
                             </div>
                             <div class="column is-6">

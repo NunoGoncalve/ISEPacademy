@@ -315,7 +315,7 @@
                 
                 //Composição do email
                 $mail->setFrom('no_reply@IsepAcademy.fixstuff.net');
-                $mail->addAddress('nunotmg@gmail.com');
+                $mail->addAddress('isepacademy@gmail.com');
                             
                 $mail->isHTML(true);
                 $mail->Subject = "Pedido de eliminação";
@@ -378,6 +378,26 @@
                 $Query="Update User Set Role=0 where ID=".$_POST["UserID"];
                 exeDB($Query);
                 echo "ok";
+            break;
+
+            case "Stats":
+                $Query="Select ID From Course where Name like '".$_POST["Name"]."'";
+                $temp = exeDB($Query);
+                $CourseID=$temp["ID"];
+
+                $Query="Select Count(UserID) From Interaction where CourseID=".$CourseID." and Status=1";
+                $temp = exeDB($Query);
+                $Inscritos=$temp["Count(UserID)"];
+
+                $Query="Select Count(UserID) From Interaction where CourseID=".$CourseID." and Status=2";
+                $temp = exeDB($Query);
+                $Concluidos=$temp["Count(UserID)"];
+
+                $Query="Select Count(UserID) From Interaction where CourseID=".$CourseID." and Status>0";
+                $temp = exeDB($Query);
+                $Todos=$temp["Count(UserID)"];
+
+                echo $Inscritos."|".$Concluidos."|".number_format(($Concluidos/$Todos)*100,0);
             break;
 
         }  
@@ -525,7 +545,7 @@
                 
         //Composição do email
         $mail->setFrom('no_reply@IsepAcademy.fixstuff.net');
-        $mail->addAddress('nunotmg@gmail.com');
+        $mail->addAddress('isepacademy@gmail.com');
                     
         $mail->isHTML(true);
         $mail->Subject = "Pedido de cargo";
@@ -545,7 +565,7 @@
 
         //Composição do email
         $mail->setFrom('no_reply@IsepAcademy.fixstuff.net');
-        $mail->addAddress('nunotmg@gmail.com');
+        $mail->addAddress('isepacademy@gmail.com');
                     
         $mail->isHTML(true);
         $mail->Subject = "Pedido de criação de curso";
@@ -566,20 +586,21 @@
         $Course = $temp["Name"];
         $Category= $temp["Category"];
 
-        $Query="Select Name from User where ID=".$_SESSION["UserID"];
+        $Query="Select Name, Email from User where ID=".$_SESSION["UserID"];
         $temp= exeDB($Query);
         $User=$temp["Name"];
+        $Email=$temp["Email"];
 
         //Composição do email
         $mail->setFrom('no_reply@IsepAcademy.fixstuff.net');
-        $mail->addAddress('nunotmg@gmail.com');
+        $mail->addAddress($Email);
                     
         $mail->isHTML(true);
         $mail->Subject = "Certificado";
         $mail->Body  = '<h2> Foi emitido o certificado de do <b>curso: '.$Course.'</b><br>
         Clique para transferir o certificado
         <a style="display: inline-block; background-color: #444f5a; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;" 
-        href="https://isepacademy.fixstuff.net/Nuno/certificado.php?Course='.$Course.'&User='.$User.'&Cat='.$Category.'">Download</a></h2>'; 
+        href="https://isepacademy.fixstuff.net/Master/certificado.php?Course='.$Course.'&User='.$User.'&Cat='.$Category.'">Download</a></h2>'; 
         $mail->send(); 
     }
 ?>

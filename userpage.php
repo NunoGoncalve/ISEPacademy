@@ -16,7 +16,7 @@ if (!isset($_SESSION['UserID'])) {
 
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="vendor/jquery/jquery.min.js"></script>
     <script>
         function logout() {
@@ -213,7 +213,7 @@ if (!isset($_SESSION['UserID'])) {
                             <li><a href="new-post.php">Novo Blog-Post</a></li>
                             <li><a onclick="togglePostsModal()">Gerir Posts</a></li>
                             <li><a onclick="toggleUserModal()">Utilizadores</a></li>
-                            
+                            <li><a href="metricas.php">Metricas</a></li>
                         </ul>
 <?php               } ?>
                     

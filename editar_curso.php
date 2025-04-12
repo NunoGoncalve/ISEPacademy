@@ -38,7 +38,7 @@ $modules = getModulesByCourseId($course_id);
     <title>ISEP Academy - Editar Curso</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function image(){
@@ -320,7 +320,7 @@ $modules = getModulesByCourseId($course_id);
                         <label class="label">ficheiro do módulo</label>
                         <div id="file-js-example" class="file has-name">
                                 <label class="file-label">
-                                    <input class="file-input module-file" accept="application/pdf" onchange="file(this,${moduloCounter})" type="file" name="ModFile${moduloCounter}" required/>
+                                    <input class="file-input module-file" accept="application/pdf" onchange="file(this,${moduloCounter})" type="file" name="ModFile${moduloCounter}"/>
                                     <span class="file-cta">
                                     <span class="file-icon">
                                         <i class="fas fa-upload"></i>

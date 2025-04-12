@@ -110,7 +110,7 @@
                     '</svg>Concluído';
                     document.getElementById("StepBtn"+StepID).onclick='';
                     document.getElementById("StepBtn"+StepID).className='btn-completed';
-                    document.getElementById("badge"+StepID).className='.module-badge completed';
+                    document.getElementById("badge"+StepID).className='module-badge completed';
 
                 }
                 else{
@@ -189,6 +189,7 @@
         document.getElementById('PdfModal').classList.toggle('is-active');
         if(id>0){
             document.getElementById('Framepdf').src="cursos/<?php echo $CourseID?>/"+id+".pdf";
+            document.getElementById('Mod').innerHTML="Módulo "+id;
         }
         
     }
@@ -196,7 +197,7 @@
     </script>
     <style>
         .hero-body{
-            background-image: url('img/cursos/<?php echo $CourseID?>.jpg');
+            background-image: url('img/layout/<?php echo $CourseID?>.jpg');
             background-size: contain;
         }
 
@@ -408,13 +409,13 @@
             </div>
 <?php       if($Info["Status"]>=1 || $_SESSION["Role"]>1){ ?>             
                 <div class="descricao column box block">
-                    <div class="title is-5"> <?php echo $CourseInfo["Name"]?></div>
-                        <div class="subtitle is-6">
+                    <div class="title is-5 p-2"> <?php echo $CourseInfo["Name"]?></div>
+                        <div class="subtitle is-5 p-2">
                             Bem vindo ao curso <?php echo $CourseInfo["Name"]?> abaixo tens acesso a toda a informação disponivel.<br>
                             Não te esqueças de deixar o teu feedback quando completares o curso.<br> Boa sorte!<br>
                             
                         </div><br>
-                        <div class="section">
+                        <div class="section" style="padding-top: 0">
                             <div class="modules-wrapper">
                             <h3 class="modules-title">Módulos/Etapas</h3>
                                 <div class="modules-list">
@@ -466,10 +467,10 @@
         <div class="modal-background"></div>
             <div class="modal-card pdf" >
             <header class="modal-card-head">
-                    <p class="modal-card-title">Módulo</p>
+                    <p class="modal-card-title" id="Mod">Módulo</p>
                     <button class="delete" aria-label="close" onclick="togglePdf()"></button>
                 </header>
-                <section class="modal-card-body">
+                <section class="modal-card-body" style="padding:0">
                 <div class="field pdf">
                 <iframe class="Framepdf" title="Iframe Example" id="Framepdf"></iframe>
                 </div>
