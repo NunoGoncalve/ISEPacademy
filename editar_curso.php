@@ -41,21 +41,37 @@ $modules = getModulesByCourseId($course_id);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function file(){
-        var fileInput = document.getElementById("course-image");
+        function image(){
+            var imageInput = document.getElementById("course-image");
 
-        if (fileInput.files.length > 0) {
-            var fileType = fileInput.files[0].type; // Obtém o tipo MIME
+            if (imageInput.files.length > 0) {
+                var fileType = imageInput.files[0].type; // Obtém o tipo MIME
 
-            if (fileType !== "image/jpeg") {
-                document.getElementById("FileError").innerHTML="Apenas .jpg são aceites";
-                fileInput.value="";
-            }else{
-                document.getElementById("FileError").innerHTML="";
-                document.getElementById("FileName").textContent = document.getElementById("course-image").files[0].name;
+                if (fileType !== "image/jpeg") {
+                    document.getElementById("course-image-error").innerHTML="Apenas .jpg são aceites";
+                    imageInput.value="";
+                }else{
+                    document.getElementById("course-image-error").innerHTML="";
+                    document.getElementById("FileName").textContent = document.getElementById("course-image").files[0].name;
+                }
+            }
+
+            
+        }   
+
+        function file(fileInput, id){
+            if (fileInput.files.length > 0) {
+                var fileType = fileInput.files[0].type; // Obtém o tipo MIME
+
+                if (fileType !== "application/pdf") {
+                    document.getElementById("ModFileError").innerHTML="Apenas .pdf são aceites";
+                    fileInput.value="";
+                }else{
+                    document.getElementById("ModFileError").innerHTML="";
+                    document.getElementById("ModFileName"+id).textContent = fileInput.files[0].name;
+                }
             }
         }
-    }
     </script>
 </head>
 
@@ -133,7 +149,7 @@ $modules = getModulesByCourseId($course_id);
                                    
                                         <div id="file-js-example" class="file has-name">
                                             <label class="file-label">
-                                                <input class="file-input" id="course-image" accept="image/jpeg" onchange="file()" type="file" name="resume" />
+                                                <input class="file-input" id="course-image" accept="image/jpeg" onchange="image()" type="file" name="resume" />
                                                 <span class="file-cta">
                                                 <span class="file-icon">
                                                     <i class="fas fa-upload"></i>
@@ -143,7 +159,7 @@ $modules = getModulesByCourseId($course_id);
                                                 <span class="file-name" id="FileName"> Vazio </span>
                                             </label>
                                         </div>
-                                        <p class="help is-danger" id="FileError"></p>
+                                        <p class="help is-danger" id="course-image-error"></p>
                                     <p class="help">Deixe em branco para manter a imagem atual</p>
                                 </div>
                             </div>
@@ -182,6 +198,23 @@ $modules = getModulesByCourseId($course_id);
                                                     <textarea class="textarea module-description"
                                                         required><?php echo preg_replace('/<br\s\/>/i', "", $module['Description']); ?></textarea>
                                                 </div>
+                                            </div>
+                                            <div class="field">
+                                                <label class="label">ficheiro do módulo</label>
+                                                <div id="file-js-example" class="file has-name">
+                                                        <label class="file-label">
+                                                            <input class="file-input module-file" accept="application/pdf" onchange="file(this, <?php echo $module['ID']; ?>)" type="file" name="ModFile1"/>
+                                                            <span class="file-cta">
+                                                            <span class="file-icon">
+                                                                <i class="fas fa-upload"></i>
+                                                            </span>
+                                                            <span class="file-label"> Escolha um ficheiro </span>
+                                                            </span>
+                                                            <span class="file-name" id="ModFileName<?php echo $module['ID']; ?>"> Vazio </span>
+                                                        </label>
+                                                    </div>
+                                                <p class="help is-danger" id="ModFileError"></p>
+                                                <p class="help">Deixe em branco para manter o ficheiro atual</p>
                                             </div>
                                         </div>
                                     </div>
@@ -282,6 +315,22 @@ $modules = getModulesByCourseId($course_id);
                         <div class="control">
                             <textarea class="textarea module-description" required></textarea>
                         </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">ficheiro do módulo</label>
+                        <div id="file-js-example" class="file has-name">
+                                <label class="file-label">
+                                    <input class="file-input module-file" accept="application/pdf" onchange="file(this,${moduloCounter})" type="file" name="ModFile${moduloCounter}" required/>
+                                    <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label"> Escolha um ficheiro </span>
+                                    </span>
+                                    <span class="file-name" id="ModFileName${moduloCounter}"> Vazio </span>
+                                </label>
+                            </div>
+                        <p class="help is-danger" id="ModFileError"></p>
                     </div>
                 </div>
             `;
@@ -392,71 +441,100 @@ $modules = getModulesByCourseId($course_id);
 
         // Submeter formulário
         function submeterFormulario() {
-            if (!validarFormulario()) {
-                return false;
-            }
+    if (!validarFormulario()) {
+        return false;
+    }
 
-            const courseId = document.getElementById("course-id").value;
-            const fileInput = document.getElementById("course-image");
-            let imageBase64 = null;
+    const courseId = document.getElementById("course-id").value;
+    const fileInput = document.getElementById("course-image");
+    let imageBase64 = null;
 
-            // Coletar dados dos módulos
-            const modules = [];
-            document.querySelectorAll('.module-card').forEach((modulo) => {
-                modules.push({
-                    ModuleId: modulo.querySelector('.module-id').value,
-                    ModuleName: modulo.querySelector('.module-name').value,
-                    ModuleDescription: modulo.querySelector('.module-description').value
-                });
-            });
+    // Coletar dados dos módulos
+    const modules = [];
+    const moduleCards = document.querySelectorAll('.module-card');
+    const totalModules = moduleCards.length;
+    let processedModules = 0;
 
-            function processarAtualizacao() {
-                $.ajax({
-                    url: "funcoes.php",
-                    type: "POST",
-                    data: {
-                        Func: "updateCourse",
-                        CourseID: document.getElementById("course-id").value,
-                        Name: document.getElementById("course-title").value,
-                        DescriptionCourse: document.getElementById("course-description").value,
-                        SecondDescription: document.getElementById("course-card-description").value,
-                        CategoryCourse: document.getElementById("course-category").value,
-                        StartDate: document.getElementById("start-date").value,
-                        EndDate: document.getElementById("end-date").value,
-                        Price: document.getElementById("price").value,
-                        Img: imageBase64,
-                        Modules: JSON.stringify(modules)
-                    },
-                    dataType: "text",
-                    success: function (response) {
-                        if (response == "ok") {
-                            alert("Curso atualizado com sucesso!");
-                            document.location = "catalogo.php";
-                        } else {
-                            alert("Erro ao atualizar curso: " + response);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        alert("Erro na requisição: " + error);
-                        console.error(xhr.responseText);
-                    }
-                });
-            }
-
-            // Verificar se há uma nova imagem
+    function checkAllProcessed() {
+        processedModules++;
+        if (processedModules === totalModules) {
+            // Todos os módulos foram processados, agora podemos processar a imagem principal
             if (fileInput.files.length > 0) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     imageBase64 = e.target.result;
-                    processarAtualizacao();
+                    enviarDadosAoServidor();
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                processarAtualizacao();
+                enviarDadosAoServidor();
             }
-
-            return false;
         }
+    }
+
+    // Processar cada módulo, incluindo seus arquivos
+    moduleCards.forEach((modulo) => {
+        const moduleFileInput = modulo.querySelector('.module-file');
+        const moduleObj = {
+            ModuleId: modulo.querySelector('.module-id').value,
+            ModuleName: modulo.querySelector('.module-name').value,
+            ModuleDescription: modulo.querySelector('.module-description').value,
+            ModuleFile: null
+        };
+
+        // Verificar se há um novo arquivo para o módulo
+        if (moduleFileInput.files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                moduleObj.ModuleFile = e.target.result; // Armazenar o arquivo em Base64
+                modules.push(moduleObj);
+                checkAllProcessed();
+            };
+            reader.readAsDataURL(moduleFileInput.files[0]);
+        } else {
+            // Não há novo arquivo, apenas adicionar o módulo sem arquivo
+            modules.push(moduleObj);
+            checkAllProcessed();
+        }
+    });
+
+    function enviarDadosAoServidor() {
+        $.ajax({
+            url: "funcoes.php",
+            type: "POST",
+            data: {
+                Func: "updateCourse",
+                CourseID: document.getElementById("course-id").value,
+                Name: document.getElementById("course-title").value,
+                DescriptionCourse: document.getElementById("course-description").value,
+                SecondDescription: document.getElementById("course-card-description").value,
+                CategoryCourse: document.getElementById("course-category").value,
+                StartDate: document.getElementById("start-date").value,
+                EndDate: document.getElementById("end-date").value,
+                Price: document.getElementById("price").value,
+                Img: imageBase64,
+                Modules: JSON.stringify(modules)
+            },
+            dataType: "text",
+            success: function (response) {
+                if (response == "ok") {
+                    alert("Curso atualizado com sucesso!");
+                    document.location = "catalogo.php";
+                } else {
+                    alert("Erro ao atualizar curso: " + response);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("Erro na requisição: " + error);
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
+    // O processamento assíncrono dos arquivos ocorrerá 
+    // acima, então retornamos false para evitar o envio normal do formulário
+    return false;
+}
     </script>
 </body>
 </html>

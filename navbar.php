@@ -1,3 +1,8 @@
+<script>
+    function alerta(){
+        alert("Faça login ou crie uma conta para aceder a esta funcionalidade!");
+    }
+</script>
 <nav class="navbar has-shadow p-3">  
     <div class="navbar-brand">
         <a class="navbar-item no-hover" href="index.php">
@@ -15,18 +20,20 @@
         <ul class="navbar-end">
             <a class="navbar-item" href="index.php">Inicio</a>
             <a class="navbar-item" href="catalogo.php">Cursos</a>
-            <a class="navbar-item" href="blog.php">Blog</a>
-            <a class="navbar-item" href="#">Forum</a>
-            <div class="navbar-item">
+            
                 <?php 
                 if(isset($_SESSION["UserID"])){
-                    echo '<a class="button GreyBtn" href="userpage.php">Conta</a>';
+                    echo '<a class="navbar-item" href="blog.php" >Blog</a>
+                            <a class="navbar-item" href="#">Forum</a>
+                            <div class="navbar-item"><a class="button GreyBtn" href="userpage.php">Conta</a></div>';
                 }else{
-                    echo '<a class="button GreyBtn" href="login.php">Log in</a>';
+                    echo '<a class="navbar-item" href="#" onclick="alerta();">Blog</a>
+                            <a class="navbar-item" href="#">Forum</a>
+                            <div class="navbar-item"><a class="button GreyBtn" href="login.php">Log in</a></div>';
                 }
                     
                 ?>
-            </div>
+            
         </ul>
     </div>
 
@@ -40,7 +47,7 @@
         <nav class="navbar p-6">
             <a class="navbar-item is-size-4" href="index.php">Inicio</a>
             <a class="navbar-item is-size-4" href="catalogo.php">Cursos</a>
-            <a class="navbar-item is-size-4" href="#">Blog</a>
+            <a class="navbar-item is-size-4" href="blog.php">Blog</a>
             <a class="navbar-item is-size-4" href="#">Forum</a>
         </nav>
 

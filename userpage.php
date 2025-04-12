@@ -123,6 +123,20 @@ if (!isset($_SESSION['UserID'])) {
             }
         }
 
+        function DelUser(UserID){
+            if (confirm("Eliminar utilizador?")) {
+                $.post("funcoes.php",{
+                Func:"DelUser",
+                UserID:UserID
+                },function(data, status){
+                    if(data=="ok") {   
+                        document.location.reload();
+                    }
+                    else{}
+                },"text");	
+            }
+        }
+
     </script>
 
 </head>
@@ -174,11 +188,12 @@ if (!isset($_SESSION['UserID'])) {
                 </div>
                 <aside class="menu mt-4 ml-3 mb-2">
                    
-<?php               if($_SESSION["Role"]==3){?>
+<?php               if($_SESSION["Role"]>1){?>
                         <p class="menu-label">Administracao</p>
                         <ul class="menu-list">
                             <li><a href="inserir_curso.php">Novo curso</a></li>
                             <li><a onclick="toggleUserModal()">Utilizadores</a></li>
+                            <li><a href="metricas.php">Metricas</a></li>
                         </ul>
 <?php               } ?>
                     
@@ -281,12 +296,8 @@ if (!isset($_SESSION['UserID'])) {
                                     <th><?php echo $user["RegisterDate"];?></th>
                                     <th>
                                         <div class="buttons">
-                                            <button class="button is-small is-info is-outlined" onclick="">
-                                                <span class="icon">
-                                                    <i class="fas fa-edit"></i>
-                                                </span>
-                                            </button>
-                                            <button class="button is-small is-danger is-outlined" onclick="">
+                                         
+                                            <button class="button is-small is-danger is-outlined is-fullwidth" onclick="DelUser(<?php echo $user["ID"];?>)">
                                                 <span class="icon">
                                                     <i class="fas fa-trash"></i>
                                                 </span>
@@ -372,7 +383,7 @@ if (!isset($_SESSION['UserID'])) {
                     <div class="columns is-multiline">
 <?php                   
                         while ($CourseInfo = mysqli_fetch_assoc($courses)) { ?>
-                            <article class="column is-3-desktop is-4-tablet is-6-mobile <?php echo ($CourseInfo["Status"] > 1) ? 'unavailable-card' : '';?>" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
+                            <article class="column is-4-desktop is-4-tablet is-6-mobile <?php echo ($CourseInfo["Status"] > 1) ? 'unavailable-card' : '';?>" onclick="document.location='curso.php?ID=<?php echo $CourseInfo['ID']?>'">                            
                                 <div class="card product-card small-card" style="max-height: fit-content">               
                                     <div class="card-image">
                                         <div class="product-image">

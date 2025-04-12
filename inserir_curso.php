@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="vendor/jquery/jquery.min.js"></script>
  
 </head>
 
@@ -23,7 +23,7 @@
                     <h1 class="card-header-title title is-5 mb-0">Adicionar Novo Curso</h1>
                 </div>
                 <div class="card-content py-4">
-                    <form id="course-form" onsubmit="return submeter()">
+                    <form id="course-form">
                         <div class="columns is-multiline is-mobile">
                             <div class="column is-12">
                                 <div class="field">
@@ -86,7 +86,7 @@
                                     <label class="label">Imagem do Curso*</label>
                                     <div id="file-js-example" class="file has-name">
                                             <label class="file-label">
-                                                <input class="file-input" id="course-image" accept="image/jpeg" onchange="file()" type="file" name="curso-imagem" required/>
+                                                <input class="file-input" id="course-image" accept="image/jpeg" onchange="image()" type="file" name="curso-imagem" required/>
                                                 <span class="file-cta">
                                                 <span class="file-icon">
                                                     <i class="fas fa-upload"></i>
@@ -135,6 +135,22 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="field">
+                                                    <label class="label">ficheiro do módulo</label>
+                                                    <div id="file-js-example" class="file has-name">
+                                                            <label class="file-label">
+                                                                <input class="file-input module-file" accept="application/pdf" onchange="file(this,1)" type="file" name="ModFile1"/>
+                                                                <span class="file-cta">
+                                                                <span class="file-icon">
+                                                                    <i class="fas fa-upload"></i>
+                                                                </span>
+                                                                <span class="file-label"> Escolha um ficheiro </span>
+                                                                </span>
+                                                                <span class="file-name" id="ModFileName1"> Vazio </span>
+                                                            </label>
+                                                        </div>
+                                                    <p class="help is-danger" id="ModFileError"></p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -177,7 +193,7 @@
                             <div class="column is-12">
                                 <div class="field is-grouped is-grouped-centered">
                                     <div class="control">
-                                        <button class="button is-primary" type="submit">
+                                        <button class="button is-primary" type="submit" onclick="submeter()">
                                             <span class="icon is-small"><i class="fas fa-save"></i></span>
                                             <span>Cadastrar Curso</span>
                                         </button>
@@ -233,6 +249,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="field">
+                        <label class="label">ficheiro do módulo</label>
+                        <div id="file-js-example" class="file has-name">
+                                <label class="file-label">
+                                    <input class="file-input module-file" accept="application/pdf" onchange="file(this, ${moduloCounter})" type="file" name="ModFile${moduloCounter}" required/>
+                                    <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label"> Escolha um ficheiro </span>
+                                    </span>
+                                    <span class="file-name" id="ModFileName${moduloCounter}"> Vazio </span>
+                                </label>
+                            </div>
+                        <p class="help is-danger" id="ModFileError"></p>
+                    </div>
                 </div>
                 
             `;
@@ -248,21 +280,37 @@
             }
         }
 
-        function file(){
-            var fileInput = document.getElementById("course-image");
+        function image(){
+            var imageInput = document.getElementById("course-image");
 
-            if (fileInput.files.length > 0) {
-                var fileType = fileInput.files[0].type; // Obtém o tipo MIME
+            if (imageInput.files.length > 0) {
+                var fileType = imageInput.files[0].type; // Obtém o tipo MIME
 
                 if (fileType !== "image/jpeg") {
-                    document.getElementById("FileError").innerHTML="Apenas .jpg são aceites";
-                    fileInput.value="";
+                    document.getElementById("course-image-error").innerHTML="Apenas .jpg são aceites";
+                    imageInput.value="";
                 }else{
                     document.getElementById("course-image-error").innerHTML="";
                     document.getElementById("FileName").textContent = document.getElementById("course-image").files[0].name;
                 }
             }
+
+            
         }   
+
+        function file(fileInput, id){
+            if (fileInput.files.length > 0) {
+                var fileType = fileInput.files[0].type; // Obtém o tipo MIME
+
+                if (fileType !== "application/pdf") {
+                    document.getElementById("ModFileError").innerHTML="Apenas .pdf são aceites";
+                    fileInput.value="";
+                }else{
+                    document.getElementById("ModFileError").innerHTML="";
+                    document.getElementById("ModFileName"+id).textContent = fileInput.files[0].name;
+                }
+            }
+        }
 
         function validateForm() {
             let isValid = true;
@@ -359,72 +407,119 @@
         }
 
         function submeter() {
-            // Validar o formulário antes de prosseguir
-            if (!validateForm()) {
-                return false;
+    // Prevenir o comportamento padrão do formulário
+    event.preventDefault();
+    
+    // Validar o formulário antes de prosseguir
+    if (!validateForm()) {
+        return false;
+    }
+    
+    // Coletar os dados do curso
+    var cursoData = {
+        nome: document.getElementById("course-title").value,
+        descricao: document.getElementById("course-description").value,
+        descricaoCard: document.getElementById("course-card-description").value,
+        categoria: document.getElementById("course-category").value,
+        dataInicio: document.getElementById("start-date").value,
+        dataFim: document.getElementById("end-date").value,
+        preco: document.getElementById("price").value
+    };
+    
+    // Coletar dados dos módulos
+    var modules = [];
+    document.querySelectorAll('.module-card').forEach((modulo) => {
+        modules.push({
+            id: modulo.querySelector('.module-id').value,
+            name: modulo.querySelector('.module-name').value,
+            description: modulo.querySelector('.module-description').value
+        });
+    });
+    
+    // Converter a imagem do curso para base64
+    var imageInput = document.getElementById("course-image");
+    if (imageInput.files.length > 0) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            cursoData.imagem = e.target.result; // Imagem em base64
+            
+            // Processar os arquivos dos módulos
+            processarArquivosDosModulos(0, modules, cursoData);
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+    } else {
+        alert("Selecione uma imagem para o curso");
+    }
+    
+    return false;
+}
+
+// Função para processar os arquivos dos módulos sequencialmente
+function processarArquivosDosModulos(index, modules, cursoData) {
+    if (index >= document.querySelectorAll('.module-card').length) {
+        // Todos os módulos foram processados, enviar dados
+        enviarDadosDoCurso(cursoData, modules);
+        return;
+    }
+    
+    var modulo = document.querySelectorAll('.module-card')[index];
+    var fileInput = modulo.querySelector('.module-file');
+    
+    if (fileInput && fileInput.files.length > 0) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            modules[index].arquivo = e.target.result; // Arquivo em base64
+            
+            // Processar o próximo módulo
+            processarArquivosDosModulos(index + 1, modules, cursoData);
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    } else {
+        // Sem arquivo, continuar com o próximo módulo
+        processarArquivosDosModulos(index + 1, modules, cursoData);
+    }
+}
+
+// Função para enviar os dados via AJAX
+function enviarDadosDoCurso(cursoData, modules) {
+    // Criar o objeto para envio
+    var dadosParaEnvio = {
+        Func: "newCourse",
+        Name: cursoData.nome,
+        DescriptionCourse: cursoData.descricao,
+        SecondDescription: cursoData.descricaoCard,
+        CategoryCourse: cursoData.categoria,
+        StartDate: cursoData.dataInicio,
+        EndDate: cursoData.dataFim,
+        Price: cursoData.preco,
+        Img: cursoData.imagem,
+        modules: JSON.stringify(modules)
+    };
+    
+    // Mostrar dados antes do envio (para debug)
+    console.log("Enviando dados:", JSON.stringify(dadosParaEnvio).substring(0, 100) + "...");
+    
+    // Enviar via AJAX
+    $.ajax({
+        url: "funcoes.php",
+        type: "POST",
+        data: dadosParaEnvio,
+        success: function(data) {
+            console.log("Resposta:", data);
+            if (data == "ok") {
+                alert("Curso cadastrado com sucesso!");
+                document.location = "userpage.php";
+            } else {
+                alert("Erro ao cadastrar curso: " + data);
             }
-            
-            var fileInput = document.getElementById("course-image");
-            
-            // Verificar se uma imagem foi selecionada
-            if (fileInput.files.length === 0) {
-                document.getElementById('course-image-error').textContent = 'Selecione uma imagem para o curso';
-                return false;
-            }
-            
-            var reader = new FileReader();
-
-            reader.onload = function (event) {
-                var imageBase64 = event.target.result;
-
-                // Coletar módulos
-                var modules = [];
-                document.querySelectorAll('.module-card').forEach((modulo, index) => {
-                    var modID = modulo.querySelector('.module-id').value;
-                    var modName = modulo.querySelector('.module-name').value;
-                    var modDesc = modulo.querySelector('.module-description').value;
-
-                    modules.push({
-                        ModuleId: modID,
-                        ModuleName: modName,
-                        ModuleDescription: modDesc
-                    });
-                });
-
-                // Enviar dados via AJAX com tratamento de erro
-                $.ajax({
-                    url: "funcoes.php",
-                    type: "POST",
-                    data: {
-                        Func: "newCourse",
-                        Name: document.getElementById("course-title").value,
-                        DescriptionCourse: document.getElementById("course-description").value,
-                        SecondDescription: document.getElementById("course-card-description").value,
-                        CategoryCourse: document.getElementById("course-category").value,
-                        StartDate: document.getElementById("start-date").value,
-                        EndDate: document.getElementById("end-date").value,
-                        Price: document.getElementById("price").value,
-                        Img: imageBase64,
-                        Modules: JSON.stringify(modules)
-                    },
-                    dataType: "text",
-                    success: function(data) {
-                        if (data == "ok") {
-                            document.location = "userpage.php";
-                        } else {
-                            alert("Erro ao cadastrar curso: " + data);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert("Erro na requisição AJAX: " + error);
-                        console.error(xhr.responseText);
-                    }
-                });
-            };
-
-            reader.readAsDataURL(fileInput.files[0]);
-            return false; // Impedir o envio normal do formulário
+        },
+        error: function(xhr, status, error) {
+            alert("Erro na requisição AJAX: " + error);
+            console.error(xhr.responseText);
         }
+    });
+}
+    
     </script>
 </body>
 
